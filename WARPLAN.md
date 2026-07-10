@@ -34,6 +34,7 @@ Three document formats are in use, all sharing the same building blocks:
 - **Candle lighting 2nd night YT / motzaei Shabbos that is YT:** printed as "not before X", **rounded up** to the minute (e.g. 1st day Pesach → "not before 7:26pm").
 - **Havdalah / Motzaei Shabbos Maariv:** later than weekday tzeis (samples show ~39–43 min after Friday shkia vs ~28–30 min for weekday tzeis) — i.e. two distinct tzeis definitions, both almost certainly degree-based and season-dependent. **Rounded up.**
 - **Weekday Mincha:** ~10 min before shkia; **Maariv:** at weekday tzeis; **Erev Shabbos Mincha:** ~8 min after candle lighting; **Kabbolas Shabbos:** ~26 min after Mincha. These are shul policies, not halachic constants → must be configurable rules with per-week manual override.
+- **Davening schedules vary through the year:** Shacharis minyan times and *counts* change (e.g. 6:15 & 7:30 in some seasons; an added 9:15 on public holidays and in other periods; Sun 8:00 & 9:15), an early Erev Shabbos Mincha/Kabbolas Shabbos/Maariv minyan runs in part of the year (anchored to the earliest halachically permitted time, i.e. after Plag Hamincha), and early Mincha/Maariv appear in summer months. So the davening-times model must support **seasonal schedule profiles, a variable number of minyanim per tefillah, and halachic-time anchors — with everything editable per sheet**.
 - Mi'sheyakir is printed as "approx"; Morning Shema is "finish by" (sof zman Krias Shema per the Alter Rebbe's shitta).
 - Molad announced in Jerusalem Standard Time with chalakim; Rosh Chodesh days spelled out ("yom revi'i and yom chamishi").
 
@@ -65,11 +66,18 @@ Five modules, deliberately separable:
 
 1. **Zmanim engine** — wraps KosherJava-family library (PhpZmanim / kosher-zmanim), configured for Bondi (lat/long/elevation, `Australia/Sydney` tz incl. DST) and the Alter Rebbe definitions recovered in Phase 0. Exposes each zman with an explicit **rounding policy** (`FLOOR` for Friday/erev-YT candle lighting; `CEIL` for havdalah, motzaei-Shabbos Maariv, and 2nd-day-YT "not before" candle lighting; nearest-minute or "approx" for informational zmanim).
 2. **Luach (calendar) layer** — Hebrew↔civil dates, parsha (Diaspora cycle incl. doubled sedras and Chazak), special Shabbosos (Mevorchim, Chazon, Nachamu, Shuva, HaGadol, Shira, the four parshiyos), yomim tovim (2-day diaspora), fasts (with commencement rules — dawn for minor fasts, shkia for 9 Av/YK), Rosh Chodesh, molad (JST + chalakim, formatted text), Omer day numbers, Pirkei Avos chapter (Chabad cycle: Pesach → Rosh Hashanah), Chanukah, DST transition detection, NSW public holidays.
-3. **Schedule rules engine** — the shul's minyan-time policies expressed as editable rules ("weekday Mincha = shkia − 10 min, rounded to 1 min", "Kabbolas Shabbos = Mincha + 26 min", "Shacharis Sun 8:00 & 9:15; Mon–Fri 6:15 & 7:30; add 9:15 on public holidays", "Mevorchim → Tehillim 8:15 + Shacharis 10:10; otherwise Chassidus 9:15 + Shacharis 10:00"). Rules produce a draft; every value remains manually overridable per sheet.
-4. **Document generator** — assembles week blocks / yom-tov day blocks into the three formats; renders .docx (PHPWord or `docx` npm), PDF, HTML. Includes the notes library (kiddush-window text with DST/EST variants, Eruv Tavshilin reminder, DST changeover, "A Kosheren un Freilichen Pesach!", etc.) auto-suggested by the luach layer but individually removable.
-5. **Dashboard** — pick a date range (weeks and/or a yom tov) → generate draft → block-level editor (toggle sections, edit any time or text, drag in saved notes) → export .docx/PDF → archive of past sheets (regenerate/duplicate/edit).
+3. **Schedule rules engine** — the shul's minyan-time policies expressed as editable rules. Every davening line is one of three types, and the type is visible in the dashboard:
+   - **Zman-anchored:** offset from a halachic time, with rounding ("weekday Mincha = shkia − 10 min", "Maariv = tzeis", "early Maariv = not before Plag Hamincha, rounded up", "Kabbolas Shabbos = Mincha + 26 min").
+   - **Fixed clock time:** "Shacharis Mon–Fri 6:15 & 7:30", "Shabbos Shacharis 10:00".
+   - **Manual override:** typed directly on a given sheet; always wins over the rule.
 
-**Data model:** `Location` (coords, tz), `ZmanimProfile` (definitions + rounding), `ScheduleRule` (rules engine config), `NoteTemplate` (reusable texts + trigger conditions), `Timesheet` (date range, format, generated JSON of blocks, manual overrides, export history).
+   Rules are scoped by **schedule profiles** (seasons): a profile is active for a date range, a DST state, or a zman condition (e.g. "run the early Erev Shabbos Mincha/Kabbolas Shabbos/Maariv minyan only when Plag is early enough"), and each profile defines its own set of minyanim — so the *number* of minyanim per tefillah can differ by season, not just the times ("add 9:15 Shacharis on public holidays and during January", "early Mincha/Maariv minyan in summer months"). Conditional logic like "Mevorchim → Tehillim 8:15 + Shacharis 10:10; otherwise Chassidus 9:15 + Shacharis 10:00" lives here too. Rules produce a draft; every line on every sheet remains individually editable — add a minyan, remove one, or change its time.
+
+   Where a line is zman-anchored, edits are validated against the halachic bound and the dashboard **warns (but does not block)** if an edit crosses it — e.g. an early Maariv moved before Plag, Mincha before Mincha Gedola, or candle lighting after the calculated time.
+4. **Document generator** — assembles week blocks / yom-tov day blocks into the three formats; renders .docx (PHPWord or `docx` npm), PDF, HTML. Includes the notes library (kiddush-window text with DST/EST variants, Eruv Tavshilin reminder, DST changeover, "A Kosheren un Freilichen Pesach!", etc.) auto-suggested by the luach layer but individually removable.
+5. **Dashboard** — pick a date range (weeks and/or a yom tov) → generate draft → block-level editor: toggle sections, add/remove/edit minyan lines, edit any time or text, drag in saved notes. Each time shows whether it is rule-derived or manually overridden, with a one-click "revert to calculated" and a warning when an edit crosses its halachic bound. Also: manage schedule profiles (the seasonal rules themselves are editable here, not just per-sheet values) → export .docx/PDF → archive of past sheets (regenerate/duplicate/edit).
+
+**Data model:** `Location` (coords, tz), `ZmanimProfile` (definitions + rounding), `ScheduleProfile` (seasonal minyan sets + activation conditions), `ScheduleRule` (per-minyan anchor/offset/fixed-time config), `NoteTemplate` (reusable texts + trigger conditions), `Timesheet` (date range, format, generated JSON of blocks, per-line manual overrides, export history).
 
 ---
 
@@ -84,7 +92,7 @@ Five modules, deliberately separable:
 
 **Phase 2 — Luach layer**: parsha/YT/fasts/molad/Omer/Pirkei Avos/Mevorchim/DST; golden test = reproduce every header, label, molad line and note trigger in the fixtures.
 
-**Phase 3 — Rules engine + document generator**: draft sheets for a sample span (regular week, Mevorchim week, fast week, DST-change week, Pesach, Tishrei); .docx opens cleanly in Word/LibreOffice/Google Docs and visually matches the house style.
+**Phase 3 — Rules engine + document generator**: draft sheets for a sample span (regular week, Mevorchim week, fast week, DST-change week, a summer week with the early Mincha/Maariv minyan, Pesach, Tishrei); verify seasonal profile switching (minyan added/removed at the right week) and per-line overrides; .docx opens cleanly in Word/LibreOffice/Google Docs and visually matches the house style.
 
 **Phase 4 — Dashboard** (WP plugin or standalone per the decision gate): generate-on-demand, block editor, exports, archive, user login.
 
