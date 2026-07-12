@@ -1,0 +1,1667 @@
+{
+ "source_pdf": "5786_20Tishrei_20Times.pdf",
+ "readable_name": "5786_20Tishrei_20Times",
+ "hebrew_year": 5786,
+ "format": "yomtov",
+ "blocks": [
+  {
+   "type": "day",
+   "title_raw": "(preamble)",
+   "weekday_raw": null,
+   "hebrew_date_raw": null,
+   "date": null,
+   "labels": [],
+   "omer_day": null,
+   "entries": [],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Erev Rosh Hashana",
+   "weekday_raw": "Mon",
+   "hebrew_date_raw": "29 Elul",
+   "date": "2025-09-22",
+   "labels": [
+    "Erev Rosh Hashana"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Selichos",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "05:30",
+     "qualifier": null,
+     "raw": "Selichos 5:30am & 6:30am"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Selichos",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "06:30",
+     "qualifier": null,
+     "raw": "Selichos 5:30am & 6:30am"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Shacharis followed by Hatoras Nedorim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "06:15",
+     "qualifier": "by",
+     "raw": "Shacharis followed by Hatoras Nedorim 6:15am & 7:30am"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Shacharis followed by Hatoras Nedorim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "07:30",
+     "qualifier": "by",
+     "raw": "Shacharis followed by Hatoras Nedorim 6:15am & 7:30am"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Morning Shema finish by",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "08:44",
+     "qualifier": "finish by",
+     "raw": "Morning Shema finish by 8:44am"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Candle lighting (“Yom HaZikaron”)",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "17:33",
+     "qualifier": null,
+     "raw": "Candle lighting (“Yom HaZikaron”) 5:33pm"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Mincha (the last one for the year) followed by Tehillim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "17:35",
+     "qualifier": "by",
+     "raw": "Mincha (the last one for the year) followed by Tehillim 5:35pm"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Shkia",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "17:51",
+     "qualifier": null,
+     "raw": "Shkia 5:51pm"
+    },
+    {
+     "section": "Erev Rosh Hashana",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-22",
+     "time": "18:20",
+     "qualifier": null,
+     "raw": "Maariv  6:20pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Rosh Hashana Day 1",
+   "weekday_raw": "Tues",
+   "hebrew_date_raw": "1 Tishrei",
+   "date": "2025-09-23",
+   "labels": [
+    "Rosh Hashana Day 1"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Morning Shema (also for Rosh Hashana day 2) finish by",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "08:43",
+     "qualifier": "finish by",
+     "raw": "Morning Shema (also for Rosh Hashana day 2) finish by 8:43am"
+    },
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Shacharis (“Hodu…”)",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "09:00",
+     "qualifier": null,
+     "raw": "Shacharis (“Hodu…”) 9:00am"
+    },
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Tekias Shofar approx",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "11:10",
+     "qualifier": "approx",
+     "raw": "Tekias Shofar approx 11:10am"
+    },
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Mincha, then Tashlich:  after Musaf (Mincha Gedolah",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "12:19",
+     "qualifier": "after",
+     "raw": "Mincha, then Tashlich:  after Musaf (Mincha Gedolah 12:19pm) & 5:00pm"
+    },
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Mincha, then Tashlich:  after Musaf (Mincha Gedolah",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "17:00",
+     "qualifier": null,
+     "raw": "Mincha, then Tashlich:  after Musaf (Mincha Gedolah 12:19pm) & 5:00pm"
+    },
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Candle lighting 2nd night (“Yom Hazikaron”) not before",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "18:29",
+     "qualifier": "not before",
+     "raw": "Candle lighting 2nd night (“Yom Hazikaron”) not before 6:29pm"
+    },
+    {
+     "section": "Rosh Hashana Day 1",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-23",
+     "time": "18:30",
+     "qualifier": null,
+     "raw": "Maariv 6:30pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Rosh Hashana Day 2",
+   "weekday_raw": "Wed",
+   "hebrew_date_raw": "2 Tishrei",
+   "date": "2025-09-24",
+   "labels": [
+    "Rosh Hashana Day 2"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Rosh Hashana Day 2",
+     "label": "Shacharis (“Hodu…”)",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-24",
+     "time": "09:00",
+     "qualifier": null,
+     "raw": "Shacharis (“Hodu…”) 9:00am"
+    },
+    {
+     "section": "Rosh Hashana Day 2",
+     "label": "Tekias Shofar approx",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-24",
+     "time": "11:10",
+     "qualifier": "approx",
+     "raw": "Tekias Shofar approx 11:10am"
+    },
+    {
+     "section": "Rosh Hashana Day 2",
+     "label": "Mincha followed by nigunim of the Rebbeim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-24",
+     "time": "17:30",
+     "qualifier": "by",
+     "raw": "Mincha followed by nigunim of the Rebbeim 5:30pm"
+    },
+    {
+     "section": "Rosh Hashana Day 2",
+     "label": "Maariv and end of RH",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-24",
+     "time": "18:30",
+     "qualifier": null,
+     "raw": "Maariv and end of RH 6:30pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Tzom Gedaliah",
+   "weekday_raw": "Thurs",
+   "hebrew_date_raw": "3 Tishrei",
+   "date": "2025-09-25",
+   "labels": [
+    "Tzom Gedaliah"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Tzom Gedaliah",
+     "label": "Fast start",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2025-09-25",
+     "time": "04:22",
+     "qualifier": null,
+     "raw": "Alos Hashachar (Fast begins) 4:22am"
+    },
+    {
+     "section": "Tzom Gedaliah",
+     "label": "Shacharis with Selichos",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-25",
+     "time": "05:55",
+     "qualifier": null,
+     "raw": "Shacharis with Selichos 5:55am & 7:00am"
+    },
+    {
+     "section": "Tzom Gedaliah",
+     "label": "Shacharis with Selichos",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-25",
+     "time": "07:00",
+     "qualifier": null,
+     "raw": "Shacharis with Selichos 5:55am & 7:00am"
+    },
+    {
+     "section": "Tzom Gedaliah",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-25",
+     "time": "17:30",
+     "qualifier": null,
+     "raw": "Mincha 5:30pm"
+    },
+    {
+     "section": "Tzom Gedaliah",
+     "label": "Fast end",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2025-09-25",
+     "time": "18:19",
+     "qualifier": null,
+     "raw": "Maariv and end of Fast 6:19pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Erev Shabbos",
+   "weekday_raw": "Fri",
+   "hebrew_date_raw": "4 Tishrei",
+   "date": "2025-09-26",
+   "labels": [
+    "Erev Shabbos"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Erev Shabbos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-26",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am & 7:30am"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-26",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am & 7:30am"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Candle lighting (“Shabbos Kodesh”)",
+     "kind": "zman",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-09-26",
+     "time": "17:36",
+     "qualifier": null,
+     "raw": "Candle lighting (“Shabbos Kodesh”) 5:36pm"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-26",
+     "time": "17:45",
+     "qualifier": null,
+     "raw": "Mincha 5:45pm"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Shkia",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-26",
+     "time": "17:54",
+     "qualifier": null,
+     "raw": "Shkia 5:54pm"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Kabbolas Shabbos, then Maariv",
+     "kind": "minyan",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-09-26",
+     "time": "18:10",
+     "qualifier": null,
+     "raw": "Kabbolas Shabbos, then Maariv  6:10pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Shabbos Kodesh, Vayelech/Shuvah",
+   "weekday_raw": null,
+   "hebrew_date_raw": "5 Tishrei",
+   "date": "2025-09-27",
+   "labels": [
+    "Shabbos Kodesh, Vayelech/Shuvah"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Morning Shema finish by",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "08:40",
+     "qualifier": "finish by",
+     "raw": "Morning Shema finish by 8:40am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Chassidus",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Chassidus 9:15am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis (Shabbos Shuva derasha before Krias Hatorah)",
+     "kind": "minyan",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-09-27",
+     "time": "10:00",
+     "qualifier": "before",
+     "raw": "Shacharis (Shabbos Shuva derasha before Krias Hatorah) 10:00am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Mincha followed by nigunim of the Rebbeim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "17:35",
+     "qualifier": "by",
+     "raw": "Mincha followed by nigunim of the Rebbeim 5:35pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Motzaei Shabbos, Maariv",
+     "kind": "minyan",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-09-27",
+     "time": "18:32",
+     "qualifier": null,
+     "raw": "Motzaei Shabbos, Maariv 6:32pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  approx",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-09-27",
+     "time": "04:52",
+     "qualifier": "approx",
+     "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  approx 4:52am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Hanetz (sunrise) Sun.-Fri",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-09-27",
+     "time": "05:37",
+     "qualifier": null,
+     "raw": "Hanetz (sunrise) Sun.-Fri.  5:37am.  Shema Sun.-Fri.  finish by 8:35am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Hanetz (sunrise) Sun.-Fri",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-09-27",
+     "time": "08:35",
+     "qualifier": "finish by",
+     "raw": "Hanetz (sunrise) Sun.-Fri.  5:37am.  Shema Sun.-Fri.  finish by 8:35am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shkia Sun.-Thurs",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Thurs.",
+     "date": "2025-09-27",
+     "time": "17:56",
+     "qualifier": null,
+     "raw": "Shkia Sun.-Thurs.  5:56pm.       Tzeis Mon.-Thurs.  6:24pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shkia Sun.-Thurs",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Thurs.",
+     "date": "2025-09-27",
+     "time": "18:24",
+     "qualifier": null,
+     "raw": "Shkia Sun.-Thurs.  5:56pm.       Tzeis Mon.-Thurs.  6:24pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis Sun",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.",
+     "date": "2025-09-27",
+     "time": "08:00",
+     "qualifier": null,
+     "raw": "Shacharis Sun. 8:00am & 9:15am; Mon & Tues 6:15am & 7:30am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis Sun",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.",
+     "date": "2025-09-27",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis Sun. 8:00am & 9:15am; Mon & Tues 6:15am & 7:30am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis Sun",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.",
+     "date": "2025-09-27",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis Sun. 8:00am & 9:15am; Mon & Tues 6:15am & 7:30am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis Sun",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.",
+     "date": "2025-09-27",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis Sun. 8:00am & 9:15am; Mon & Tues 6:15am & 7:30am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Mincha  Sun.-Tues",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.-Tues.",
+     "date": "2025-09-27",
+     "time": "17:45",
+     "qualifier": null,
+     "raw": "Mincha  Sun.-Tues. 5:45pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "18:23",
+     "qualifier": null,
+     "raw": "Maariv 6:23pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am & 7:30am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am & 7:30am"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Early Mincha followed by lekach",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "15:15",
+     "qualifier": "by",
+     "raw": "Early Mincha followed by lekach 3:15pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Fast start",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "17:40",
+     "qualifier": null,
+     "raw": "Candle lighting (“Yom HaKippurim”); Fast begins 5:40pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Fast start",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "17:58",
+     "qualifier": null,
+     "raw": "Shkia: Fast begins for men. (Tallis already on with a brocha) 5:58pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Vayelech/Shuvah",
+     "label": "Kol Nidrei, followed by a Derosha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-09-27",
+     "time": "18:10",
+     "qualifier": "by",
+     "raw": "Kol Nidrei, followed by a Derosha  6:10pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Yom Kippur",
+   "weekday_raw": "Thurs",
+   "hebrew_date_raw": "10 Tishrei",
+   "date": "2025-10-02",
+   "labels": [
+    "Yom Kippur"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Yom Kippur",
+     "label": "Morning Shema finish by",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-02",
+     "time": "08:36",
+     "qualifier": "finish by",
+     "raw": "Morning Shema finish by 8:36am"
+    },
+    {
+     "section": "Yom Kippur",
+     "label": "Shacharis (“Hodu…”)",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-02",
+     "time": "09:30",
+     "qualifier": null,
+     "raw": "Shacharis (“Hodu…”) 9:30am"
+    },
+    {
+     "section": "Yom Kippur",
+     "label": "Yizkor approx",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-02",
+     "time": "12:15",
+     "qualifier": "approx",
+     "raw": "Yizkor approx 12:15pm"
+    },
+    {
+     "section": "Yom Kippur",
+     "label": "Mincha followed by a derosha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-02",
+     "time": "15:45",
+     "qualifier": "by",
+     "raw": "Mincha followed by a derosha 3:45pm"
+    },
+    {
+     "section": "Yom Kippur",
+     "label": "Neilah",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-02",
+     "time": "17:20",
+     "qualifier": null,
+     "raw": "Neilah 5:20pm"
+    },
+    {
+     "section": "Yom Kippur",
+     "label": "Fast end",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2025-10-02",
+     "time": "18:36",
+     "qualifier": null,
+     "raw": "Maariv and end of Fast, then Kiddush Levana & refreshments 6:36pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Erev Shabbos",
+   "weekday_raw": "Fri",
+   "hebrew_date_raw": "11 Tishrei",
+   "date": "2025-10-03",
+   "labels": [
+    "Erev Shabbos"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Erev Shabbos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-03",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-03",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-03",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Candle lighting (“Shabbos Kodesh”)",
+     "kind": "zman",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-10-03",
+     "time": "17:41",
+     "qualifier": null,
+     "raw": "Candle lighting (“Shabbos Kodesh”) 5:41pm"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-03",
+     "time": "17:50",
+     "qualifier": null,
+     "raw": "Mincha 5:50pm"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Shkia",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-03",
+     "time": "17:59",
+     "qualifier": null,
+     "raw": "Shkia 5:59pm"
+    },
+    {
+     "section": "Erev Shabbos",
+     "label": "Kabbolas Shabbos, then Maariv",
+     "kind": "minyan",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-10-03",
+     "time": "18:15",
+     "qualifier": null,
+     "raw": "Kabbolas Shabbos, then Maariv  6:15pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Shabbos Kodesh, Ha’azinu",
+   "weekday_raw": null,
+   "hebrew_date_raw": "12 Tishrei",
+   "date": "2025-10-04",
+   "labels": [
+    "Shabbos Kodesh, Ha’azinu"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Morning Shema finish by",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "08:34",
+     "qualifier": "finish by",
+     "raw": "Morning Shema finish by 8:34am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Chassidus",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Chassidus 9:15am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Shacharis (“Hodu…”) followed by Musaf",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "10:00",
+     "qualifier": "by",
+     "raw": "Shacharis (“Hodu…”) followed by Musaf 10:00am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Mincha followed by nigunim of the Rebbeim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "17:40",
+     "qualifier": "by",
+     "raw": "Mincha followed by nigunim of the Rebbeim 5:40pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Motzaei Shabbos, Maariv",
+     "kind": "minyan",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-10-04",
+     "time": "18:37",
+     "qualifier": null,
+     "raw": "Motzaei Shabbos, Maariv 6:37pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  approx",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-04",
+     "time": "05:42",
+     "qualifier": "approx",
+     "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  approx 5:42am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Hanetz (sunrise) Sun.-Fri",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-04",
+     "time": "06:27",
+     "qualifier": null,
+     "raw": "Hanetz (sunrise) Sun.-Fri.  6:27am.  Shema Sun.-Fri.  finish by 9:29am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Hanetz (sunrise) Sun.-Fri",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-04",
+     "time": "09:29",
+     "qualifier": "finish by",
+     "raw": "Hanetz (sunrise) Sun.-Fri.  6:27am.  Shema Sun.-Fri.  finish by 9:29am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Mincha Gedolah Sun.-Shabbos",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Shabbos",
+     "date": "2025-10-04",
+     "time": "13:16",
+     "qualifier": null,
+     "raw": "Mincha Gedolah Sun.-Shabbos 1:16pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Shkia Sun.-Thurs",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Thurs.",
+     "date": "2025-10-04",
+     "time": "19:01",
+     "qualifier": null,
+     "raw": "Shkia Sun.-Thurs.  7:01pm.          Tzeis Sun.-Thurs.  7:29pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Shkia Sun.-Thurs",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Thurs.",
+     "date": "2025-10-04",
+     "time": "19:29",
+     "qualifier": null,
+     "raw": "Shkia Sun.-Thurs.  7:01pm.          Tzeis Sun.-Thurs.  7:29pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "08:00",
+     "qualifier": null,
+     "raw": "Shacharis  8:00am & 9:15am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis  8:00am & 9:15am"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "18:50",
+     "qualifier": null,
+     "raw": "Mincha 6:50pm"
+    },
+    {
+     "section": "Shabbos Kodesh, Ha’azinu",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-04",
+     "time": "19:30",
+     "qualifier": null,
+     "raw": "Maariv 7:30pm"
+    }
+   ],
+   "notes": [
+    "Daylight Saving Time starts Sun. 5 Oct. Adjust clocks forward 1 hr."
+   ],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Erev Succos",
+   "weekday_raw": "Mon",
+   "hebrew_date_raw": "14 Tishrei",
+   "date": "2025-10-06",
+   "labels": [
+    "Erev Succos"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Erev Succos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-06",
+     "time": "08:00",
+     "qualifier": null,
+     "raw": "Shacharis 8:00am, 9:15am"
+    },
+    {
+     "section": "Erev Succos",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-06",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis 8:00am, 9:15am"
+    },
+    {
+     "section": "Erev Succos",
+     "label": "Candle lighting (“Yom Tov”)",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-06",
+     "time": "18:43",
+     "qualifier": null,
+     "raw": "Candle lighting (“Yom Tov”) 6:43pm"
+    },
+    {
+     "section": "Erev Succos",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-06",
+     "time": "18:50",
+     "qualifier": null,
+     "raw": "Mincha 6:50pm"
+    },
+    {
+     "section": "Erev Succos",
+     "label": "Shkia",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-06",
+     "time": "19:01",
+     "qualifier": null,
+     "raw": "Shkia 7:01pm"
+    },
+    {
+     "section": "Erev Succos",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-06",
+     "time": "19:27",
+     "qualifier": null,
+     "raw": "Maariv 7:27pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Succos day 1",
+   "weekday_raw": "Tues",
+   "hebrew_date_raw": "15 Tishrei",
+   "date": "2025-10-07",
+   "labels": [
+    "Succos day 1"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Succos day 1",
+     "label": "Shacharis (Kiddush in sukkah after Musaf)",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-07",
+     "time": "10:00",
+     "qualifier": "after",
+     "raw": "Shacharis (Kiddush in sukkah after Musaf) 10:00am"
+    },
+    {
+     "section": "Succos day 1",
+     "label": "Mincha followed by Kinus Torah part 1",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-07",
+     "time": "18:50",
+     "qualifier": "by",
+     "raw": "Mincha followed by Kinus Torah part 1 6:50pm"
+    },
+    {
+     "section": "Succos day 1",
+     "label": "Candle lighting (“Yom Tov”) not before",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-07",
+     "time": "19:40",
+     "qualifier": "not before",
+     "raw": "Candle lighting (“Yom Tov”) not before 7:40pm"
+    },
+    {
+     "section": "Succos day 1",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-07",
+     "time": "19:40",
+     "qualifier": null,
+     "raw": "Maariv 7:40pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Succos day 2",
+   "weekday_raw": "Wed",
+   "hebrew_date_raw": "16 Tishrei",
+   "date": "2025-10-08",
+   "labels": [
+    "Succos day 2"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis followed by Musaf)",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "10:00",
+     "qualifier": "by",
+     "raw": "Shacharis followed by Musaf) 10:00am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "18:50",
+     "qualifier": null,
+     "raw": "Mincha 6:50pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Maariv and end of Yom Tov",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "19:41",
+     "qualifier": null,
+     "raw": "Maariv and end of Yom Tov 7:41pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "18:50",
+     "qualifier": null,
+     "raw": "Mincha 6:50pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "19:30",
+     "qualifier": null,
+     "raw": "Maariv 7:30pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Candle lighting (“Shabbos kodesh”)",
+     "kind": "zman",
+     "day_spec_raw": "Shabbos kodesh",
+     "date": "2025-10-08",
+     "time": "18:46",
+     "qualifier": null,
+     "raw": "Candle lighting (“Shabbos kodesh”) 6:46pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "18:50",
+     "qualifier": null,
+     "raw": "Mincha 6:50pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Shkia",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-08",
+     "time": "19:04",
+     "qualifier": null,
+     "raw": "Shkia 7:04pm"
+    },
+    {
+     "section": "Succos day 2",
+     "label": "Tzeis, Kabbolas Shabbos (“Mizmor l’Dovid”) & Maariv",
+     "kind": "zman",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-10-08",
+     "time": "19:30",
+     "qualifier": null,
+     "raw": "Tzeis, Kabbolas Shabbos (“Mizmor l’Dovid”) & Maariv  7:30pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Shabbos Chol HaMoed Succos",
+   "weekday_raw": null,
+   "hebrew_date_raw": "19 Tishrei",
+   "date": "2025-10-11",
+   "labels": [
+    "Shabbos Chol HaMoed Succos"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Morning Shema  finish by",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-11",
+     "time": "09:28",
+     "qualifier": "finish by",
+     "raw": "Morning Shema  finish by 9:28am"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Shacharis (“Hodu…”) followed by Musaf",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-11",
+     "time": "10:00",
+     "qualifier": "by",
+     "raw": "Shacharis (“Hodu…”) followed by Musaf 10:00am"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Mincha followed by Kinus Torah part 2",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-11",
+     "time": "18:45",
+     "qualifier": "by",
+     "raw": "Mincha followed by Kinus Torah part 2 6:45pm"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Motzaei Shabbos, Maariv",
+     "kind": "minyan",
+     "day_spec_raw": "Shabbos",
+     "date": "2025-10-11",
+     "time": "19:43",
+     "qualifier": null,
+     "raw": "Motzaei Shabbos, Maariv 7:43pm"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  approx",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-11",
+     "time": "05:32",
+     "qualifier": "approx",
+     "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  approx 5:32am"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Hanetz (sunrise) Sun.-Fri",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-11",
+     "time": "06:18",
+     "qualifier": null,
+     "raw": "Hanetz (sunrise) Sun.-Fri.  6:18am."
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Morning Shema Sun.-Fri.  finish by",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-11",
+     "time": "09:24",
+     "qualifier": "finish by",
+     "raw": "Morning Shema Sun.-Fri.  finish by 9:24am.   Mincha Gedolah 1:14pm"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Morning Shema Sun.-Fri.  finish by",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Fri.",
+     "date": "2025-10-11",
+     "time": "13:14",
+     "qualifier": "by",
+     "raw": "Morning Shema Sun.-Fri.  finish by 9:24am.   Mincha Gedolah 1:14pm"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Shkia Sun.-Thurs",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Thurs.",
+     "date": "2025-10-11",
+     "time": "19:06",
+     "qualifier": null,
+     "raw": "Shkia Sun.-Thurs.  7:06pm.      Tzeis Sun.-Thurs.  7:35pm"
+    },
+    {
+     "section": "Shabbos Chol HaMoed Succos",
+     "label": "Shkia Sun.-Thurs",
+     "kind": "zman",
+     "day_spec_raw": "Sun.-Thurs.",
+     "date": "2025-10-11",
+     "time": "19:35",
+     "qualifier": null,
+     "raw": "Shkia Sun.-Thurs.  7:06pm.      Tzeis Sun.-Thurs.  7:35pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Chol HaMoed Succos",
+   "weekday_raw": "Sun",
+   "hebrew_date_raw": "20 Tishrei",
+   "date": "2025-10-12",
+   "labels": [
+    "Chol HaMoed Succos"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Chol HaMoed Succos",
+     "label": "Shacharis Sun",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.",
+     "date": "2025-10-12",
+     "time": "08:00",
+     "qualifier": null,
+     "raw": "Shacharis Sun. 8:00 & 9:15am"
+    },
+    {
+     "section": "Chol HaMoed Succos",
+     "label": "Shacharis Sun",
+     "kind": "minyan",
+     "day_spec_raw": "Sun.",
+     "date": "2025-10-12",
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis Sun. 8:00 & 9:15am"
+    },
+    {
+     "section": "Chol HaMoed Succos",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-12",
+     "time": "18:55",
+     "qualifier": null,
+     "raw": "Mincha 6:55pm"
+    },
+    {
+     "section": "Chol HaMoed Succos",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-12",
+     "time": "19:35",
+     "qualifier": null,
+     "raw": "Maariv 7:35pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Hoshano Rabbo & Erev Shmini Atzeres",
+   "weekday_raw": null,
+   "hebrew_date_raw": "21-22 Tishrei",
+   "date": null,
+   "labels": [
+    "Hoshano Rabbo & Erev Shmini Atzeres"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Tehillim, apple & honey  (starting at chatzot ha’laila) Tues",
+     "kind": "zman",
+     "day_spec_raw": "Tues.",
+     "date": null,
+     "time": "00:42",
+     "qualifier": null,
+     "raw": "Tehillim, apple & honey  (starting at chatzot ha’laila) Tues. 12:42am"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "09:15",
+     "qualifier": null,
+     "raw": "Shacharis 6:15am, 7:30am, 9:15am"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Candle lighting (“Yom Tov”)",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "18:49",
+     "qualifier": null,
+     "raw": "Candle lighting (“Yom Tov”) 6:49pm"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "18:55",
+     "qualifier": null,
+     "raw": "Mincha 6:55pm"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Shkia",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "19:07",
+     "qualifier": null,
+     "raw": "Shkia 7:07pm"
+    },
+    {
+     "section": "Hoshano Rabbo & Erev Shmini Atzeres",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": null,
+     "time": "19:35",
+     "qualifier": null,
+     "raw": "Maariv 7:35pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Shemini Azeres",
+   "weekday_raw": "Tues",
+   "hebrew_date_raw": "22 Tishrei",
+   "date": "2025-10-14",
+   "labels": [
+    "Shemini Azeres"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Shemini Azeres",
+     "label": "Shacharis (in Musaf, change to “Mashiv ha’ruach…”)",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "10:00",
+     "qualifier": null,
+     "raw": "Shacharis (in Musaf, change to “Mashiv ha’ruach…”) 10:00am"
+    },
+    {
+     "section": "Shemini Azeres",
+     "label": "Yizkor approx",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "11:45",
+     "qualifier": "approx",
+     "raw": "Yizkor approx 11:45am"
+    },
+    {
+     "section": "Shemini Azeres",
+     "label": "Children’s program including Hakofos",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "18:30",
+     "qualifier": null,
+     "raw": "Children’s program including Hakofos 6:30pm–8:00pm"
+    },
+    {
+     "section": "Shemini Azeres",
+     "label": "Children’s program including Hakofos",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "20:00",
+     "qualifier": null,
+     "raw": "Children’s program including Hakofos 6:30pm–8:00pm"
+    },
+    {
+     "section": "Shemini Azeres",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "18:55",
+     "qualifier": null,
+     "raw": "Mincha 6:55pm"
+    },
+    {
+     "section": "Shemini Azeres",
+     "label": "Candle lighting for Simchas Torah (“Yom Tov”) not before",
+     "kind": "zman",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "19:46",
+     "qualifier": "not before",
+     "raw": "Candle lighting for Simchas Torah (“Yom Tov”) not before 7:46pm"
+    },
+    {
+     "section": "Shemini Azeres",
+     "label": "Maariv followed by Hakofos, Kiddush & farbrengen",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-14",
+     "time": "19:46",
+     "qualifier": null,
+     "raw": "Maariv followed by Hakofos, Kiddush & farbrengen 7:46pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Simchas Torah",
+   "weekday_raw": "Wed",
+   "hebrew_date_raw": "23 Tishrei",
+   "date": "2025-10-15",
+   "labels": [
+    "Simchas Torah"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Simchas Torah",
+     "label": "Shacharis including Birchas Kohanim",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-15",
+     "time": "10:00",
+     "qualifier": null,
+     "raw": "Shacharis including Birchas Kohanim 10:00am"
+    },
+    {
+     "section": "Simchas Torah",
+     "label": "Kiddush, then Hakafos, Krias haTorah, Musaf  approx",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-15",
+     "time": "11:00",
+     "qualifier": "approx",
+     "raw": "Kiddush, then Hakafos, Krias haTorah, Musaf  approx 11:00am"
+    },
+    {
+     "section": "Simchas Torah",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-15",
+     "time": "18:55",
+     "qualifier": null,
+     "raw": "Mincha 6:55pm"
+    },
+    {
+     "section": "Simchas Torah",
+     "label": "Maariv & end of Yom Tov",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2025-10-15",
+     "time": "19:46",
+     "qualifier": null,
+     "raw": "Maariv & end of Yom Tov 7:46pm"
+    }
+   ],
+   "notes": [],
+   "suspected_errata": []
+  }
+ ]
+}

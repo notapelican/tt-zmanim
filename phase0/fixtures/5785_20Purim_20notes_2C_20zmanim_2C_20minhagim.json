@@ -1,0 +1,85 @@
+{
+ "source_pdf": "5785_20Purim_20notes_2C_20zmanim_2C_20minhagim.pdf",
+ "readable_name": "5785 Purim notes, zmanim, minhagim",
+ "hebrew_year": 5785,
+ "format": "yomtov",
+ "blocks": [
+  {
+   "type": "day",
+   "title_raw": "Taanis Esther",
+   "weekday_raw": "Thurs.",
+   "hebrew_date_raw": "13 Adar",
+   "date": "2025-03-13",
+   "labels": ["Taanis Esther"],
+   "omer_day": null,
+   "entries": [
+    {"section": "Taanis Esther", "label": "Fast start", "kind": "fast", "day_spec_raw": null, "date": "2025-03-13", "time": "05:33", "qualifier": null, "raw": "daybreak (5:33am) until nightfall (7:42pm)."},
+    {"section": "Taanis Esther", "label": "Fast end", "kind": "fast", "day_spec_raw": null, "date": "2025-03-13", "time": "19:42", "qualifier": null, "raw": "daybreak (5:33am) until nightfall (7:42pm)."},
+    {"section": "Taanis Esther", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "06:15", "qualifier": null, "raw": "Minyonim for Shacharis will be at 6:15am, 7:30am and 9:00am."},
+    {"section": "Taanis Esther", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "07:30", "qualifier": null, "raw": "Minyonim for Shacharis will be at 6:15am, 7:30am and 9:00am."},
+    {"section": "Taanis Esther", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "09:00", "qualifier": null, "raw": "Minyonim for Shacharis will be at 6:15am, 7:30am and 9:00am."},
+    {"section": "Night Megillah window", "label": "Tzeis hakochavim", "kind": "zman", "day_spec_raw": null, "date": "2025-03-13", "time": "19:42", "qualifier": "from", "raw": "read the Megillah at night any time from tzeis hakochavim (7:42pm) ... until alos hashachar (5:34am)"},
+    {"section": "Night Megillah window", "label": "Alos hashachar", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "05:34", "qualifier": null, "raw": "read the Megillah at night any time from tzeis hakochavim (7:42pm) ... until alos hashachar (5:34am)"},
+    {"section": "Schedule for Taanis Esther", "label": "Fast start", "kind": "fast", "day_spec_raw": null, "date": "2025-03-13", "time": "05:33", "qualifier": null, "raw": "Fast starts at 5:33am, ends at 7:42pm"},
+    {"section": "Schedule for Taanis Esther", "label": "Fast end", "kind": "fast", "day_spec_raw": null, "date": "2025-03-13", "time": "19:42", "qualifier": null, "raw": "Fast starts at 5:33am, ends at 7:42pm"},
+    {"section": "Schedule for Taanis Esther", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "06:15", "qualifier": null, "raw": "Shacharis  6:15am, 7:30am, 9:00am"},
+    {"section": "Schedule for Taanis Esther", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "07:30", "qualifier": null, "raw": "Shacharis  6:15am, 7:30am, 9:00am"},
+    {"section": "Schedule for Taanis Esther", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "09:00", "qualifier": null, "raw": "Shacharis  6:15am, 7:30am, 9:00am"},
+    {"section": "Schedule for Taanis Esther", "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "18:50", "qualifier": null, "raw": "Mincha 6:50pm"},
+    {"section": "Machatzis HaShekel", "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "18:50", "qualifier": "before", "raw": "available before Mincha (6:50pm) to assist in observing this custom."},
+    {"section": "Schedule for Taanis Esther", "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "19:42", "qualifier": null, "raw": "Maariv 7:42pm"},
+    {"section": "Schedule for Taanis Esther", "label": "Megillah reading", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-13", "time": "19:55", "qualifier": null, "raw": "Megillah reading 7:55pm SHARP"}
+   ],
+   "notes": ["PROSE: The Fast of Esther (laws of the fast, exemptions)", "PROSE: Machatzis HaShekel"],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Purim Day, Erev Shabbos",
+   "weekday_raw": "Fri.",
+   "hebrew_date_raw": "14 Adar",
+   "date": "2025-03-14",
+   "labels": ["Purim", "Erev Shabbos"],
+   "omer_day": null,
+   "entries": [
+    {"section": "Day Megillah window", "label": "Sunrise", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "06:53", "qualifier": null, "raw": "The Megillah may be read on the day of Purim itself any time between sunrise and sunset (this year between 6:53am and 7:15pm)."},
+    {"section": "Day Megillah window", "label": "Sunset", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "19:15", "qualifier": null, "raw": "The Megillah may be read on the day of Purim itself any time between sunrise and sunset (this year between 6:53am and 7:15pm)."},
+    {"section": "Purim morning", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "06:15", "qualifier": null, "raw": "There will be two minyanim for Shacharis on Purim morning, starting at 6:15am and 7:00am respectively."},
+    {"section": "Purim morning", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "07:00", "qualifier": null, "raw": "There will be two minyanim for Shacharis on Purim morning, starting at 6:15am and 7:00am respectively."},
+    {"section": "Kiddush Levana", "label": "Sof Zeman Kiddush Levana", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "10:24", "qualifier": null, "raw": "Sof Zeman Kiddush Levana for Adar this year is on Purim morning at 10:24am Sydney Daylight Saving time."},
+    {"section": "Purim Seudah", "label": "Chatzos HaYom", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "13:04", "qualifier": "before", "raw": "the Purim Seudah before Chatzos HaYom (1:04pm) so that we are able to eat the Shabbos"},
+    {"section": "Purim Seudah", "label": "10th halachic hour", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "16:09", "qualifier": null, "raw": "until the 10th halachic hour of this day (4:09pm)."},
+    {"section": "Schedule for Purim day", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "06:15", "qualifier": null, "raw": "Shacharis  6:15am and 7:00am"},
+    {"section": "Schedule for Purim day", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "07:00", "qualifier": null, "raw": "Shacharis  6:15am and 7:00am"},
+    {"section": "Schedule for Purim day", "label": "Megillah readings", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "06:45", "qualifier": "approx", "raw": "Megillah readings 6:45am and 7:30am (approx)"},
+    {"section": "Schedule for Purim day", "label": "Megillah readings", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "07:30", "qualifier": "approx", "raw": "Megillah readings 6:45am and 7:30am (approx)"},
+    {"section": "Erev Shabbos early minyan", "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "15:00", "qualifier": null, "raw": "Erev Shabbos early minyan:  Mincha 3:00pm,"},
+    {"section": "Erev Shabbos early minyan", "label": "Candles", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "18:01", "qualifier": "from", "raw": "Candles 6:01pm-6:11pm, Kabbolas Shabbos 6:01pm"},
+    {"section": "Erev Shabbos early minyan", "label": "Candles (window end)", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "18:11", "qualifier": null, "raw": "Candles 6:01pm-6:11pm, Kabbolas Shabbos 6:01pm"},
+    {"section": "Erev Shabbos early minyan", "label": "Kabbolas Shabbos", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "18:01", "qualifier": null, "raw": "Candles 6:01pm-6:11pm, Kabbolas Shabbos 6:01pm"},
+    {"section": "Erev Shabbos regular minyan", "label": "Candles", "kind": "zman", "day_spec_raw": null, "date": "2025-03-14", "time": "18:57", "qualifier": null, "raw": "Erev Shabbos regular minyan:  Candles 6:57pm, Mincha 7:05pm,"},
+    {"section": "Erev Shabbos regular minyan", "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "19:05", "qualifier": null, "raw": "Erev Shabbos regular minyan:  Candles 6:57pm, Mincha 7:05pm,"},
+    {"section": "Erev Shabbos regular minyan", "label": "Kabbolas Shabbos", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-14", "time": "19:30", "qualifier": null, "raw": "Kabbolas Shabbos 7:30pm"}
+   ],
+   "notes": ["PROSE: Reading of the Megillah (night and day windows)", "PROSE: Matanos L'Evyonim, Mishloach Manos", "PROSE: The Purim Seudah on Erev Shabbos (start before Chatzos)"],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Shabbos day",
+   "weekday_raw": "Shabbos",
+   "hebrew_date_raw": "15 Adar",
+   "date": "2025-03-15",
+   "labels": ["Shabbos"],
+   "omer_day": null,
+   "entries": [
+    {"section": "Shabbos day", "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-15", "time": "10:00", "qualifier": null, "raw": "Shabbos day:  Shacharis  10:00am (followed by Musaf),"},
+    {"section": "Shabbos day", "label": "Halacha shiur", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-15", "time": "18:25", "qualifier": null, "raw": "Halacha shiur 6:25pm,  Mincha 6:55pm,"},
+    {"section": "Shabbos day", "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-15", "time": "18:55", "qualifier": null, "raw": "Halacha shiur 6:25pm,  Mincha 6:55pm,"},
+    {"section": "Shabbos day", "label": "Motzaei Shabbos & Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2025-03-15", "time": "19:50", "qualifier": null, "raw": "Motzaei Shabbos & Maariv 7:50pm"}
+   ],
+   "notes": ["PROSE: Purim minhagim (multi-page essay; headings only, no clock times)"],
+   "suspected_errata": []
+  }
+ ]
+}

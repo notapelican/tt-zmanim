@@ -1,0 +1,187 @@
+{
+ "source_pdf": "Purim times 5786.pdf",
+ "readable_name": "Purim times 5786",
+ "hebrew_year": 5786,
+ "format": "yomtov",
+ "blocks": [
+  {
+   "type": "day",
+   "title_raw": "(preamble)",
+   "weekday_raw": null,
+   "hebrew_date_raw": null,
+   "date": null,
+   "labels": [],
+   "omer_day": null,
+   "entries": [],
+   "notes": [],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Taanis Esther",
+   "weekday_raw": "Mon",
+   "hebrew_date_raw": "13 Adar",
+   "date": "2026-03-02",
+   "labels": [
+    "Taanis Esther"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Taanis Esther",
+     "label": "Fast start",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "05:23",
+     "qualifier": null,
+     "raw": "Fast starts at 5:23am, ends at 7:56pm"
+    },
+    {
+     "section": "Taanis Esther",
+     "label": "Fast start",
+     "kind": "fast",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "19:56",
+     "qualifier": null,
+     "raw": "Fast starts at 5:23am, ends at 7:56pm"
+    },
+    {
+     "section": "Taanis Esther",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "06:15",
+     "qualifier": null,
+     "raw": "Shacharis  6:15am and 7:30am."
+    },
+    {
+     "section": "Taanis Esther",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Shacharis  6:15am and 7:30am."
+    },
+    {
+     "section": "Taanis Esther",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "19:00",
+     "qualifier": null,
+     "raw": "Mincha 7:00pm (note that the start is earlier than the other regular days this week)"
+    },
+    {
+     "section": "Taanis Esther",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "19:56",
+     "qualifier": null,
+     "raw": "Maariv 7:56pm"
+    },
+    {
+     "section": "Taanis Esther",
+     "label": "Megillah reading",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-02",
+     "time": "20:15",
+     "qualifier": null,
+     "raw": "Megillah reading 8:15pm SHARP"
+    }
+   ],
+   "notes": [
+    "Machatzis HaShekel before Mincha",
+    "Refreshments  After Megillah",
+    "Additional readings of Megillah: see the list to be emailed for all of Sydney"
+   ],
+   "suspected_errata": []
+  },
+  {
+   "type": "day",
+   "title_raw": "Purim Day",
+   "weekday_raw": "Tues",
+   "hebrew_date_raw": "14 Adar",
+   "date": "2026-03-03",
+   "labels": [
+    "Purim Day"
+   ],
+   "omer_day": null,
+   "entries": [
+    {
+     "section": "Purim Day",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-03",
+     "time": "06:05",
+     "qualifier": null,
+     "raw": "Shacharis  6:05am and 7:00am"
+    },
+    {
+     "section": "Purim Day",
+     "label": "Shacharis",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-03",
+     "time": "07:00",
+     "qualifier": null,
+     "raw": "Shacharis  6:05am and 7:00am"
+    },
+    {
+     "section": "Purim Day",
+     "label": "Megillah readings",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-03",
+     "time": "06:35",
+     "qualifier": null,
+     "raw": "Megillah readings 6:35am and 7:30am (approx)"
+    },
+    {
+     "section": "Purim Day",
+     "label": "Megillah readings",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-03",
+     "time": "07:30",
+     "qualifier": null,
+     "raw": "Megillah readings 6:35am and 7:30am (approx)"
+    },
+    {
+     "section": "Purim Day",
+     "label": "Mincha",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-03",
+     "time": "16:30",
+     "qualifier": null,
+     "raw": "Mincha 4:30pm"
+    },
+    {
+     "section": "Purim Day",
+     "label": "Maariv",
+     "kind": "minyan",
+     "day_spec_raw": null,
+     "date": "2026-03-03",
+     "time": "20:30",
+     "qualifier": null,
+     "raw": "Maariv 8:30pm at Tzemach Tzedek Community Centre"
+    }
+   ],
+   "notes": [
+    "Additional readings of Megillah: see the list to be emailed for all of Sydney.",
+    "A Freilichen Purim!!!"
+   ],
+   "suspected_errata": []
+  }
+ ]
+}
