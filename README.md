@@ -55,6 +55,13 @@ See `WARPLAN.md` for the full plan and phase gates.
     against all 27 fixtures (Phase 1 zmanim: 782/895 exact with every residual
     triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 777/861 with every
     residual triaged, incl. seasonal-profile switching 59/62).
+  - `render_docx.py` — the document generator (renderer): turns
+    `assemble.generate()` block data into .docx sheets matching the house
+    style (בס״ד header, blue/purple section bars, dotted leaders, boxed
+    fast-day notices). Chooses single-week / multi-week-two-column / yom-tov
+    day-by-day layout from the shape of the generated data. Requires
+    `python-docx` (`pip install -r requirements.txt`). Layout-only: never
+    computes or re-rounds a zman; see RENDERER-CONTRACT.md.
 - `samples/` — original PDFs.
 
 ## Running the golden regressions
