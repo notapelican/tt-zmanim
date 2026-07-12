@@ -31,11 +31,18 @@ See `WARPLAN.md` for the full plan and phase gates.
 - `engine/` — Phase 1+ code:
   - `solar.py` — NOAA solar calculator (KosherJava-compatible).
   - `zmanim.py` — zmanim engine (Baal HaTanya definitions, explicit rounding policies).
-  - `validate.py` — golden regression of the zmanim engine against all 27 fixtures.
+  - `hebcal.py` — Hebrew calendar core (year arithmetic, Hebrew↔civil, molad).
+  - `luach.py` — luach layer: diaspora parsha cycle (doubled sedras, Chazak),
+    special Shabbosos, yomim tovim, fasts (with commencement kinds), Rosh Chodesh
+    & molad announcements, Omer, Pirkei Avos (Chabad cycle), DST detection,
+    NSW public holidays.
+  - `validate.py` / `validate_luach.py` — golden regressions against all 27 fixtures
+    (Phase 1 zmanim: 782/895 exact with every residual triaged; Phase 2 luach: 352/352).
 - `samples/` — original PDFs.
 
-## Running the golden regression
+## Running the golden regressions
 
 ```sh
-python3 engine/validate.py         # exits nonzero if the exact-hit total regresses
+python3 engine/validate.py         # zmanim engine; exits nonzero on regression
+python3 engine/validate_luach.py   # luach layer; exits nonzero on regression
 ```
