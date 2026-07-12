@@ -12,8 +12,12 @@
   motzaei Shabbos/YT tzeis (fits 78/79 vs. the standard 8.5°) and the confirmed-errata
   rulings (Tishrei Shema outliers, 9 Av am/pm slip) listed in `phase0/PHASE0-FINDINGS.md`.
   The warplan makes this the halachic gate: nothing ships without it.
-- [ ] **Confirm whether ttcc.info runs WordPress** — decision gate before Phase 4
-  (WP plugin vs. standalone web app; see WARPLAN.md §2).
+- [x] **Confirm whether ttcc.info runs WordPress** — ✅ confirmed WordPress
+  (2026-07-12): Phase 4 will be the WP-plugin route (WARPLAN.md §2, Option A).
+
+Neither open item blocks Phases 3–4 (each is a one-line constant in
+`engine/zmanim.py`), but **both must land before the Phase 5 pilot** — no sheet
+is used in production without the confirmed coordinate and the Rov's sign-off.
 
 Tracked as a GitHub issue as well; tick items off in both places.
 
