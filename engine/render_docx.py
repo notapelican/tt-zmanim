@@ -87,9 +87,14 @@ def _fmt_ampm(hhmm: str) -> str:
     return f"{h12}:{m:02d}{ampm}"
 
 
+# House month style: short names in full (May, June, July), the rest
+# abbreviated with a period (Oct., Sept., ...) as printed on the sheets.
+_MONTH_STYLE = {"May": "May", "Jun": "June", "Jul": "July", "Sep": "Sept."}
+
+
 def _mon(d: _date) -> str:
     m = d.strftime("%b")
-    return m if m == "May" else m + "."
+    return _MONTH_STYLE.get(m, m + ".")
 
 
 def _fmt_civil_range(start_iso: str, end_iso: str) -> str:
@@ -200,7 +205,7 @@ def _dotted_line(container, label, value, width, *, size=BODY_SIZE, bullet=False
     p.paragraph_format.tab_stops.add_tab_stop(
         width, WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
     prefix = "\u2022 " if bullet else ""
-    r = p.add_run(f"{prefix}{label}\t{value}")
+    r = p.add_run(f"{prefix}{label} \t {value}")
     r.font.name = FONT_NAME
     r.font.size = size
     return p
@@ -356,7 +361,8 @@ def _partition_week_entries(entries):
     return zmanim_table, fast_runs, named, named_order
 
 
-def render_week_into(container, block: dict, width, *, size=BODY_SIZE) -> None:
+def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
+                     notes_inline=False) -> None:
     title_size = Pt(size.pt + 2.5)
     _para(container, block["title"], bold=True, color=BLUE, size=title_size,
           space_after=Pt(0))
@@ -372,9 +378,19 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE) -> None:
     for run in fast_runs:
         start, end = run[0], run[1]
         title = _fast_section_title(run)
-        text = (f"{title}: starts {start['day_spec']} at {_fmt_ampm(start['time'])}; "
-                f"ends {end['day_spec']} at {_fmt_ampm(end['time'])}")
+        # Same-day fast prints "(Thurs.) starts at ...; ends at ..." per the
+        # sheets; a fast spanning days names each day.
+        if start["day_spec"] == end["day_spec"]:
+            text = (f"{title} ({start['day_spec']}): starts at "
+                    f"{_fmt_ampm(start['time'])}; ends at {_fmt_ampm(end['time'])}.")
+        else:
+            text = (f"{title}: starts {start['day_spec']} at {_fmt_ampm(start['time'])}; "
+                    f"ends {end['day_spec']} at {_fmt_ampm(end['time'])}.")
         _fast_box(container, text, width, size=size)
+
+    if notes_inline and block.get("notes"):
+        for n in block["notes"]:
+            _para(container, n, italic=True, size=size)
 
     shabbos_bar_done = False
 
@@ -409,7 +425,7 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE) -> None:
 
     emit_shabbos_bar()  # in case a week has no Erev Shabbos content at all
 
-    if block.get("notes"):
+    if block.get("notes") and not notes_inline:
         _notes_foot(container, block["notes"], width, size=size)
 
 
@@ -431,7 +447,8 @@ def _render_shabbos_day(container, entries, width, molad, *, size=BODY_SIZE):
         _para(container, molad, italic=True, size=molad_size)
         return
     _render_entry_group(container, ordered_entries[:split], width, size=size)
-    _para(container, molad, italic=True, size=molad_size)
+    mp = _para(container, molad, italic=True, size=molad_size)
+    mp.paragraph_format.left_indent = Mm(3)
     _render_entry_group(container, ordered_entries[split:], width, size=size)
 
 
@@ -456,7 +473,7 @@ def _notes_foot(container, notes, width, *, size=BODY_SIZE):
 
 def render_day_into(container, block: dict, width, *, size=BODY_SIZE) -> None:
     title = block["title"] or ", ".join(block["labels"])
-    heading = f"{title} — {block['weekday']}, {block['hebrew_date']} ({_fmt_civil_date(block['date'])})"
+    heading = f"{title}: {block['hebrew_date']} ({block['weekday']} {_fmt_civil_date(block['date'])})"
     _bar(container, heading, width, size=size)
     if block.get("omer_day"):
         _para(container, f"Day {block['omer_day']} of the Omer", italic=True, size=size)
@@ -479,14 +496,31 @@ def _group_blocks(blocks: list[dict]) -> list[dict]:
     return groups
 
 
-def _render_group(container, group, width, *, size=BODY_SIZE):
-    render_week_into(container, group["week"], width, size=size)
+def _render_group(container, group, width, *, size=BODY_SIZE, notes_inline=False):
+    render_week_into(container, group["week"], width, size=size,
+                     notes_inline=notes_inline)
     for day in group["days"]:
         render_day_into(container, day, width, size=size)
         _para(container, " ", space_after=Pt(0), size=Pt(4))
 
 
-def _add_header(doc, width):
+def _week_separator(container):
+    """Thin horizontal rule between stacked week blocks in a column."""
+    p = container.add_paragraph()
+    p.paragraph_format.space_before = Pt(4)
+    p.paragraph_format.space_after = Pt(4)
+    pPr = p._p.get_or_add_pPr()
+    pbdr = OxmlElement("w:pBdr")
+    bottom = OxmlElement("w:bottom")
+    bottom.set(qn("w:val"), "single")
+    bottom.set(qn("w:sz"), "4")
+    bottom.set(qn("w:space"), "1")
+    bottom.set(qn("w:color"), "000000")
+    pbdr.append(bottom)
+    pPr.append(pbdr)
+
+
+def _add_header(doc, width, *, multi=False):
     table = doc.add_table(rows=1, cols=2)
     _no_borders(table.rows[0].cells[0])
     _no_borders(table.rows[0].cells[1])
@@ -498,15 +532,28 @@ def _add_header(doc, width):
     r.font.size = Pt(18)
     r.font.bold = True
     r.font.color.rgb = BLUE
+    if multi:
+        r2 = p.add_run("        www.ttcc.info")
+        r2.font.name = FONT_NAME
+        r2.font.size = Pt(13)
+        r2.font.bold = True
+        r2.font.color.rgb = BLUE
+        r2.font.underline = True
     p2 = bsd_cell.paragraphs[0]
     p2.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     r2 = p2.add_run("בס״ד")  # בס"ד (gershayim, not an ASCII quote)
     r2.font.size = Pt(14)
     r2.font.bold = True
-    _para(doc, "1 Penkivil St, Bondi, NSW.    www.ttcc.info", bold=True, color=BLUE,
-          align=WD_ALIGN_PARAGRAPH.CENTER)
-    _para(doc, "Mailing address: PO Box 477 Waverley NSW 2024", bold=True, color=BLUE,
-          align=WD_ALIGN_PARAGRAPH.CENTER, space_after=Pt(4))
+    if multi:
+        # compact one-line address, as on the multi-week sheets
+        _para(doc, "Location: 1 Penkivil St, Bondi, NSW.  "
+              "Mailing address: PO Box 477 Waverley NSW 2024",
+              bold=True, color=BLUE, size=Pt(12), space_after=Pt(2))
+    else:
+        _para(doc, "1 Penkivil St, Bondi, NSW.    www.ttcc.info", bold=True, color=BLUE,
+              align=WD_ALIGN_PARAGRAPH.CENTER)
+        _para(doc, "Mailing address: PO Box 477 Waverley NSW 2024", bold=True, color=BLUE,
+              align=WD_ALIGN_PARAGRAPH.CENTER, space_after=Pt(4))
     hr = doc.add_paragraph()
     hr.paragraph_format.space_after = Pt(6)
     pPr = hr._p.get_or_add_pPr()
@@ -533,9 +580,8 @@ def render_docx(doc_data: dict) -> Document:
     section.top_margin = section.bottom_margin = PAGE_MARGIN
     usable_width = section.page_width - section.left_margin - section.right_margin
 
-    _add_header(doc, usable_width)
-
     groups = _group_blocks(doc_data["blocks"])
+    _add_header(doc, usable_width, multi=len(groups) > 1)
 
     shared_notes: list[str] = []
     if len(groups) > 1:
@@ -565,10 +611,14 @@ def render_docx(doc_data: dict) -> Document:
     _set_cell_margins(left_cell, 80)
     _set_cell_margins(right_cell, 120)
 
-    for g in groups[:half]:
-        _render_group(left_cell, g, col_width, size=MULTI_BODY_SIZE)
-    for g in groups[half:]:
-        _render_group(right_cell, g, col_width, size=MULTI_BODY_SIZE)
+    for i, g in enumerate(groups[:half]):
+        if i:
+            _week_separator(left_cell)
+        _render_group(left_cell, g, col_width, size=MULTI_BODY_SIZE, notes_inline=True)
+    for i, g in enumerate(groups[half:]):
+        if i:
+            _week_separator(right_cell)
+        _render_group(right_cell, g, col_width, size=MULTI_BODY_SIZE, notes_inline=True)
     for n in shared_notes:
         _para(doc, f"Note: {n}", size=MULTI_BODY_SIZE, space_before=Pt(6),
               align=WD_ALIGN_PARAGRAPH.CENTER)
