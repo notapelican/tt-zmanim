@@ -30,8 +30,13 @@ See `WARPLAN.md` for the full plan and phase gates.
 ## Layout
 
 - `WARPLAN.md` — plan, system design, phased delivery.
+- `RENDERER-CONTRACT.md` — field-by-field spec of the generated block data;
+  the .docx/PDF renderer (next session) is built from this document alone.
 - `phase0/` — fixture corpus (all 27 historical sheets transcribed to JSON), extraction
-  and fitting scripts, and `PHASE0-FINDINGS.md` (recovered zmanim definitions + errata).
+  and fitting scripts (`fit_zmanim.py` for zmanim, `fit_rules.py` for minyan rules),
+  and `PHASE0-FINDINGS.md` (recovered zmanim definitions + errata).
+- `phase3/PHASE3-FINDINGS.md` — recovered schedule rules (minyan-time policies),
+  seasonal-profile conditions, and the triage of every residual.
 - `engine/` — Phase 1+ code:
   - `solar.py` — NOAA solar calculator (KosherJava-compatible).
   - `zmanim.py` — zmanim engine (Baal HaTanya definitions, explicit rounding policies).
@@ -40,8 +45,16 @@ See `WARPLAN.md` for the full plan and phase gates.
     special Shabbosos, yomim tovim, fasts (with commencement kinds), Rosh Chodesh
     & molad announcements, Omer, Pirkei Avos (Chabad cycle), DST detection,
     NSW public holidays.
-  - `validate.py` / `validate_luach.py` — golden regressions against all 27 fixtures
-    (Phase 1 zmanim: 782/895 exact with every residual triaged; Phase 2 luach: 352/352).
+  - `rules.py` — schedule-rules engine: `ScheduleProfile` (seasonal minyan sets
+    with date-range/DST/zman activation conditions), `ScheduleRule` (zman-anchored
+    with rounding + halachic bound / fixed-clock / manual override — overrides
+    always win), `NoteTemplate`, `Timesheet`.
+  - `assemble.py` — `generate(start, end)`: combines zmanim + luach + rules into
+    plain-data week/day blocks (no layout/styling; see RENDERER-CONTRACT.md).
+  - `validate.py` / `validate_luach.py` / `validate_rules.py` — golden regressions
+    against all 27 fixtures (Phase 1 zmanim: 782/895 exact with every residual
+    triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 777/861 with every
+    residual triaged, incl. seasonal-profile switching 59/62).
 - `samples/` — original PDFs.
 
 ## Running the golden regressions
@@ -49,4 +62,5 @@ See `WARPLAN.md` for the full plan and phase gates.
 ```sh
 python3 engine/validate.py         # zmanim engine; exits nonzero on regression
 python3 engine/validate_luach.py   # luach layer; exits nonzero on regression
+python3 engine/validate_rules.py   # schedule rules + profiles; exits nonzero on regression
 ```
