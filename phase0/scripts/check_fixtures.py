@@ -4,8 +4,11 @@ must be accounted for by its fixture (as an entry, or inside molad_raw/notes).
 
 Handles the sheets' typographic quirks:
 - "9.15am" (period separator) and "8:000am" (typo minutes) count as times;
+- "by8:34am" (missing space before the time) counts as a time;
 - bare times without am/pm ("Candle lighting ... 4:45") match a fixture time of
-  either possible half-day (04:45 or 16:45).
+  either possible half-day (04:45 or 16:45).  Anchored (am/pm) tokens are
+  matched first so a bare token cannot claim a half-day that an explicit
+  am/pm token elsewhere on the sheet needs.
 """
 from __future__ import annotations
 
@@ -19,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 EXTRACTED = ROOT / "phase0" / "extracted"
 FIXTURES = ROOT / "phase0" / "fixtures"
 
-TIME_RE = re.compile(r"\b(\d{1,2})[:.](\d{2,3})\s*(am|pm)?\b", re.IGNORECASE)
+TIME_RE = re.compile(r"(?<![\d:.])(\d{1,2})[:.](\d{2,3})\s*(am|pm)?\b", re.IGNORECASE)
 
 
 def tokens_in(text: str):
@@ -72,14 +75,17 @@ def main() -> int:
         anchored_have = Counter({k: v for k, v in have.items() if not k.startswith("~")})
 
         missing = Counter()
-        for tok, known in tokens_in(text):
+        toks = list(tokens_in(text))
+        # Pass 1: anchored (am/pm) tokens claim their exact 24h time.
+        for tok, known in toks:
             if known:
                 if anchored_have[tok] > 0:
                     anchored_have[tok] -= 1
                 else:
                     missing[tok] += 1
-            else:
-                # bare token: try both half-days in fixture entries, then bare notes
+        # Pass 2: bare tokens try both half-days among what's left, then bare notes.
+        for tok, known in toks:
+            if not known:
                 h, mm = tok.split(":")
                 am, pm = f"{int(h)%12:02d}:{mm}", f"{int(h)%12+12:02d}:{mm}"
                 if anchored_have[pm] > 0:

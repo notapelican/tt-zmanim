@@ -1,0 +1,1031 @@
+{
+  "source_pdf": "5786_20times_20-wk_2017_20to_2019.pdf",
+  "readable_name": "5786 times -wk 17 to 19",
+  "hebrew_year": 5786,
+  "format": "weekly",
+  "blocks": [
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Va’era:",
+      "parsha": "Va’era",
+      "shabbos_labels": [
+        "Mevorchim"
+      ],
+      "hebrew_dates_raw": "22–28 Tevet 5786",
+      "civil_start": "2026-01-11",
+      "civil_end": "2026-01-17",
+      "friday": "2026-01-16",
+      "shabbos": "2026-01-17",
+      "entries": [
+        {
+          "section": null,
+          "label": "Mi’sheyakir",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "05:09",
+          "qualifier": "approx",
+          "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  .....  approx 5:09am"
+        },
+        {
+          "section": null,
+          "label": "Netz Hachamah",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "06:00",
+          "qualifier": null,
+          "raw": "Netz Hachamah (sunrise) Sun.-Fri.  .....  6:00am"
+        },
+        {
+          "section": null,
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "09:27",
+          "qualifier": "finish by",
+          "raw": "Morning Shema Sun.-Fri.  .....  finish by 9:27am"
+        },
+        {
+          "section": null,
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Thurs.",
+          "date": null,
+          "time": "20:09",
+          "qualifier": null,
+          "raw": "Shkia Sun.-Thurs.  .....  8:09pm"
+        },
+        {
+          "section": null,
+          "label": "Tzeis",
+          "kind": "zman",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "20:39",
+          "qualifier": null,
+          "raw": "Tzeis Sun.–Thurs.  .....  8:39pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.",
+          "date": "2026-01-11",
+          "time": "08:00",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.",
+          "date": "2026-01-11",
+          "time": "09:45",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon.–Fri.",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon.–Fri.",
+          "date": null,
+          "time": "09:45",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "19:59",
+          "qualifier": null,
+          "raw": "Mincha  ..... Sun.–Thurs. 7:59pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "20:39",
+          "qualifier": null,
+          "raw": "Maariv  ..... Sun.–Thurs. 8:39pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Plag Hamincha",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "18:44",
+          "qualifier": null,
+          "raw": "Plag Hamincha  .....  6:44pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:09",
+          "qualifier": null,
+          "raw": "Shkia  .....  8:09pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Tzeis hachochavim",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:37",
+          "qualifier": null,
+          "raw": "Tzeis hachochavim  .....  8:37pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "18:24",
+          "qualifier": null,
+          "raw": "• Mincha  .....  6:24pm   (must be completely finished before Plag Hamincha)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "18:44",
+          "qualifier": "not before",
+          "raw": "• Candle lighting  ..... not before 6:44pm, not after approx 6:54pm   (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "18:54",
+          "qualifier": "by",
+          "raw": "• Candle lighting  ..... not before 6:44pm, not after approx 6:54pm   (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kabbolas Shabbos",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "18:44",
+          "qualifier": null,
+          "raw": "• Kabbolas Shabbos (L’chu Ne’ranena)  .....  6:44pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "deadline",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:07",
+          "qualifier": "by",
+          "raw": "• Start Kiddush & meal * ..... before 8:07pm or after 8:37pm   (earlier than ½ hour before Tzeis Hachochavim)   (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "deadline",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:37",
+          "qualifier": "not before",
+          "raw": "• Start Kiddush & meal * ..... before 8:07pm or after 8:37pm   (earlier than ½ hour before Tzeis Hachochavim)   (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kerias Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:37",
+          "qualifier": "not before",
+          "raw": "• Kerias Shema (said from Tzeis Hachochavim)  ..... from 8:37pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Eat another kezayis bread",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:37",
+          "qualifier": "not before",
+          "raw": "• Eat another kezayis bread after Tzeis Hachochavim  .... after 8:37pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "19:51",
+          "qualifier": null,
+          "raw": "Candle lighting  .....  7:51pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "19:59",
+          "qualifier": null,
+          "raw": "Mincha  .....  7:59pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Kabbolas Shabbos followed by Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-16",
+          "time": "20:27",
+          "qualifier": null,
+          "raw": "Kabbolas Shabbos followed by Maariv .....  8:27pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Tehillim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-17",
+          "time": "08:15",
+          "qualifier": null,
+          "raw": "Tehillim  .....  8:15am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-17",
+          "time": "09:31",
+          "qualifier": "finish by",
+          "raw": "Morning Shema  .....  finish by 9:31am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-17",
+          "time": "10:10",
+          "qualifier": null,
+          "raw": "Shacharis (Kiddush/ farbrengen after Musaf) .....  10:10am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Halacha shiur",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-17",
+          "time": "19:20",
+          "qualifier": null,
+          "raw": "Halacha shiur, from the Shulchan Aruch Harav .....  7:20pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Mincha followed by Seder Nigunim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-17",
+          "time": "19:50",
+          "qualifier": null,
+          "raw": "Mincha followed by Seder Nigunim  .....  7:50pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Motzaei Shabbos, Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-17",
+          "time": "20:51",
+          "qualifier": null,
+          "raw": "Motzaei Shabbos, Maariv  .....  8:51pm"
+        }
+      ],
+      "molad_raw": "Molad for Shevat: Sunday 3:06pm and 11 chalakim, Jerusalem Standard Time.  Rosh Chodesh: yom sheni.",
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Bo:",
+      "parsha": "Bo",
+      "shabbos_labels": [
+        "the Shabbos before Yud Shevat"
+      ],
+      "hebrew_dates_raw": "29 Tevet – 6 Shevat 5786",
+      "civil_start": "2026-01-18",
+      "civil_end": "2026-01-24",
+      "friday": "2026-01-23",
+      "shabbos": "2026-01-24",
+      "entries": [
+        {
+          "section": null,
+          "label": "Mi’sheyakir",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "05:17",
+          "qualifier": "approx",
+          "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  .....  approx 5:17am"
+        },
+        {
+          "section": null,
+          "label": "Netz Hachamah",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "06:07",
+          "qualifier": null,
+          "raw": "Netz Hachamah (sunrise) Sun.-Fri.  .....  6:07am"
+        },
+        {
+          "section": null,
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "09:31",
+          "qualifier": "finish by",
+          "raw": "Morning Shema Sun.-Fri.  .....  finish by 9:31am"
+        },
+        {
+          "section": null,
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Thurs.",
+          "date": null,
+          "time": "20:06",
+          "qualifier": null,
+          "raw": "Shkia Sun.-Thurs.  .....  8:06pm"
+        },
+        {
+          "section": null,
+          "label": "Tzeis",
+          "kind": "zman",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "20:37",
+          "qualifier": null,
+          "raw": "Tzeis Sun.–Thurs.  .....  8:37pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.",
+          "date": "2026-01-18",
+          "time": "08:00",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.",
+          "date": "2026-01-18",
+          "time": "09:45",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon.–Fri.",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon.–Fri.",
+          "date": null,
+          "time": "09:45",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. 8:00am & 9:45am; Mon.–Fri. 7:30am, 9:45am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "19:56",
+          "qualifier": null,
+          "raw": "Mincha  ..... Sun.–Thurs. 7:56pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "20:37",
+          "qualifier": null,
+          "raw": "Maariv  ..... Sun.–Thurs. 8:37pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Plag Hamincha",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "18:42",
+          "qualifier": null,
+          "raw": "Plag Hamincha  .....  6:42pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:06",
+          "qualifier": null,
+          "raw": "Shkia  .....  8:06pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Tzeis hachochavim",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:34",
+          "qualifier": null,
+          "raw": "Tzeis hachochavim  .....  8:34pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "18:22",
+          "qualifier": null,
+          "raw": "• Mincha  .....  6:22pm   (must be completely finished before Plag Hamincha)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "18:42",
+          "qualifier": "not before",
+          "raw": "• Candle lighting  ..... not before 6:42pm, not after approx 6:52pm   (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "18:52",
+          "qualifier": "by",
+          "raw": "• Candle lighting  ..... not before 6:42pm, not after approx 6:52pm   (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kabbolas Shabbos",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "18:42",
+          "qualifier": null,
+          "raw": "• Kabbolas Shabbos (L’chu Ne’ranena)  .....  6:42pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "deadline",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:04",
+          "qualifier": "by",
+          "raw": "• Start Kiddush & meal * ..... before 8:04pm or after 8:34pm   (earlier than ½ hour before Tzeis Hachochavim)   (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "deadline",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:34",
+          "qualifier": "not before",
+          "raw": "• Start Kiddush & meal * ..... before 8:04pm or after 8:34pm   (earlier than ½ hour before Tzeis Hachochavim)   (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kerias Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:34",
+          "qualifier": "not before",
+          "raw": "• Kerias Shema (said from Tzeis Hachochavim)  ..... from 8:34pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Eat another kezayis bread",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:34",
+          "qualifier": "not before",
+          "raw": "• Eat another kezayis bread after Tzeis Hachochavim  .... after 8:34pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "19:48",
+          "qualifier": null,
+          "raw": "Candle lighting  .....  7:48pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "19:56",
+          "qualifier": null,
+          "raw": "Mincha  .....  7:56pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Kabbolas Shabbos followed by Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-23",
+          "time": "20:24",
+          "qualifier": null,
+          "raw": "Kabbolas Shabbos followed by Maariv .....  8:24pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Chassidus",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-24",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Chassidus  .....  9.15am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-24",
+          "time": "09:35",
+          "qualifier": "finish by",
+          "raw": "Morning Shema  .....  finish by 9:35am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-24",
+          "time": "10:00",
+          "qualifier": null,
+          "raw": "Shacharis with multiple leining (followed by Musaf) .....  10:00am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Halacha shiur",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-24",
+          "time": "19:20",
+          "qualifier": null,
+          "raw": "Halacha shiur, from the Shulchan Aruch Harav .....  7:20pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Mincha followed by Seder Nigunim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-24",
+          "time": "19:50",
+          "qualifier": null,
+          "raw": "Mincha followed by Seder Nigunim  .....  7:50pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Motzaei Shabbos, Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-24",
+          "time": "20:47",
+          "qualifier": null,
+          "raw": "Motzaei Shabbos, Maariv  .....  8:47pm"
+        }
+      ],
+      "molad_raw": null,
+      "notes": [
+        "Rosh Chodesh Shevat: from Sun. evening to Mon. evening."
+      ],
+      "suspected_errata": [
+        "Shabbos-day Chassidus printed as '9.15am' (period instead of colon); transcribed as 09:15."
+      ]
+    },
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Beshalach:",
+      "parsha": "Beshalach",
+      "shabbos_labels": [],
+      "hebrew_dates_raw": "7–13 Shevat 5786",
+      "civil_start": "2026-01-25",
+      "civil_end": "2026-01-31",
+      "friday": "2026-01-30",
+      "shabbos": "2026-01-31",
+      "entries": [
+        {
+          "section": null,
+          "label": "Mi’sheyakir",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "05:25",
+          "qualifier": "approx",
+          "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri.  .....  approx 5:25am"
+        },
+        {
+          "section": null,
+          "label": "Netz Hachamah",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "06:14",
+          "qualifier": null,
+          "raw": "Netz Hachamah (sunrise) Sun.-Fri.  .....  6:14am"
+        },
+        {
+          "section": null,
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Fri.",
+          "date": null,
+          "time": "09:36",
+          "qualifier": "finish by",
+          "raw": "Morning Shema Sun.-Fri.  .....  finish by 9:36am"
+        },
+        {
+          "section": null,
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": "Sun.-Thurs.",
+          "date": null,
+          "time": "20:03",
+          "qualifier": null,
+          "raw": "Shkia Sun.-Thurs.  .....  8:03pm"
+        },
+        {
+          "section": null,
+          "label": "Tzeis",
+          "kind": "zman",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "20:33",
+          "qualifier": null,
+          "raw": "Tzeis Sun.–Thurs.  .....  8:33pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun. & Mon.",
+          "date": null,
+          "time": "08:00",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun. & Mon.",
+          "date": null,
+          "time": "09:45",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Tues. & Wed.",
+          "date": null,
+          "time": "06:15",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Tues. & Wed.",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Tues. & Wed.",
+          "date": null,
+          "time": "09:45",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Thurs. & Fri",
+          "date": null,
+          "time": "06:15",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Thurs. & Fri",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis  .....  Sun. & Mon. 8:00am & 9:45am; Tues. & Wed. 6:15am, 7:30am, 9:45am; Thurs. & Fri 6:15am, 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "19:53",
+          "qualifier": null,
+          "raw": "Mincha  ..... Sun.–Thurs. 7:53pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Sun.–Thurs.",
+          "date": null,
+          "time": "20:33",
+          "qualifier": null,
+          "raw": "Maariv  ..... Sun.–Thurs. 8:33pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Plag Hamincha",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "18:39",
+          "qualifier": null,
+          "raw": "Plag Hamincha  .....  6:39pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:02",
+          "qualifier": null,
+          "raw": "Shkia  .....  8:02pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Tzeis hachochavim",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:30",
+          "qualifier": null,
+          "raw": "Tzeis hachochavim  .....  8:30pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "18:19",
+          "qualifier": null,
+          "raw": "• Mincha  .....  6:19pm   (must be completely finished before Plag Hamincha)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "18:39",
+          "qualifier": "not before",
+          "raw": "• Candle lighting  ..... not before 6:39pm, not after approx 6:49pm   (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "18:49",
+          "qualifier": "by",
+          "raw": "• Candle lighting  ..... not before 6:39pm, not after approx 6:49pm   (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kabbolas Shabbos",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "18:39",
+          "qualifier": null,
+          "raw": "• Kabbolas Shabbos (L’chu Ne’ranena)  .....  6:39pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "deadline",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:00",
+          "qualifier": "by",
+          "raw": "• Start Kiddush & meal * ..... before 8:00pm or after 8:30pm   (earlier than ½ hour before Tzeis Hachochavim)   (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "deadline",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:30",
+          "qualifier": "not before",
+          "raw": "• Start Kiddush & meal * ..... before 8:00pm or after 8:30pm   (earlier than ½ hour before Tzeis Hachochavim)   (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kerias Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:30",
+          "qualifier": "not before",
+          "raw": "• Kerias Shema (said from Tzeis Hachochavim)  ..... from 8:30pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Eat another kezayis bread",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:30",
+          "qualifier": "not before",
+          "raw": "• Eat another kezayis bread after Tzeis Hachochavim  .... after 8:30pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "19:44",
+          "qualifier": null,
+          "raw": "Candle lighting  .....  7:44pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "19:52",
+          "qualifier": null,
+          "raw": "Mincha  .....  7:52pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Kabbolas Shabbos followed by Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-30",
+          "time": "20:20",
+          "qualifier": null,
+          "raw": "Kabbolas Shabbos followed by Maariv .....  8:20pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Chassidus",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-31",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Chassidus  .....  9.15am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2026-01-31",
+          "time": "09:39",
+          "qualifier": "finish by",
+          "raw": "Morning Shema  .....  finish by 9:39am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-31",
+          "time": "10:00",
+          "qualifier": null,
+          "raw": "Shacharis (followed by Musaf)  .....  10:00am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Halacha shiur",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-31",
+          "time": "19:15",
+          "qualifier": null,
+          "raw": "Halacha shiur, from the Shulchan Aruch Harav .....  7:15pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Mincha followed by Seder Nigunim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-31",
+          "time": "19:45",
+          "qualifier": null,
+          "raw": "Mincha followed by Seder Nigunim  .....  7:45pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Motzaei Shabbos, Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2026-01-31",
+          "time": "20:42",
+          "qualifier": null,
+          "raw": "Motzaei Shabbos, Maariv  .....  8:42pm"
+        }
+      ],
+      "molad_raw": null,
+      "notes": [
+        "Mon. public holiday",
+        "Yud Shevat: special events TBA.",
+        "*  Note: It is customary to not make Kiddush between 6.55pm and 7.55pm Daylight Saving Time in Sydney (based on Mogen Avrohom & Alter Rebbe Shulchan Aruch O.C. 271). [sheet-level footnote referenced by the * on the Start Kiddush & meal lines]"
+      ],
+      "suspected_errata": [
+        "Shabbos-day Chassidus printed as '9.15am' (period instead of colon); transcribed as 09:15.",
+        "Weekday Shacharis line prints 'Thurs. & Fri 6:15am, 7:30am' — 'Fri' without its period, unlike other day abbreviations; transcribed as printed."
+      ]
+    }
+  ]
+}
