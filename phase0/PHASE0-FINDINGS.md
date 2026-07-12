@@ -89,6 +89,32 @@ Rebbe's zmanim" standard. This is implemented natively by the KosherJava library
 5. **Chatzos (halachic midnight):** follow chabad.org's convention (solar midnight), consistent
    with everything else.
 
+## Engine built and validated (`engine/zmanim.py`)
+
+Constants cross-checked directly against **KosherJava's `ComplexZmanimCalendar` source**
+(pulled via `npm pack kosher-zmanim`, since chabad.org itself is unreachable from this
+sandbox — see network note above) — every fitted value matched the library's documented
+Baal HaTanya / Geonim constants exactly: netz amiti/shkia amitis 1.583°, alos 16.9°, tzeis
+6.0°, misheyakir 10.2°, candle lighting = shkia − 18 min. One correction from the Phase 0
+fit: motzaei Shabbos/YT and "not before" 2nd-night candles best match **8.4°** (not 8.5°),
+78/79 exact.
+
+`engine/validate.py` runs this engine against all 27 fixtures: **776/895 (86.7%)** exact
+after fixing two real bugs (a double-rounding error on candle lighting; the 8.4°/8.5°
+constant). Remaining residuals are validation-harness/calendar artifacts, not engine
+defects — each traced to a specific cause:
+- **Early-minyan alternate candle-lighting times** (e.g. Purim's "Candles 6:01pm" early
+  minyan) are a distinct shul policy, not the shkia−18 rule — exactly the "manual
+  override" case the schedule-rules engine (warplan §3) is designed for.
+- **Yom Kippur's fast end** follows the stricter 8.4° Shabbos-style tzeis, not the 6°
+  weekday/minor-fast tzeis — a real calendar-layer distinction for Phase 2.
+- **Some fasts start in the evening** (Erev Yom Kippur, at candle-lighting time), not at
+  dawn like Tzom Gedaliah/Taanis Esther/17 Tammuz — another Phase 2 calendar rule.
+- Day-block "Shkia Sun-Thurs" range lines and "Chatzos HaYom" (midday) vs. chatzos
+  halayla (midnight) are validation-script date-resolution artifacts, not engine bugs.
+- A handful of ±1 minute residuals remain, consistent with the coordinate/elevation
+  still being fit-derived rather than chabad.org's exact published value (open item below).
+
 ## What Phase 1 inherits
 
 - `phase0/fixtures/` — 27 golden test files (every printed time, dated and labeled).
