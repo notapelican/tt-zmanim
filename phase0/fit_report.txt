@@ -1,0 +1,441 @@
+fixtures: 27
+  alos: 4
+  candle_day: 21
+  candle_fri: 116
+  candle_notbefore: 9
+  chatzot: 2
+  fast_end: 13
+  fast_start: 20
+  mishyakir_wk: 62
+  motzaei: 58
+  motzaei_day: 12
+  netz_wk: 62
+  plag_fri: 60
+  shema_day: 25
+  shema_shab: 58
+  shema_wk: 62
+  shkia_day: 30
+  shkia_fri: 58
+  shkia_wk: 62
+  tzeis_fri: 98
+  tzeis_wk: 63
+
+### Friday shkia elev=0.0m: 57/58 exact  [nearest]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:55 calc 16:54 (-1m)
+### Candle=shkia-18 elev=0.0m: 57/116 exact  [nearest]
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 17:51 calc 18:50 (+59m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 18:01 calc 18:50 (+49m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:37 calc 16:36 (-1m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:40 calc 19:35 (-5m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 19:41 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:43 calc 19:41 (+58m)
+  ... 51 more misses
+### Friday shkia elev=5.0m: 51/58 exact  [floor]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:55 calc 16:54 (-1m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 19:59 calc 19:58 (-1m)
+  miss 5783_20times_20-wk_2004_20to_2006:Lech L’cha: printed 19:26 calc 19:25 (-1m)
+  miss 5786 times -wk 20 to 22:Yisro: printed 19:57 calc 19:56 (-1m)
+  miss 5786 times -wk 20 to 22:Terumah: printed 19:43 calc 19:42 (-1m)
+  miss 5786_20times_20-wk_2005_20to_2007:Vayeira: printed 19:29 calc 19:28 (-1m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 19:26 calc 19:25 (-1m)
+### Candle=shkia-18 elev=5.0m: 51/116 exact  [floor]
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 17:51 calc 18:50 (+59m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 18:01 calc 18:50 (+49m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:37 calc 16:36 (-1m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:40 calc 19:35 (-5m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 19:40 (+67m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:43 calc 19:40 (+57m)
+  ... 57 more misses
+### Friday shkia elev=10.0m: 57/58 exact  [floor]
+  miss 5786_20times_20-wk_2011_20to_2013:Mikeitz: printed 20:04 calc 20:05 (+1m)
+### Candle=shkia-18 elev=10.0m: 57/116 exact  [floor]
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 17:51 calc 18:50 (+59m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 18:01 calc 18:50 (+49m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:40 calc 19:35 (-5m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 19:41 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:43 calc 19:41 (+58m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:37 calc 19:45 (+68m)
+  ... 51 more misses
+### Friday shkia elev=15.0m: 52/58 exact  [floor]
+  miss 5782_20times_20wk_2013_20to_2015:Vayechi: printed 20:03 calc 20:04 (+1m)
+  miss 5786 times -wk 41 to 44:Devarim: printed 17:05 calc 17:06 (+1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Mikeitz: printed 20:04 calc 20:05 (+1m)
+  miss 5786_20times_20-wk_2026_20to_2028a:Tzav: printed 18:57 calc 18:58 (+1m)
+  miss 5786_20times_20-wk_2037_20to_2040:Beha’aloscha: printed 16:53 calc 16:54 (+1m)
+  miss 5786_20times_20-wk_2037_20to_2040:Korach: printed 16:53 calc 16:54 (+1m)
+### Candle=shkia-18 elev=15.0m: 52/116 exact  [floor]
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 17:51 calc 18:50 (+59m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 18:01 calc 18:50 (+49m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:40 calc 19:35 (-5m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 19:41 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:43 calc 19:41 (+58m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:37 calc 19:46 (+69m)
+  ... 56 more misses
+### Friday shkia elev=20.0m: 42/58 exact  [floor]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 17:03 calc 17:04 (+1m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 19:08 calc 19:09 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Chukas: printed 17:00 calc 17:01 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayechi: printed 20:03 calc 20:04 (+1m)
+  miss 5784_20times_20-wk_2023_20to_2025:Vayakhel: printed 19:22 calc 19:23 (+1m)
+  miss 5785_20times_20-wk_2026_20to_2028:Vayikra: printed 18:46 calc 18:47 (+1m)
+  miss 5785_20times_20-wk_2026_20to_2028:Tzav, Erev Pesach: printed 17:37 calc 17:38 (+1m)
+  miss 5785_20times_20-wk_2051_20to_208601_20incl_20RH:Nitzavim: printed 17:49 calc 17:50 (+1m)
+  ... 8 more misses
+### Candle=shkia-18 elev=20.0m: 42/116 exact  [floor]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 16:45 calc 16:46 (+1m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 17:51 calc 18:51 (+60m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 18:01 calc 18:51 (+50m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 18:50 calc 18:51 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Chukas: printed 16:42 calc 16:43 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:40 calc 19:35 (-5m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 19:35 (+68m)
+  ... 66 more misses
+### Friday shkia = shkia_amitis(1.583): 0/58 exact  [floor]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 17:03 calc 17:07 (+4m)
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 16:59 calc 17:02 (+3m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 19:08 calc 19:12 (+4m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:55 calc 16:58 (+3m)
+  miss 5782_20times_20-wk_2042_20to_2045:Korach: printed 16:57 calc 17:00 (+3m)
+  miss 5782_20times_20-wk_2042_20to_2045:Chukas: printed 17:00 calc 17:04 (+4m)
+  miss 5782_20times_20-wk_2042_20to_2045:Balak: printed 17:04 calc 17:08 (+4m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:53 calc 19:57 (+4m)
+  ... 50 more misses
+### Weekday shkia elev=0.0m: 61/62 exact  [day=min,nearest]
+  miss 5786_20times_20-wk_2017_20to_2019:Bo: printed 20:06 calc 20:07 (+1m)
+### Weekday shkia elev=15.0m: 52/62 exact  [day=min,floor]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 16:59 calc 17:00 (+1m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 19:04 calc 19:05 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:53 calc 16:54 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:48 calc 19:49 (+1m)
+  miss 5786 times -wk 20 to 22:Yisro: printed 19:57 calc 19:58 (+1m)
+  miss 5786 times -wk 41 to 44:Devarim: printed 17:02 calc 17:03 (+1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Mikeitz: printed 20:01 calc 20:02 (+1m)
+  miss 5786_20times_20-wk_2017_20to_2019:Bo: printed 20:06 calc 20:07 (+1m)
+  ... 2 more misses
+### Weekday shkia elev=20.0m: 47/62 exact  [day=min,floor]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 16:59 calc 17:00 (+1m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 19:04 calc 19:05 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 16:53 calc 16:54 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Balak: printed 17:01 calc 17:02 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 19:48 calc 19:49 (+1m)
+  miss 5786 times -wk 20 to 22:Yisro: printed 19:57 calc 19:58 (+1m)
+  miss 5786 times -wk 41 to 44:Devarim: printed 17:02 calc 17:03 (+1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Vayishlach: printed 19:50 calc 19:51 (+1m)
+  ... 7 more misses
+### Netz elev=0.0m: 61/62 exact  [day=max,nearest]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 07:00 calc 07:01 (+1m)
+### Netz elev=5.0m: 49/62 exact  [day=max,ceil]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 06:44 calc 06:45 (+1m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 06:20 calc 06:21 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 07:00 calc 07:01 (+1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Ki Tissa: printed 06:53 calc 06:54 (+1m)
+  miss 5785_20times_20-wk_2026_20to_2028:Vayikra: printed 07:09 calc 07:10 (+1m)
+  miss 5785_20times_20-wk_2051_20to_208601_20incl_20RH:Vayelech: printed 05:46 calc 05:47 (+1m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 06:56 calc 06:57 (+1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Vayishlach: printed 05:37 calc 05:38 (+1m)
+  ... 5 more misses
+### Netz elev=10.0m: 62/62 exact  [day=max,ceil]
+### Netz = netz_amiti(1.583): 0/62 exact  [day=Sun,floor]
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 06:39 calc 06:31 (-8m)
+  miss 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 06:44 calc 06:36 (-8m)
+  miss 5782_20times_20-wk_2006:Lech L'cha: printed 06:20 calc 06:16 (-4m)
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 07:00 calc 06:55 (-5m)
+  miss 5782_20times_20-wk_2042_20to_2045:Korach: printed 07:01 calc 06:56 (-5m)
+  miss 5782_20times_20-wk_2042_20to_2045:Chukas: printed 07:01 calc 06:56 (-5m)
+  miss 5782_20times_20-wk_2042_20to_2045:Balak: printed 07:00 calc 06:55 (-5m)
+  miss 5782_20times_20wk_2013_20to_2015:Mikketz: printed 05:38 calc 05:33 (-5m)
+  ... 54 more misses
+### Friday tzeis @ 6.0 deg: 98/98 exact  [ceil]
+### Friday tzeis @ 6.1 deg: 98/98 exact  [nearest]
+### Friday tzeis @ 6.2 deg: 96/98 exact  [floor]
+  miss 5786_20times_20-wk_2017_20to_2019:Va’era: printed 20:37 calc 20:38 (+1m)
+  miss 5786_20times_20-wk_2017_20to_2019:Va’era: printed 20:37 calc 20:38 (+1m)
+### Friday tzeis @ 6.15 deg: 85/98 exact  [floor]
+  miss 5785 times -wk 23 to 25 CORRECTED:Tetzaveh: printed 19:50 calc 19:49 (-1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Tetzaveh: printed 19:50 calc 19:49 (-1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Tetzaveh: printed 19:50 calc 19:49 (-1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Vayakhel: printed 19:31 calc 19:30 (-1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Vayakhel: printed 19:31 calc 19:30 (-1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Vayakhel: printed 19:31 calc 19:30 (-1m)
+  miss 5785_20times_20-wk_2051_20to_208601_20incl_20RH:Nitzavim: printed 18:15 calc 18:14 (-1m)
+  miss 5785_20times_20-wk_2051_20to_208601_20incl_20RH:Vayelech: printed 18:20 calc 18:19 (-1m)
+  ... 5 more misses
+### Weekday tzeis @ 6.1 deg: 60/63 exact  [day=max,nearest]
+  miss 5785_20times_20-wk_2026_20to_2028:Tzav, Erev Pesach: printed 18:04 calc 18:09 (+5m)
+  miss 5786_20times_20-wk_2005_20to_2007:Noach: printed 19:41 calc 19:42 (+1m)
+  miss 5786_20times_20-wk_2023_20to_2025:Tetzaveh: printed 20:06 calc 20:07 (+1m)
+### Weekday tzeis @ 6.0 deg: 59/63 exact  [day=max,ceil]
+  miss 5785_20times_20-wk_2026_20to_2028:Tzav, Erev Pesach: printed 18:04 calc 18:09 (+5m)
+  miss 5786 times -wk 41 to 44:Devarim: printed 17:33 calc 17:32 (-1m)
+  miss 5786_20times_20-wk_2005_20to_2007:Noach: printed 19:41 calc 19:42 (+1m)
+  miss 5786_20times_20-wk_2023_20to_2025:Tetzaveh: printed 20:06 calc 20:07 (+1m)
+### Weekday tzeis @ 6.2 deg: 59/63 exact  [day=max,floor]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 17:22 calc 17:23 (+1m)
+  miss 5785_20times_20-wk_2026_20to_2028:Tzav, Erev Pesach: printed 18:04 calc 18:09 (+5m)
+  miss 5786_20times_20-wk_2005_20to_2007:Noach: printed 19:41 calc 19:42 (+1m)
+  miss 5786_20times_20-wk_2023_20to_2025:Tetzaveh: printed 20:06 calc 20:07 (+1m)
+### Weekday tzeis @ 6.05 deg: 48/63 exact  [day=max,ceil]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 17:22 calc 17:23 (+1m)
+  miss 5782_20times_20-wk_2042_20to_2045:Balak: printed 17:31 calc 17:32 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 20:27 calc 20:28 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayechi: printed 20:32 calc 20:33 (+1m)
+  miss 5784_20times_20-wk_2023_20to_2025:Ki Sissa: printed 20:03 calc 20:04 (+1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Vayakhel: printed 19:37 calc 19:38 (+1m)
+  miss 5785_20times_20-wk_2015:Vayechi: printed 20:39 calc 20:40 (+1m)
+  miss 5785_20times_20-wk_2026_20to_2028:Vayikra: printed 19:18 calc 19:19 (+1m)
+  ... 7 more misses
+### Motzaei Shabbos maariv @ 8.4 deg: 57/58 exact  [ceil]
+  miss 5786_20times_20-wk_2030_20to_2033:Tazria–Metzora: printed 18:07 calc 18:06 (-1m)
+### Motzaei Shabbos maariv @ 8.5 deg: 57/58 exact  [nearest]
+  miss 5786_20times_20-wk_2030_20to_2033:Tazria–Metzora: printed 18:07 calc 18:06 (-1m)
+### Motzaei Shabbos maariv @ 8.6 deg: 53/58 exact  [floor]
+  miss 5783_20times_20-wk_2004_20to_2006:Lech L’cha: printed 20:06 calc 20:07 (+1m)
+  miss 5785_20times_20-wk_2015:Vayechi: printed 20:52 calc 20:53 (+1m)
+  miss 5786 times -wk 20 to 22:Yisro: printed 20:35 calc 20:36 (+1m)
+  miss 5786_20times_20-wk_2026_20to_2028a:Vayikra: printed 19:43 calc 19:42 (-1m)
+  miss 5786_20times_20-wk_2030_20to_2033:Tazria–Metzora: printed 18:07 calc 18:06 (-1m)
+### Motzaei Shabbos maariv @ 8.55 deg: 47/58 exact  [floor]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 17:36 calc 17:35 (-1m)
+  miss 5783_20times_20-wk_2004_20to_2006:Bereishis: printed 19:53 calc 19:52 (-1m)
+  miss 5784_20times_20-wk_2023_20to_2025:Ki Sissa: printed 20:08 calc 20:07 (-1m)
+  miss 5786_20times_20-wk_2005_20to_2007:Noach: printed 19:56 calc 19:55 (-1m)
+  miss 5786_20times_20-wk_2005_20to_2007:Lech L’cha: printed 20:03 calc 20:02 (-1m)
+  miss 5786_20times_20-wk_2017_20to_2019:Va’era: printed 20:51 calc 20:50 (-1m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 20:02 calc 20:01 (-1m)
+  miss 5786_20times_20-wk_2026_20to_2028a:Vayikra: printed 19:43 calc 19:42 (-1m)
+  ... 3 more misses
+### Motzaei YT maariv @ 8.4 deg: 12/12 exact  [ceil]
+### Motzaei YT maariv @ 8.5 deg: 12/12 exact  [nearest]
+### Motzaei YT maariv @ 8.6 deg: 12/12 exact  [floor]
+### Motzaei YT maariv @ 8.35 deg: 10/12 exact  [ceil]
+  miss 5786_20times_20-wk_2028b_20_26_2029_20Pesach:Shabbos Chol Hamoed: printed 19:24 calc 19:23 (-1m)
+  miss 5786_20times_20-wk_2034_20to_2036_20incl_20Shavuos:Shavuos: 2nd night & 2nd day: : printed 17:38 calc 17:37 (-1m)
+### Fast end @ 6.0 deg: 11/13 exact  [ceil]
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:44 calc 19:32 (-12m)
+  miss 5786_20Tishrei_20Times:Yom Kippur: printed 18:36 calc 18:24 (-12m)
+### Fast end @ 6.1 deg: 11/13 exact  [nearest]
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:44 calc 19:32 (-12m)
+  miss 5786_20Tishrei_20Times:Yom Kippur: printed 18:36 calc 18:24 (-12m)
+### Fast end @ 6.05 deg: 9/13 exact  [ceil]
+  miss 5785_20Tishrei_20Times:Tzom Gedaliah (Nidche): printed 19:27 calc 19:28 (+1m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:44 calc 19:32 (-12m)
+  miss 5786_20Tishrei_20Times:Yom Kippur: printed 18:36 calc 18:24 (-12m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 19:56 calc 19:57 (+1m)
+### Fast end @ 6.15 deg: 9/13 exact  [nearest]
+  miss 5785_20Tishrei_20Times:Tzom Gedaliah (Nidche): printed 19:27 calc 19:28 (+1m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:44 calc 19:32 (-12m)
+  miss 5786_20Tishrei_20Times:Yom Kippur: printed 18:36 calc 18:24 (-12m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 19:56 calc 19:57 (+1m)
+### Candle 'not before' (2nd night) @ 8.4 deg: 9/9 exact  [ceil]
+### Candle 'not before' (2nd night) @ 8.5 deg: 9/9 exact  [nearest]
+### Candle 'not before' (2nd night) @ 8.6 deg: 9/9 exact  [floor]
+### Candle 'not before' (2nd night) @ 8.45 deg: 7/9 exact  [ceil]
+  miss 5785_20Tishrei_20Times:Succos day 1: printed 19:48 calc 19:49 (+1m)
+  miss 5786_20times_20-wk_2028b_20_26_2029_20Pesach:1st day Pesach: printed 19:26 calc 19:27 (+1m)
+### Erev-YT candle=shkia-18 elev=0.0m: 18/21 exact  [nearest]
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Purim Day, Erev Shabbos: printed 18:01 calc 18:57 (+56m)
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Purim Day, Erev Shabbos: printed 18:11 calc 18:57 (+46m)
+  miss 5786_20Tishrei_20Times:Succos day 2: printed 18:46 calc 18:45 (-1m)
+### Day-block shkia elev=0.0m: 17/30 exact  [nearest]
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Ha’azinu/Shuva: printed 19:02 calc 18:01 (-61m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Ha’azinu/Shuva: printed 19:30 calc 18:01 (-89m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:07 calc 19:06 (-1m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:36 calc 19:06 (-30m)
+  miss 5785_20Tishrei_20Times:Shabbos Chol HaMoed Succos: printed 19:13 calc 19:12 (-1m)
+  miss 5785_20Tishrei_20Times:Shabbos Chol HaMoed Succos: printed 19:43 calc 19:12 (-31m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:56 calc 17:55 (-1m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 18:24 calc 17:55 (-29m)
+  ... 5 more misses
+### Erev-YT candle=shkia-18 elev=15.0m: 16/21 exact  [floor]
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Purim Day, Erev Shabbos: printed 18:01 calc 18:57 (+56m)
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Purim Day, Erev Shabbos: printed 18:11 calc 18:57 (+46m)
+  miss 5785_20Tishrei_20Times:Erev Succos: printed 18:51 calc 18:52 (+1m)
+  miss 5786_20Tishrei_20Times:Erev Succos: printed 18:43 calc 18:44 (+1m)
+  miss 5786_20Tishrei_20Times:Succos day 2: printed 18:46 calc 18:45 (-1m)
+### Day-block shkia elev=15.0m: 15/30 exact  [floor]
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Ha’azinu/Shuva: printed 19:02 calc 18:01 (-61m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Ha’azinu/Shuva: printed 19:30 calc 18:01 (-89m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:07 calc 19:06 (-1m)
+  miss 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 19:36 calc 19:06 (-30m)
+  miss 5785_20Tishrei_20Times:Erev Succos: printed 19:09 calc 19:10 (+1m)
+  miss 5785_20Tishrei_20Times:Shabbos Chol HaMoed Succos: printed 19:13 calc 19:12 (-1m)
+  miss 5785_20Tishrei_20Times:Shabbos Chol HaMoed Succos: printed 19:43 calc 19:12 (-31m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:56 calc 17:55 (-1m)
+  ... 7 more misses
+### Misheyakir @ 10.1 deg: 61/62 exact  [day=max,nearest]
+  miss 5786_20times_20-wk_2011_20to_2013:Vayeishev: printed 04:44 calc 04:45 (+1m)
+### Misheyakir @ 10.2 deg: 61/62 exact  [day=max,ceil]
+  miss 5786_20times_20-wk_2017_20to_2019:Bo: printed 05:17 calc 05:16 (-1m)
+### Misheyakir @ 10.0 deg: 57/62 exact  [day=max,floor]
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 04:44 calc 04:45 (+1m)
+  miss 5785_20times_20-wk_2051_20to_208601_20incl_20RH:Nitzavim: printed 05:12 calc 05:11 (-1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Vayishlach: printed 04:45 calc 04:46 (+1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Vayeishev: printed 04:44 calc 04:45 (+1m)
+  miss 5786_20times_20-wk_2011_20to_2013:Mikeitz: printed 04:46 calc 04:47 (+1m)
+### Misheyakir @ 9.95 deg: 45/62 exact  [day=max,floor]
+  miss 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 06:11 calc 06:12 (+1m)
+  miss 5782_20times_20wk_2013_20to_2015:Vayigash: printed 04:44 calc 04:45 (+1m)
+  miss 5783_20times_20-wk_2004_20to_2006:Lech L’cha: printed 05:09 calc 05:10 (+1m)
+  miss 5784_20times_20-wk_2023_20to_2025:Tetzaveh: printed 05:50 calc 05:51 (+1m)
+  miss 5784_20times_20-wk_2023_20to_2025:Vayakhel: printed 06:03 calc 06:04 (+1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Tetzaveh: printed 06:02 calc 06:03 (+1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Ki Tissa: printed 06:08 calc 06:09 (+1m)
+  miss 5785_20times_20-wk_2026_20to_2028:Pekudei: printed 06:19 calc 06:20 (+1m)
+  ... 9 more misses
+### Alos 16.9deg: 13/24 exact  [floor]
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 18:47 calc 04:58 (-829m)
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 19:05 calc 04:58 (-847m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 05:09 calc 05:32 (+23m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 17:37 calc 05:32 (-725m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:40 calc 04:19 (-801m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:58 calc 04:19 (-819m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 05:23 calc 05:22 (-1m)
+  miss Purim times 5786:Taanis Esther: printed 05:23 calc 05:22 (-1m)
+  ... 3 more misses
+### Alos 17.0deg: 13/24 exact  [nearest]
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 18:47 calc 04:58 (-829m)
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 19:05 calc 04:58 (-847m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 05:09 calc 05:32 (+23m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 17:37 calc 05:32 (-725m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:40 calc 04:19 (-801m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:58 calc 04:19 (-819m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 05:23 calc 05:22 (-1m)
+  miss Purim times 5786:Taanis Esther: printed 05:23 calc 05:22 (-1m)
+  ... 3 more misses
+### Alos 17.1deg: 13/24 exact  [ceil]
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 18:47 calc 04:58 (-829m)
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 19:05 calc 04:58 (-847m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 05:09 calc 05:33 (+24m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 17:37 calc 05:33 (-724m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:40 calc 04:19 (-801m)
+  miss 5786_20Tishrei_20Times:Shabbos Kodesh, Vayelech/Shuva: printed 17:58 calc 04:19 (-819m)
+  miss 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 05:23 calc 05:22 (-1m)
+  miss Purim times 5786:Taanis Esther: printed 05:23 calc 05:22 (-1m)
+  ... 3 more misses
+### Alos 16.85deg: 12/24 exact  [floor]
+  miss 5782_20times_20wk_2013_20to_2015:Vayechi: printed 04:01 calc 04:02 (+1m)
+  miss 5785 times -wk 23 to 25 CORRECTED:Ki Tissa: printed 05:33 calc 05:34 (+1m)
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Taanis Esther: printed 05:33 calc 05:34 (+1m)
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Taanis Esther: printed 05:33 calc 05:34 (+1m)
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 18:47 calc 04:58 (-829m)
+  miss 5785_20Tishrei_20Times:Erev Shabbos, Erev Yom Kippur: printed 19:05 calc 04:58 (-847m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 05:09 calc 05:33 (+24m)
+  miss 5786 times -wk 41 to 44:Va’es’chanan: printed 17:37 calc 05:33 (-724m)
+  ... 4 more misses
+### SHEMA netz_amiti -> shkia_amitis: weekday 61/62 [day=min,floor] single 73/83 [floor]
+    miss(single) 5785_20Tishrei_20Times:Erev Rosh Hashana: printed 08:34 calc 08:35 (+1m)
+    miss(single) 5785_20Tishrei_20Times:Rosh Hashana Day 1: printed 08:34 calc 08:35 (+1m)
+    miss(single) 5785_20Tishrei_20Times:Shabbos Kodesh, Ha’azinu/Shuva: printed 09:28 calc 08:33 (-55m)
+    miss(single) 5785_20Tishrei_20Times:Shabbos Kodesh, Yom Kippur: printed 09:23 calc 09:27 (+4m)
+    miss(wk) 5786_20times_20-wk_2004:Bereishis: printed 08:24 calc 09:24 (+60m)
+### SHEMA netz_amiti -> shkia: weekday 60/62 [day=min,ceil] single 70/83 [ceil]
+    miss(single) 5786_20times_20-wk_2005_20to_2007:Lech L’cha: printed 09:14 calc 09:15 (+1m)
+    miss(single) 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 09:54 calc 09:55 (+1m)
+    miss(single) 5785_20Tishrei_20Times:Erev Rosh Hashana: printed 08:34 calc 08:36 (+2m)
+    miss(single) 5785_20Tishrei_20Times:Rosh Hashana Day 1: printed 08:34 calc 08:35 (+1m)
+    miss(wk) 5786_20times_20-wk_2004:Bereishis: printed 08:24 calc 09:24 (+60m)
+    miss(wk) 5786_20times_20-wk_2028b_20_26_2029_20Pesach:Shemini: printed 09:01 calc 09:02 (+1m)
+### SHEMA netz_amiti -> tzeis1.5: weekday 59/62 [day=min,floor] single 65/83 [floor]
+    miss(single) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:24 (-1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Korach: printed 09:28 calc 09:27 (-1m)
+    miss(single) 5783_20times_20-wk_2004_20to_2006:Bereishis: printed 09:21 calc 09:20 (-1m)
+    miss(single) 5785_20times_20-wk_2026_20to_2028:Vayikra: printed 10:02 calc 10:01 (-1m)
+    miss(wk) 5786_20times_20-wk_2004:Bereishis: printed 08:24 calc 09:24 (+60m)
+    miss(wk) 5786_20times_20-wk_2023_20to_2025:Ki Sissa: printed 09:53 calc 09:52 (-1m)
+    miss(wk) 5786_20times_20-wk_2034_20to_2036_20incl_20Shavuos:Naso: printed 09:17 calc 09:16 (-1m)
+### SHEMA netz_amiti -> tzeis1.0: weekday 53/62 [day=min,ceil] single 57/83 [ceil]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:13 calc 09:14 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 09:10 calc 09:11 (+1m)
+    miss(single) 5785 times -wk 23 to 25 CORRECTED:Vayakhel: printed 09:58 calc 09:59 (+1m)
+    miss(single) 5786_20times_20-wk_2005_20to_2007:Noach: printed 09:18 calc 09:19 (+1m)
+    miss(wk) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:26 (+1m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:25 calc 09:26 (+1m)
+    miss(wk) 5784 times -wk 42:Korach: printed 09:27 calc 09:28 (+1m)
+    miss(wk) 5784_20times_20-wk_2023_20to_2025:Vayakhel: printed 09:53 calc 09:54 (+1m)
+### SHEMA netz_amiti -> tzeis2.0: weekday 31/62 [day=min,floor] single 39/83 [floor]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:13 calc 09:14 (+1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Balak: printed 09:27 calc 09:28 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 09:10 calc 09:11 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 09:13 calc 09:14 (+1m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:11 calc 09:12 (+1m)
+    miss(wk) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:26 (+1m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:25 calc 09:26 (+1m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Balak: printed 09:27 calc 09:28 (+1m)
+### SHEMA alos10.0 -> amitis+120: weekday 22/62 [day=Thu,floor] single 22/83 [nearest]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:13 calc 09:12 (-1m)
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 09:16 calc 09:14 (-2m)
+    miss(single) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:24 (-1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:27 calc 09:24 (-3m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:11 calc 09:10 (-1m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 09:14 calc 09:13 (-1m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:25 calc 09:23 (-2m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Korach: printed 09:27 calc 09:24 (-3m)
+### SHEMA alos10.0 -> shkia+120: weekday 22/62 [day=max,nearest] single 11/83 [ceil]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:13 calc 09:11 (-2m)
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 09:16 calc 09:13 (-3m)
+    miss(single) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:23 (-2m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:27 calc 09:23 (-4m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:11 calc 09:10 (-1m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 09:14 calc 09:13 (-1m)
+    miss(wk) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:28 (+3m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:25 calc 09:23 (-2m)
+### SHEMA alos10.5 -> amitis+120: weekday 17/62 [day=max,ceil] single 1/83 [ceil]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:13 calc 09:10 (-3m)
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 09:16 calc 09:12 (-4m)
+    miss(single) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:22 (-3m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:27 calc 09:22 (-5m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Bemidbar: printed 09:11 calc 09:10 (-1m)
+    miss(wk) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 09:14 calc 09:12 (-2m)
+    miss(wk) 5782_20times_20-wk_2006:Lech L'cha: printed 09:25 calc 09:27 (+2m)
+    miss(wk) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 09:25 calc 09:22 (-3m)
+### PLAG netz -> shkia_amitis: single 56/60 [nearest]
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:33 (+20m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:17 calc 18:37 (+20m)
+    miss(single) 5785 times -wk 23 to 25 CORRECTED:Tetzaveh: printed 18:09 calc 18:08 (-1m)
+    miss(single) 5785_20times_20-wk_2026_20to_2028:Tzav, Erev Pesach: printed 16:30 calc 16:29 (-1m)
+### PLAG netz -> tzeis1.5: single 56/60 [ceil]
+    miss(single) 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 18:28 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:33 (+20m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:17 calc 18:37 (+20m)
+    miss(single) 5785_20times_20-wk_2015:Vayechi: printed 18:44 calc 18:45 (+1m)
+### PLAG netz_amiti -> shkia_amitis: single 56/60 [ceil]
+    miss(single) 5782_20times_20wk_2013_20to_2015:Mikketz: printed 18:27 calc 18:28 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:33 (+20m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:17 calc 18:37 (+20m)
+    miss(single) 5785_20times_20-wk_2015:Vayechi: printed 18:44 calc 18:45 (+1m)
+### PLAG alos12.0 -> tzeis3.0: single 51/60 [floor]
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Chukas: printed 16:01 calc 16:02 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 18:32 (-1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:32 (+19m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:17 calc 18:37 (+20m)
+### PLAG alos13.0 -> tzeis3.0: single 50/60 [nearest]
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Chukas: printed 16:01 calc 16:02 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 18:32 (-1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:32 (+19m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:17 calc 18:37 (+20m)
+### PLAG alos14.0 -> tzeis3.0: single 50/60 [ceil]
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 18:32 (-1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:32 (+19m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayechi: printed 18:17 calc 18:37 (+20m)
+    miss(single) 5783_20times_20-wk_2004_20to_2006:Bereishis: printed 17:55 calc 17:54 (-1m)
+### PLAG alos12.5 -> tzeis3.0: single 48/60 [nearest]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 15:58 calc 15:59 (+1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 15:56 calc 15:57 (+1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Chukas: printed 16:01 calc 16:02 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:13 calc 18:33 (+20m)
+### PLAG alos13.5 -> tzeis3.0: single 47/60 [ceil]
+    miss(single) 5781_20times_20-wk_2035_20to_2036_20_26_20Shavuos:Naso: printed 15:58 calc 15:59 (+1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Shlach L'cha: printed 15:56 calc 15:57 (+1m)
+    miss(single) 5782_20times_20-wk_2042_20to_2045:Chukas: printed 16:01 calc 16:02 (+1m)
+    miss(single) 5782_20times_20wk_2013_20to_2015:Vayigash: printed 18:33 calc 18:32 (-1m)
+### Chatzot halayla (solar noon+12h): 1/2 exact  [floor]
+  miss 5785_20Purim_20notes_2C_20zmanim_2C_20minhagim:Purim Day, Erev Shabbos: printed 13:04 calc 01:04 (-720m)

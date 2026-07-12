@@ -23,10 +23,10 @@ from solar import CIVIL_ZENITH, elevation_adjustment, sun_event_local, solar_noo
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = ROOT / "phase0" / "fixtures"
 TZ = ZoneInfo("Australia/Sydney")
-LAT, LON = -33.889, 151.260  # 1 Penkivil St, Bondi
+LAT, LON = -33.88, 151.22  # Sydney (calibrated: published times fit city coordinates, not Bondi)
 
 AMITI = 91.583  # Baal HaTanya: centre of sun 1.583 deg below geometric horizon
-ELEVATIONS = [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0]
+ELEVATIONS = [0.0, 5.0, 10.0, 15.0, 20.0]
 
 
 def parse_iso(s):
