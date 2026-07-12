@@ -52,11 +52,36 @@ Three document formats are in use, all sharing the same building blocks:
 
 **Recommendation:** Build the core as a **standalone, framework-agnostic library + document templates**, then wrap it in **Option A (WP plugin)** if ttcc.info is WordPress, otherwise **Option B**. The wrapper is thin either way; the value (zmanim engine, rules, templates) is portable. *Decision gate: confirm the ttcc.info CMS before Phase 4 (it was not reachable from the build sandbox).*
 
-### Output & editing model ("compatible with regular word editing software")
+### Output & editing model
 
-- **Primary output: .docx** generated from a styled template that mirrors the existing sheets (fonts, blue/purple section bars, dotted leaders, boxed fast-day notices, בס"ד header). The user opens it in Word and edits freely — this is the guaranteed-editable deliverable.
-- **Dashboard editing before export:** every section/line is a toggleable, editable block (include/remove Chassidus vs Tehillim, add a note, change a minyan time, insert a free-text announcement) so most edits never require Word.
-- **Secondary outputs:** PDF (for printing/WhatsApp distribution) and optionally HTML (publish to the website).
+**Decision (2026-07-12, revisited): rendering target is HTML/CSS, edited in
+the plugin — not a Word round-trip.** Trialled a `.docx` renderer
+(`engine/render_docx.py`, python-docx) against a parallel HTML/CSS renderer
+(`engine/render_html.py`, printed via headless Chromium). The HTML renderer
+reaches the house style far more faithfully and far faster, because CSS has
+native primitives for exactly this page (dotted leaders, colour-hugging
+section bars, two-column flow with a divider rule, boxed fast notices) where
+python-docx requires hand-built OOXML verified through a proxy renderer
+(LibreOffice) that lays docx out differently from Word. Confirmed the
+`.docx`→Word/Google-Docs "editable deliverable" premise is not needed: **all
+editing happens inside the plugin before export**, so the exported file only
+has to *look* right, which HTML nails.
+
+- **Editing: in-plugin, WYSIWYG.** The dashboard renders the sheet as live
+  HTML (same renderer as export, so what you edit is what prints); every
+  section/line is a toggleable, editable block (include/remove Chassidus vs
+  Tehillim, add a note, change a minyan time, insert a free-text
+  announcement). The live preview shows page boundaries so fit is visible as
+  you type — no surprises at export. Nothing leaves the site to be edited.
+- **Primary export: PDF** (print / WhatsApp distribution) via headless
+  Chromium from the same HTML.
+- **PNG export** for single-week sheets in a social-sharing format (3:4
+  portrait or letter), via a Chromium screenshot of a portrait CSS variant.
+- **Optional secondary: `.docx`** — kept as a "give me a Word copy" export
+  for anyone who wants to hand-edit outside the site; not the primary path.
+- **Web surfaces:** the same renderer powers an in-page **widget** (current
+  week), a **digital-signage page** (current week, for piSignage), and a
+  **browse page** (pick any week/range) — see §4 Phase 4.
 
 ---
 
@@ -74,8 +99,8 @@ Five modules, deliberately separable:
    Rules are scoped by **schedule profiles** (seasons): a profile is active for a date range, a DST state, or a zman condition (e.g. "run the early Erev Shabbos Mincha/Kabbolas Shabbos/Maariv minyan only when Plag is early enough"), and each profile defines its own set of minyanim — so the *number* of minyanim per tefillah can differ by season, not just the times ("add 9:15 Shacharis on public holidays and during January", "early Mincha/Maariv minyan in summer months"). Conditional logic like "Mevorchim → Tehillim 8:15 + Shacharis 10:10; otherwise Chassidus 9:15 + Shacharis 10:00" lives here too. Rules produce a draft; every line on every sheet remains individually editable — add a minyan, remove one, or change its time.
 
    Where a line is zman-anchored, edits are validated against the halachic bound and the dashboard **warns (but does not block)** if an edit crosses it — e.g. an early Maariv moved before Plag, Mincha before Mincha Gedola, or candle lighting after the calculated time.
-4. **Document generator** — assembles week blocks / yom-tov day blocks into the three formats; renders .docx (PHPWord or `docx` npm), PDF, HTML. Includes the notes library (kiddush-window text with DST/EST variants, Eruv Tavshilin reminder, DST changeover, "A Kosheren un Freilichen Pesach!", etc.) auto-suggested by the luach layer but individually removable.
-5. **Dashboard** — pick a date range (weeks and/or a yom tov) → generate draft → block-level editor: toggle sections, add/remove/edit minyan lines, edit any time or text, drag in saved notes. Each time shows whether it is rule-derived or manually overridden, with a one-click "revert to calculated" and a warning when an edit crosses its halachic bound. Also: manage schedule profiles (the seasonal rules themselves are editable here, not just per-sheet values) → export .docx/PDF → archive of past sheets (regenerate/duplicate/edit).
+4. **Document generator (renderer)** — assembles week blocks / yom-tov day blocks into the sheet formats. **Primary renderer is HTML/CSS** (`engine/render_html.py`), which drives the live in-plugin preview, the PDF export (headless Chromium), the PNG export (Chromium screenshot, portrait/social variant), and the web surfaces (widget / signage / browse). A **`.docx` renderer** (`engine/render_docx.py`) is kept as an optional "Word copy" export. Section-ordering and line-merge logic is format-independent and shared by both. Includes the notes library (kiddush-window text with DST/EST variants, Eruv Tavshilin reminder, DST changeover, "A Kosheren un Freilichen Pesach!", etc.) auto-suggested by the luach layer but individually removable.
+5. **Dashboard + web surfaces** — pick a date range (weeks and/or a yom tov) → generate draft → block-level editor over the live HTML preview: toggle sections, add/remove/edit minyan lines, edit any time or text, insert free-text announcements, drag in saved notes, with page-boundary indication so fit is visible while editing. Each time shows whether it is rule-derived or manually overridden, with a one-click "revert to calculated" and a warning when an edit crosses its halachic bound. Manage schedule profiles (the seasonal rules themselves are editable here). Export PDF / PNG / optional .docx; archive of past sheets (regenerate/duplicate/edit). Public-facing surfaces built on the same renderer: a **current-week widget**, a **piSignage page** (current week, auto-advancing), and a **browse page** (any week/range) — see §4 Phase 4.
 
 **Data model:** `Location` (coords, tz), `ZmanimProfile` (definitions + rounding), `ScheduleProfile` (seasonal minyan sets + activation conditions), `ScheduleRule` (per-minyan anchor/offset/fixed-time config), `NoteTemplate` (reusable texts + trigger conditions), `Timesheet` (date range, format, generated JSON of blocks, per-line manual overrides, export history).
 
@@ -94,7 +119,16 @@ Five modules, deliberately separable:
 
 **Phase 3 — Rules engine + document generator**: draft sheets for a sample span (regular week, Mevorchim week, fast week, DST-change week, a summer week with the early Mincha/Maariv minyan, Pesach, Tishrei); verify seasonal profile switching (minyan added/removed at the right week) and per-line overrides; .docx opens cleanly in Word/LibreOffice/Google Docs and visually matches the house style.
 
-**Phase 4 — Dashboard** (WP plugin or standalone per the decision gate): generate-on-demand, block editor, exports, archive, user login.
+**Phase 4 — Dashboard + web surfaces** (WordPress plugin — CMS confirmed, WARPLAN §2/Option A). Core: generate-on-demand, block editor over the live HTML preview (with page-boundary indication), schedule-profile management, archive, user login. Rendering foundation is the HTML renderer + headless Chromium already built in the renderer phase.
+
+Deliverables (each builds on the shared HTML renderer):
+- **Current-week widget** — a WordPress widget/block that shows the current week's times, embeddable on any page; auto-rolls to the new week.
+- **piSignage page** — a public URL rendering the current week's times styled for a digital-signage screen (large type, high contrast, auto-refresh/auto-advance across weeks), for display via piSignage.
+- **Browse page** — a public page to browse times for any week / date range (pick a week → view the sheet).
+  - *Stretch:* inline editing on the browse page. If it complicates the build, editing stays in the wp-admin dashboard (acceptable — confirmed with client 2026-07-12).
+- **PDF export** — print / WhatsApp distribution (already available from the renderer).
+- **PNG export** — single-week sheet in a social-sharing format (**3:4 portrait or letter**), for WhatsApp/social posts, via a Chromium screenshot of a portrait CSS variant.
+- **Optional .docx export** — "Word copy" for off-site hand-editing.
 
 **Phase 5 — Pilot & handover**: run in parallel with manual production for 4–6 weeks (e.g. through a yom tov season); fix divergences; write a one-page operator guide; hand over admin access + repo.
 

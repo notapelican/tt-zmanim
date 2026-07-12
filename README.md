@@ -55,6 +55,19 @@ See `WARPLAN.md` for the full plan and phase gates.
     against all 27 fixtures (Phase 1 zmanim: 782/895 exact with every residual
     triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 777/861 with every
     residual triaged, incl. seasonal-profile switching 59/62).
+  - `render_html.py` — **primary renderer.** Turns `assemble.generate()`
+    block data into self-contained HTML/CSS matching the house style (בס״ד
+    header, blue/purple section bars, dotted leaders, boxed fast notices),
+    choosing single-week / multi-week-two-column / yom-tov day-by-day layout
+    from the data. Prints to PDF (and PNG) via headless Chromium and powers
+    the in-plugin live preview + web surfaces. Layout-only; see
+    RENDERER-CONTRACT.md. **Decision (2026-07-12):** HTML is the rendering
+    target — editing happens in the plugin, so the export only has to look
+    right (WARPLAN §2). CSS reaches the house style far more faithfully than
+    hand-built OOXML; the docx path was trialled and demoted.
+  - `render_docx.py` — optional secondary "Word copy" export (python-docx).
+    Same block data, same shared line-merge/section-order logic. Requires
+    `python-docx` (`pip install -r requirements.txt`).
 - `samples/` — original PDFs.
 
 ## Running the golden regressions
