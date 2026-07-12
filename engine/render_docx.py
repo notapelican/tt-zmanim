@@ -87,16 +87,21 @@ def _fmt_ampm(hhmm: str) -> str:
     return f"{h12}:{m:02d}{ampm}"
 
 
+def _mon(d: _date) -> str:
+    m = d.strftime("%b")
+    return m if m == "May" else m + "."
+
+
 def _fmt_civil_range(start_iso: str, end_iso: str) -> str:
     s, e = _date.fromisoformat(start_iso), _date.fromisoformat(end_iso)
     if s.month == e.month:
-        return f"{s.day}–{e.day} {e:%b} ’{e:%y}"
-    return f"{s.day} {s:%b} – {e.day} {e:%b} ’{e:%y}"
+        return f"{s.day}–{e.day} {_mon(e)} ’{e:%y}"
+    return f"{s.day} {_mon(s)} – {e.day} {_mon(e)} ’{e:%y}"
 
 
 def _fmt_civil_date(iso: str) -> str:
     d = _date.fromisoformat(iso)
-    return f"{d.day} {d:%b}"
+    return f"{d.day} {_mon(d)}"
 
 
 # --- low-level docx helpers -------------------------------------------------
@@ -166,33 +171,36 @@ def _para(container, text="", *, bold=False, italic=False, size=BODY_SIZE,
     return p
 
 
+def _shade_run(r, fill):
+    rPr = r._element.get_or_add_rPr()
+    shd = OxmlElement("w:shd")
+    shd.set(qn("w:val"), "clear")
+    shd.set(qn("w:color"), "auto")
+    shd.set(qn("w:fill"), fill)
+    rPr.append(shd)
+
+
 def _bar(container, text, width, *, purple=False, size=BODY_SIZE):
-    """A full-width colored bar (section header), matching the blue/purple
-    highlighted headings in the historical sheets."""
-    table = container.add_table(rows=1, cols=1)
-    table.alignment = WD_TABLE_ALIGNMENT.LEFT
-    cell = table.rows[0].cells[0]
-    _no_borders(cell)
-    _set_cell_margins(cell, 40)
-    _set_cell_background(cell, BAR_FILL_PURPLE if purple else BAR_FILL_BLUE)
-    _set_col_widths(table, [width])
-    p = cell.paragraphs[0]
-    p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.space_before = Pt(0)
+    """A colored highlight bar hugging its text (section header), matching
+    the blue/purple highlighted headings in the historical sheets."""
+    p = container.add_paragraph()
+    p.paragraph_format.space_before = Pt(4)
+    p.paragraph_format.space_after = Pt(2)
     r = p.add_run(text)
     r.font.name = FONT_NAME
     r.font.size = size
     r.font.bold = True
     r.font.color.rgb = WHITE
-    _para(container, " ", space_after=Pt(0), size=Pt(2))  # small spacer
+    _shade_run(r, BAR_FILL_PURPLE if purple else BAR_FILL_BLUE)
 
 
-def _dotted_line(container, label, value, width, *, size=BODY_SIZE):
+def _dotted_line(container, label, value, width, *, size=BODY_SIZE, bullet=False):
     p = container.add_paragraph()
     p.paragraph_format.space_after = Pt(1)
     p.paragraph_format.tab_stops.add_tab_stop(
         width, WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
-    r = p.add_run(f"{label}\t{value}")
+    prefix = "\u2022 " if bullet else ""
+    r = p.add_run(f"{prefix}{label}\t{value}")
     r.font.name = FONT_NAME
     r.font.size = size
     return p
@@ -200,6 +208,8 @@ def _dotted_line(container, label, value, width, *, size=BODY_SIZE):
 
 def _fast_box(container, text, width, *, size=BODY_SIZE):
     table = container.add_table(rows=1, cols=1)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    width = Emu(int(width * 0.9))
     cell = table.rows[0].cells[0]
     _set_cell_background(cell, FAST_FILL)
     _set_cell_borders(cell, **{
@@ -245,7 +255,7 @@ def _join_dayspec_group(entries):
     return "".join(parts)
 
 
-def _render_label_run(container, run, width, *, dayspec_before_leader, size=BODY_SIZE):
+def _render_label_run(container, run, width, *, dayspec_before_leader, size=BODY_SIZE, bullet=False):
     """Render one run of consecutive entries sharing (section, label)."""
     label = run[0]["label"]
     # sub-group by day_spec, preserving first-seen order
@@ -260,11 +270,11 @@ def _render_label_run(container, run, width, *, dayspec_before_leader, size=BODY
         day_spec, group_entries = groups[0]
         value = _join_dayspec_group(group_entries)
         if day_spec and dayspec_before_leader:
-            _dotted_line(container, f"{label} {day_spec}", value, width, size=size)
+            _dotted_line(container, f"{label} {day_spec}", value, width, size=size, bullet=bullet)
         elif day_spec:
-            _dotted_line(container, label, f"{day_spec} {value}", width, size=size)
+            _dotted_line(container, label, f"{day_spec} {value}", width, size=size, bullet=bullet)
         else:
-            _dotted_line(container, label, value, width, size=size)
+            _dotted_line(container, label, value, width, size=size, bullet=bullet)
         return
 
     # Multiple day_spec groups for the same label -- e.g. "Shacharis: Sun.
@@ -276,10 +286,10 @@ def _render_label_run(container, run, width, *, dayspec_before_leader, size=BODY
         else _join_dayspec_group(group_entries)
         for day_spec, group_entries in groups)
     label_text = f"{label}:" if label == "Shacharis" else label
-    _dotted_line(container, label_text, joined, width, size=size)
+    _dotted_line(container, label_text, joined, width, size=size, bullet=bullet)
 
 
-def _render_entry_group(container, entries, width, *, dayspec_before_leader=False, size=BODY_SIZE):
+def _render_entry_group(container, entries, width, *, dayspec_before_leader=False, size=BODY_SIZE, bullet=False):
     """Render a same-section run of entries: merge same (label, day_spec)
     qualifier variants, then merge consecutive same-label runs across
     day_specs (see RENDERER-CONTRACT.md merge rules)."""
@@ -299,7 +309,7 @@ def _render_entry_group(container, entries, width, *, dayspec_before_leader=Fals
         while j + 1 < len(merged) and merged[j + 1]["label"] == merged[i]["label"]:
             j += 1
         run = [g for m in merged[i:j + 1] for g in m["_group"]]
-        _render_label_run(container, run, width, dayspec_before_leader=dayspec_before_leader, size=size)
+        _render_label_run(container, run, width, dayspec_before_leader=dayspec_before_leader, size=size, bullet=bullet)
         i = j + 1
 
 
@@ -394,7 +404,8 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE) -> None:
             _render_shabbos_day(container, section_entries, width, block.get("molad"), size=size)
         else:
             _bar(container, section, width, size=size)
-            _render_entry_group(container, section_entries, width, size=size)
+            _render_entry_group(container, section_entries, width, size=size,
+                                bullet=(section == EARLY_ES))
 
     emit_shabbos_bar()  # in case a week has no Erev Shabbos content at all
 
@@ -501,8 +512,8 @@ def _add_header(doc, width):
     pPr = hr._p.get_or_add_pPr()
     pbdr = OxmlElement("w:pBdr")
     bottom = OxmlElement("w:bottom")
-    bottom.set(qn("w:val"), "single")
-    bottom.set(qn("w:sz"), "12")
+    bottom.set(qn("w:val"), "double")
+    bottom.set(qn("w:sz"), "6")
     bottom.set(qn("w:space"), "1")
     bottom.set(qn("w:color"), "000000")
     pbdr.append(bottom)
@@ -525,6 +536,14 @@ def render_docx(doc_data: dict) -> Document:
     _add_header(doc, usable_width)
 
     groups = _group_blocks(doc_data["blocks"])
+
+    shared_notes: list[str] = []
+    if len(groups) > 1:
+        common = set.intersection(*(set(g["week"]["notes"]) for g in groups))
+        shared_notes = [n for n in groups[0]["week"]["notes"] if n in common]
+        for g in groups:
+            g["week"] = dict(g["week"],
+                             notes=[n for n in g["week"]["notes"] if n not in common])
 
     if len(groups) <= 1:
         for g in groups:
@@ -550,6 +569,9 @@ def render_docx(doc_data: dict) -> Document:
         _render_group(left_cell, g, col_width, size=MULTI_BODY_SIZE)
     for g in groups[half:]:
         _render_group(right_cell, g, col_width, size=MULTI_BODY_SIZE)
+    for n in shared_notes:
+        _para(doc, f"Note: {n}", size=MULTI_BODY_SIZE, space_before=Pt(6),
+              align=WD_ALIGN_PARAGRAPH.CENTER)
     return doc
 
 
