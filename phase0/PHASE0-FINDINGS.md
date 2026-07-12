@@ -6,14 +6,28 @@ every printed clock time is accounted for). Definitions recovered by grid-search
 (`fit_zmanim.py`, full output in `fit_report.txt`) over: astronomical definition ×
 day-selection rule × rounding direction × location/elevation.
 
-## Calibrated location
+## Calibrated location — CONFIRMED: chabad.org "Sydney"
 
-Published times fit **Sydney city coordinates, not Bondi**: best fit at ≈ **-33.88, 151.22**
-(Sydney CBD/Observatory area), with a small (~10 m) elevation-equivalent offset on
-sunrise/sunset. Conclusion: the shul's times are copied/derived from a Sydney-wide luach
-(plausibly chabad.org's Sydney zmanim or a communal Sydney table), not computed for the
-shul's own street address. **Ask the gabbai which table/site is the source** — Phase 1 then
-replicates that source's exact chain instead of approximating it.
+Published times fit **Sydney city coordinates, not Bondi**: best fit at ≈ **-33.88, 151.22**,
+1.6 km from Sydney Town Hall/GPO (-33.8688, 151.2093) vs 5.2 km from the shul's actual Bondi
+address (-33.889, 151.260). **Confirmed by the client: the source is chabad.org**, whose
+Sydney zmanim page is computed for a single representative "Sydney, Australia" coordinate,
+not the shul's street address — consistent with the fit.
+
+**Network note:** chabad.org is blocked by this sandbox's egress policy (proxy returns
+403/`connect_rejected` on every attempt, both via WebFetch and direct curl) — I could not
+fetch chabad.org's page to read off its exact published coordinate or documented constants.
+Phase 1 needs one of:
+1. The gabbai/Rov pastes the coordinate chabad.org shows for its Sydney zmanim page (Settings
+   → Location on chabad.org/calendar/zmanim shows lat/long), or
+2. A short manual cross-check: pull a week of chabad.org Sydney zmanim by hand (browser) and
+   diff against this engine's output at a candidate coordinate, adjusting until it matches to
+   the minute, or
+3. Attempt the fetch again from an environment/session without this egress restriction.
+
+Since chabad.org has no API, the plan (per client direction) is to **replicate it via
+KosherJava** (`ComplexZmanimCalendar`), configured to chabad.org's Sydney coordinate and the
+degree constants below — not to call chabad.org at runtime.
 
 ## Recovered definitions (exact-hit rates on the full corpus)
 
@@ -59,26 +73,34 @@ Rebbe's zmanim" standard. This is implemented natively by the KosherJava library
 2. **5786 wk 04, Bereishis:** weekday "Morning Shema finish by **8:24am**" — every model gives **9:24am**; a one-hour digit slip.
 3. Assorted formatting slips transcribed verbatim and flagged in fixtures' `suspected_errata`: "12.25pm"/"9.15am" period separators, "8:000am", "Mon.–Fr.i", a "Mon-Fri" that should read "Sun-Fri".
 
-## Open questions for the Rov / gabbai (Phase 0 gate)
+## Open questions — resolved by client (2026-07-12)
 
-1. **Which published table is the source?** (chabad.org Sydney / printed communal luach /
-   other). This pins the last ±1-min residuals — different sites round hidden intermediate
-   values differently.
-2. Confirm the intended published values: tzeis 6.0° vs 6.1°; Shabbos/YT end 8.5°;
-   misheyakir 10.2°; alos 16.9°.
-3. Confirm the print-rounding policy as implemented: candle lighting **down**, all
-   end-of-day/"not before" times **up**, informational zmanim nearest (with "approx" on
-   misheyakir), weekly ranged values take the safe end of the range (latest netz/misheyakir,
-   earliest shkia).
-4. The 5785 Tishrei sheet's Ha'azinu/Shuva Shabbos Shema (9:28) and Yom Kippur Shema (9:23)
-   don't fit the weekday formula (−55 min / +4 min) — different convention for those days,
-   or errata?
-5. Two chatzos samples disagree by a minute — trivial, but confirm solar-midnight convention.
+1. **Source table:** confirmed chabad.org. See network note above — exact coordinate/constant
+   values still need one manual cross-check since the sandbox can't reach chabad.org directly.
+2. **Exact degree values (6.0° vs 6.1° tzeis, 8.5° Shabbos/YT end, 10.2° misheyakir, 16.9°
+   alos):** match chabad.org exactly — Phase 1 replicates chabad.org's published values via
+   KosherJava rather than picking between the fitted candidates.
+3. **Rounding/selection policy** (candle lighting down; all end-of-day times up; informational
+   zmanim nearest with "approx" on misheyakir; ranged weekly lines show the safe extreme):
+   **confirmed correct**, encode as-is.
+4. **Tishrei Shema outliers** (Ha'azinu/Shuva 9:28am, Yom Kippur 9:23am vs formula): **confirmed
+   errata** in the source sheets — the engine should NOT special-case Aseres Yemei Teshuva;
+   generate from the standard weekday formula.
+5. **Chatzos (halachic midnight):** follow chabad.org's convention (solar midnight), consistent
+   with everything else.
 
 ## What Phase 1 inherits
 
 - `phase0/fixtures/` — 27 golden test files (every printed time, dated and labeled).
 - `phase0/scripts/solar.py` — NOAA calculator already reproducing the corpus.
-- The definition table above → encode as the engine's `ZmanimProfile`, then the golden
-  regression is: regenerate all 27 sheets' zmanim and match ≥ the exact-hit rates here,
-  with every residual explained (source-table quirk or printed erratum).
+- The definition table above → encode as the engine's `ZmanimProfile`, built on
+  **KosherJava's `ComplexZmanimCalendar`** (has `getSunriseBaalHatanya` /
+  `getSofZmanShmaBaalHatanya` / degree-based tzeis/alos/misheyakir methods natively) at
+  chabad.org's Sydney coordinate, not the shul's Bondi address.
+- Golden regression: regenerate all 27 sheets' zmanim and match ≥ the exact-hit rates here,
+  with every residual explained (coordinate/constant still to confirm against chabad.org, or
+  a printed erratum — 9 Av am/pm, wk-04 Shema, and the two Tishrei Shema outliers are already
+  confirmed errata, not targets to match).
+- **Before writing Phase 1 code:** get the exact chabad.org coordinate/constants for Sydney
+  (see network note above) so the KosherJava configuration is exact from the start rather than
+  fitted-and-hoped.
