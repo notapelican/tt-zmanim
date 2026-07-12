@@ -45,7 +45,9 @@ FAMILY_FUNCS = {
 # alos excluded: fixtures mix fast-start (alos) with explicit "alos"/"dawn" lines
 # that need per-item date resolution already done during collect().
 FAMILY_FUNCS["alos"] = ("single", lambda o: m(engine.alos(o["date"], "nearest")))
-FAMILY_FUNCS["fast_start"] = ("single", lambda o: m(engine.alos(o["date"], "nearest")))
+# Fast start rounds DOWN (start the fast early, never late) - printed dawn fast
+# starts sit consistently 1 min below nearest-rounded alos across the corpus.
+FAMILY_FUNCS["fast_start"] = ("single", lambda o: m(engine.alos(o["date"], "floor")))
 
 
 def score(fam, kind, fn, observations):
@@ -67,6 +69,12 @@ def score(fam, kind, fn, observations):
     return hits, len(observations), misses
 
 
+# Regression floor: exact hits achieved by the confirmed engine (see
+# phase0/PHASE0-FINDINGS.md for the triage of every remaining residual).
+# Raise this when residuals are fixed; a drop below it fails the run.
+BASELINE_HITS = 782
+
+
 def main():
     fixture_paths = sorted((ROOT / "phase0" / "fixtures").glob("*.json"))
     obs = F.collect(fixture_paths)
@@ -81,7 +89,13 @@ def main():
             print(f"    miss {o['src']}: printed {o['printed']//60:02d}:{o['printed']%60:02d}"
                   f" engine {calc//60:02d}:{calc%60:02d} ({calc - o['printed']:+d}m)  {o.get('raw', '')[:70]}")
     print(f"\nTOTAL: {total_hits}/{total_n} ({100*total_hits/total_n:.1f}%)")
+    if total_hits < BASELINE_HITS:
+        print(f"FAIL: below baseline of {BASELINE_HITS} exact hits")
+        return 1
+    if total_hits > BASELINE_HITS:
+        print(f"NOTE: improved over baseline {BASELINE_HITS}; bump BASELINE_HITS to {total_hits}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
