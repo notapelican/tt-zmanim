@@ -1,0 +1,273 @@
+{
+  "source_pdf": "5786_20times_20-wk_2028b_20_26_2029_20Pesach.pdf",
+  "readable_name": "5786 times -wk 28b & 29 Pesach",
+  "hebrew_year": 5786,
+  "format": "yomtov",
+  "blocks": [
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Shemini & Pesach",
+      "parsha": "Shemini",
+      "shabbos_labels": [],
+      "hebrew_dates_raw": "11–17 Nisan (29 Mar.–4 Apr.)",
+      "civil_start": "2026-03-29",
+      "civil_end": "2026-04-04",
+      "friday": "2026-04-03",
+      "shabbos": "2026-04-04",
+      "entries": [
+        {"section": "Times for the week ahead", "label": "Mi'sheyakir", "kind": "zman", "day_spec_raw": "Sun.-Fri.", "date": null, "time": "06:24", "qualifier": "approx", "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun.-Fri. approx 6:24am"},
+        {"section": "Times for the week ahead", "label": "Sunrise", "kind": "zman", "day_spec_raw": "Sun.–Fri.", "date": null, "time": "07:08", "qualifier": null, "raw": "Sunrise Sun.–Fri. 7:08am"},
+        {"section": "Times for the week ahead", "label": "Morning Shema", "kind": "zman", "day_spec_raw": "Sun.–Fri.", "date": null, "time": "10:00", "qualifier": "finish by", "raw": "Morning Shema Sun.–Fri. finish by 10:00am"},
+        {"section": "Times for the week ahead", "label": "Shkia", "kind": "zman", "day_spec_raw": "Sun.–Thurs.", "date": null, "time": "18:49", "qualifier": null, "raw": "Shkia Sun.–Thurs. 6:49pm"},
+        {"section": "Times for the week ahead", "label": "Tzeis Hakochavim", "kind": "zman", "day_spec_raw": "Sun.–Thurs.", "date": null, "time": "19:20", "qualifier": null, "raw": "Tzeis Hakochavim Sun.–Thurs. 7:20pm"}
+      ],
+      "molad_raw": null,
+      "notes": ["Birthday of the Rebbe: 11 Nisan"],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Sun. 11 Nisan (29 Mar.)",
+      "weekday_raw": "Sun.",
+      "hebrew_date_raw": "11 Nisan",
+      "date": "2026-03-29",
+      "labels": [],
+      "omer_day": null,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-03-29", "time": "08:00", "qualifier": null, "raw": "• Shacharis 8:00am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-03-29", "time": "09:15", "qualifier": null, "raw": "• Shacharis 8:00am, 9:15am"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2026-03-29", "time": "18:39", "qualifier": null, "raw": "• Mincha 6:39pm"},
+        {"section": null, "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-03-29", "time": "19:20", "qualifier": null, "raw": "• Maariv 7:20pm"}
+      ],
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Mon. & Tues. 12 & 13 Nisan (30 & 31 Mar.)",
+      "weekday_raw": "Mon. & Tues.",
+      "hebrew_date_raw": "12 & 13 Nisan (30 & 31 Mar.)",
+      "date": null,
+      "labels": [],
+      "omer_day": null,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "06:15", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "07:30", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "09:15", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "18:39", "qualifier": null, "raw": "• Mincha 6:39pm"},
+        {"section": null, "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "19:20", "qualifier": null, "raw": "• Maariv 7:20pm"},
+        {"section": null, "label": "Bedikas Chometz & saying the first Kol Chamira", "kind": "deadline", "day_spec_raw": "Tues.", "date": "2026-03-31", "time": "19:17", "qualifier": "not before", "raw": "• Bedikas Chometz & saying the first Kol Chamira Tues., not before 7:17pm"}
+      ],
+      "notes": ["A Kosheren un Freilichen Pesach!"],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Erev Pesach",
+      "weekday_raw": "Wed.",
+      "hebrew_date_raw": "14 Nisan",
+      "date": "2026-04-01",
+      "labels": ["Erev Pesach"],
+      "omer_day": null,
+      "entries": [
+        {"section": null, "label": "Fast of firstborn commences", "kind": "fast", "day_spec_raw": null, "date": "2026-04-01", "time": "05:49", "qualifier": null, "raw": "• Fast of firstborn commences 5:49am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-01", "time": "06:15", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-01", "time": "07:30", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-01", "time": "09:15", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Finish eating chometz", "kind": "deadline", "day_spec_raw": null, "date": "2026-04-01", "time": "11:00", "qualifier": "by", "raw": "• Finish eating chometz by 11:00am"},
+        {"section": null, "label": "Finish burning chometz and saying the second Kol Chamira", "kind": "deadline", "day_spec_raw": null, "date": "2026-04-01", "time": "11:59", "qualifier": "by", "raw": "• Finish burning chometz and saying the second Kol Chamira by 11:59am"},
+        {"section": null, "label": "Sha'a asiris", "kind": "zman", "day_spec_raw": null, "date": "2026-04-01", "time": "15:55", "qualifier": null, "raw": "• Sha’a asiris (time from which to not over-eat before the Seder) 3:55pm"},
+        {"section": null, "label": "Candle lighting", "kind": "zman", "day_spec_raw": null, "date": "2026-04-01", "time": "18:33", "qualifier": null, "raw": "• Candle lighting (“Yom Tov”) 6:33pm"},
+        {"section": null, "label": "Mincha & Seder Korban Pesach", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-01", "time": "18:35", "qualifier": null, "raw": "• Mincha & Seder Korban Pesach 6:35pm"},
+        {"section": null, "label": "Shkia", "kind": "zman", "day_spec_raw": null, "date": "2026-04-01", "time": "18:51", "qualifier": null, "raw": "• Shkia 6:51pm"},
+        {"section": null, "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-01", "time": "19:15", "qualifier": null, "raw": "• Maariv (incl Hallel 1st&2nd nights) 7:15pm"},
+        {"section": null, "label": "Chatzot", "kind": "zman", "day_spec_raw": null, "date": "2026-04-02", "time": "00:59", "qualifier": "by", "raw": "• Chatzot (finish eating Afikomen) by 12:59am"}
+      ],
+      "notes": ["(Remember to make an Eruv Tavshilin)", "(each Shacharis will be followed by a siyum)"],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "1st day Pesach",
+      "weekday_raw": "Thurs.",
+      "hebrew_date_raw": "15 Nisan",
+      "date": "2026-04-02",
+      "labels": ["1st day Pesach"],
+      "omer_day": null,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-02", "time": "10:00", "qualifier": null, "raw": "• Shacharis 10:00am"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-02", "time": "18:40", "qualifier": null, "raw": "• Mincha 6:40pm"},
+        {"section": null, "label": "Candle lighting", "kind": "zman", "day_spec_raw": null, "date": "2026-04-02", "time": "19:26", "qualifier": "not before", "raw": "• Candle lighting (“Yom Tov”) not before 7:26pm"},
+        {"section": null, "label": "Maariv followed by the first counting of the Omer", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-02", "time": "19:25", "qualifier": null, "raw": "• Maariv followed by the first counting of the Omer 7:25pm"}
+      ],
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "2nd day Pesach, Erev Shabbos",
+      "weekday_raw": "Fri.",
+      "hebrew_date_raw": "16 Nisan",
+      "date": "2026-04-03",
+      "labels": ["2nd day Pesach", "Erev Shabbos"],
+      "omer_day": 1,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-03", "time": "10:00", "qualifier": null, "raw": "• Shacharis 10:00am"},
+        {"section": null, "label": "Candle lighting", "kind": "zman", "day_spec_raw": null, "date": "2026-04-03", "time": "18:30", "qualifier": null, "raw": "• Candle lighting (“Shabbos kodesh”) 6:30pm"},
+        {"section": null, "label": "Shkia", "kind": "zman", "day_spec_raw": null, "date": "2026-04-03", "time": "18:48", "qualifier": null, "raw": "• Shkia 6:48pm"},
+        {"section": null, "label": "Mincha followed by Kinus Torah pt 1", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-03", "time": "18:35", "qualifier": null, "raw": "• Mincha followed by Kinus Torah pt 1 6:35pm"},
+        {"section": null, "label": "Kabbolas Shabbos & Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-03", "time": "19:15", "qualifier": null, "raw": "• Kabbolas Shabbos (Mizmor l’Dovid) & Maariv 7:15pm"}
+      ],
+      "notes": ["After Maariv: start of shiurim in Maseches Sotah – one daf per night"],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Shabbos Chol Hamoed",
+      "weekday_raw": null,
+      "hebrew_date_raw": "17 Nisan",
+      "date": "2026-04-04",
+      "labels": ["Shabbos Chol Hamoed"],
+      "omer_day": 2,
+      "entries": [
+        {"section": null, "label": "Chassidus", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-04", "time": "09:15", "qualifier": null, "raw": "• Chassidus 9:15am"},
+        {"section": null, "label": "Morning Shema", "kind": "zman", "day_spec_raw": null, "date": "2026-04-04", "time": "10:01", "qualifier": "finish by", "raw": "• Morning Shema finish by 10:01am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-04", "time": "10:00", "qualifier": null, "raw": "• Shacharis 10:00am"},
+        {"section": null, "label": "Mincha followed by Kinus Torah pt 2", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-04", "time": "18:30", "qualifier": null, "raw": "• Mincha followed by Kinus Torah pt 2 6:30pm"},
+        {"section": null, "label": "Motzaei Shabbos & Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-04", "time": "19:24", "qualifier": null, "raw": "• Motzaei Shabbos & Maariv 7:24pm"}
+      ],
+      "notes": ["Daylight Saving Time ends overnight. Turn clocks back 1hr"],
+      "suspected_errata": []
+    },
+    {
+      "type": "week",
+      "title_raw": "The week of Pesach (contd.) & Parshas Shemini",
+      "parsha": "Shemini",
+      "shabbos_labels": [],
+      "hebrew_dates_raw": null,
+      "civil_start": "2026-04-05",
+      "civil_end": "2026-04-11",
+      "friday": "2026-04-10",
+      "shabbos": "2026-04-11",
+      "entries": [
+        {"section": "Times for the week ahead", "label": "Mi'sheyakir", "kind": "zman", "day_spec_raw": "Sun-Fri", "date": null, "time": "05:29", "qualifier": "approx", "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun-Fri approx 5:29am"},
+        {"section": "Times for the week ahead", "label": "Sunrise", "kind": "zman", "day_spec_raw": "Sun.–Fri.", "date": null, "time": "06:14", "qualifier": null, "raw": "Sunrise Sun.–Fri. 6:14am"},
+        {"section": "Times for the week ahead", "label": "Morning Shema", "kind": "zman", "day_spec_raw": "Sun.–Fri.", "date": null, "time": "09:01", "qualifier": "finish by", "raw": "Morning Shema Sun.–Fri. finish by 9:01am"},
+        {"section": "Times for the week ahead", "label": "Shkia", "kind": "zman", "day_spec_raw": "Sun.–Thurs.", "date": null, "time": "17:40", "qualifier": null, "raw": "Shkia Sun.–Thurs. 5:40pm.            Tzeis Hakochavim 6:11pm"},
+        {"section": "Times for the week ahead", "label": "Tzeis Hakochavim", "kind": "zman", "day_spec_raw": null, "date": null, "time": "18:11", "qualifier": null, "raw": "Shkia Sun.–Thurs. 5:40pm.            Tzeis Hakochavim 6:11pm"}
+      ],
+      "molad_raw": null,
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "2nd & 3rd days Chol Hamoed",
+      "weekday_raw": "Sun. & Mon.",
+      "hebrew_date_raw": "18 & 19 Nisan (5 & 6 Apr. – public hols)",
+      "date": null,
+      "labels": ["2nd & 3rd days Chol Hamoed"],
+      "omer_day": null,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "08:00", "qualifier": null, "raw": "• Shacharis 8:00am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "09:15", "qualifier": null, "raw": "• Shacharis 8:00am, 9:15am"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "17:30", "qualifier": null, "raw": "• Mincha 5:30pm"},
+        {"section": null, "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": null, "time": "18:10", "qualifier": null, "raw": "• Maariv 6:10pm"}
+      ],
+      "notes": ["Days 3 & 4 of Omer"],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "4th day Chol Hamoed: Erev Yom Tov",
+      "weekday_raw": "Tues.",
+      "hebrew_date_raw": "20 Nisan",
+      "date": "2026-04-07",
+      "labels": ["4th day Chol Hamoed", "Erev Yom Tov"],
+      "omer_day": 5,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-07", "time": "08:00", "qualifier": null, "raw": "• Shacharis 8:000am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-07", "time": "09:15", "qualifier": null, "raw": "• Shacharis 8:000am, 9:15am"},
+        {"section": null, "label": "Candle lighting", "kind": "zman", "day_spec_raw": null, "date": "2026-04-07", "time": "17:25", "qualifier": null, "raw": "• Candle lighting (“Yom Tov”) 5:25pm"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-07", "time": "17:30", "qualifier": null, "raw": "• Mincha 5:30pm"},
+        {"section": null, "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-07", "time": "18:10", "qualifier": null, "raw": "• Maariv 6:10pm"}
+      ],
+      "notes": ["All night learning after Seudas Yom Tov"],
+      "suspected_errata": ["First Shacharis time printed as \"8:000am\" (extra zero); transcribed as 08:00"]
+    },
+    {
+      "type": "day",
+      "title_raw": "Shevi'i Shel Pesach",
+      "weekday_raw": "Wed.",
+      "hebrew_date_raw": "21 Nisan",
+      "date": "2026-04-08",
+      "labels": ["Shevi'i Shel Pesach"],
+      "omer_day": 6,
+      "entries": [
+        {"section": null, "label": "Alos haShachar", "kind": "zman", "day_spec_raw": null, "date": "2026-04-08", "time": "04:54", "qualifier": null, "raw": "• Alos haShachar (dawn) 4:54am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-08", "time": "10:00", "qualifier": null, "raw": "• Shacharis 10:00am"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-08", "time": "17:30", "qualifier": null, "raw": "• Mincha 5:30pm"},
+        {"section": null, "label": "Candle lighting", "kind": "zman", "day_spec_raw": null, "date": "2026-04-08", "time": "18:19", "qualifier": "not before", "raw": "• Candle lighting (“Yom Tov”) not before 6:19pm"},
+        {"section": null, "label": "Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-08", "time": "18:20", "qualifier": null, "raw": "• Maariv 6:20pm"}
+      ],
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Acharon Shel Pesach",
+      "weekday_raw": "Thurs.",
+      "hebrew_date_raw": "22 Nisan",
+      "date": "2026-04-09",
+      "labels": ["Acharon Shel Pesach"],
+      "omer_day": 7,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-09", "time": "10:00", "qualifier": null, "raw": "• Shacharis 10:00am"},
+        {"section": null, "label": "Yizkor", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-09", "time": "11:30", "qualifier": "approx", "raw": "• Yizkor approx 11:30am"},
+        {"section": null, "label": "Mincha followed by Seudas Moshiach", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-09", "time": "16:55", "qualifier": null, "raw": "• Mincha followed by Seudas Moshiach 4:55pm"},
+        {"section": null, "label": "Shkia", "kind": "zman", "day_spec_raw": null, "date": "2026-04-09", "time": "17:40", "qualifier": null, "raw": "Shkia 5:40pm"},
+        {"section": null, "label": "Maariv & motzaei Yom Tov", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-09", "time": "18:17", "qualifier": null, "raw": "• Maariv & motzaei Yom Tov 6:17pm"}
+      ],
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Isru Chag, Erev Shabbos",
+      "weekday_raw": "Fri.",
+      "hebrew_date_raw": "23 Nisan",
+      "date": "2026-04-10",
+      "labels": ["Isru Chag", "Erev Shabbos"],
+      "omer_day": 8,
+      "entries": [
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-10", "time": "06:15", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-10", "time": "07:30", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Shacharis", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-10", "time": "09:15", "qualifier": null, "raw": "• Shacharis 6:15am, 7:30am, 9:15am"},
+        {"section": null, "label": "Candle lighting", "kind": "zman", "day_spec_raw": null, "date": "2026-04-10", "time": "17:21", "qualifier": null, "raw": "• Candle lighting (“Shabbos kodesh”) 5:21pm"},
+        {"section": null, "label": "Mincha", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-10", "time": "17:29", "qualifier": null, "raw": "• Mincha 5:29pm"},
+        {"section": null, "label": "Shkia", "kind": "zman", "day_spec_raw": null, "date": "2026-04-10", "time": "17:39", "qualifier": null, "raw": "• Shkia 5:39pm"},
+        {"section": null, "label": "Kabbolas Shabbos & Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-10", "time": "17:54", "qualifier": null, "raw": "• Kabbolas Shabbos & Maariv (Sefirah 9) 5:54pm"}
+      ],
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "day",
+      "title_raw": "Shabbos Mevorchim Iyar",
+      "weekday_raw": null,
+      "hebrew_date_raw": "24 Nisan",
+      "date": "2026-04-11",
+      "labels": ["Shabbos Mevorchim Iyar"],
+      "omer_day": 9,
+      "entries": [
+        {"section": null, "label": "Tehillim", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-11", "time": "08:15", "qualifier": null, "raw": "• Tehillim 8:15am"},
+        {"section": null, "label": "Morning Shema", "kind": "zman", "day_spec_raw": null, "date": "2026-04-11", "time": "09:03", "qualifier": "finish by", "raw": "• Morning Shema finish by 9:03am"},
+        {"section": null, "label": "Shacharis followed by Musaf", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-11", "time": "10:10", "qualifier": null, "raw": "• Shacharis followed by Musaf 10:10am"},
+        {"section": null, "label": "Mincha, Pirkei Avos 1, seder nigunim", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-11", "time": "17:20", "qualifier": null, "raw": "• Mincha, Pirkei Avos 1, seder nigunim 5:20pm"},
+        {"section": null, "label": "Motzaei Shabbos & Maariv", "kind": "minyan", "day_spec_raw": null, "date": "2026-04-11", "time": "18:15", "qualifier": null, "raw": "• Motzaei Shabbos & Maariv 6:15pm"}
+      ],
+      "notes": ["Molad: Fri. morning 5:18am and 14 chalakim (Jerusalem Standard Time). Rosh Chodesh Iyar: yom shishi and yom Shabbos kodesh"],
+      "suspected_errata": []
+    }
+  ]
+}

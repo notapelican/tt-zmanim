@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Mechanical completeness check: every clock time printed in the extracted text
 must be accounted for by its fixture (as an entry, or inside molad_raw/notes).
-Compares multisets of normalized HH:MM tokens and reports discrepancies.
+
+Handles the sheets' typographic quirks:
+- "9.15am" (period separator) and "8:000am" (typo minutes) count as times;
+- bare times without am/pm ("Candle lighting ... 4:45") match a fixture time of
+  either possible half-day (04:45 or 16:45).
 """
 from __future__ import annotations
 
@@ -15,21 +19,27 @@ ROOT = Path(__file__).resolve().parents[2]
 EXTRACTED = ROOT / "phase0" / "extracted"
 FIXTURES = ROOT / "phase0" / "fixtures"
 
-TIME_RE = re.compile(r"\b(\d{1,2}):(\d{2,3})\s*(am|pm)\b", re.IGNORECASE)
+TIME_RE = re.compile(r"\b(\d{1,2})[:.](\d{2,3})\s*(am|pm)?\b", re.IGNORECASE)
 
 
-def norm(h: str, m: str, ap: str) -> str:
-    hh, mm = int(h), int(m[:2])  # tolerate typos like 8:000am
-    ap = ap.lower()
-    if ap == "pm" and hh != 12:
-        hh += 12
-    if ap == "am" and hh == 12:
-        hh = 0
-    return f"{hh:02d}:{mm:02d}"
+def tokens_in(text: str):
+    """Yield ('HH:MM', ampm_known) for each time-like token; bare tokens yield the
+    raw 12h form ('H:MM')."""
+    for m in TIME_RE.finditer(text or ""):
+        h, mm, ap = int(m.group(1)), m.group(2)[:2], m.group(3)
+        if h == 0 or h > 12:
+            continue  # not a 12h-clock token (e.g. verse refs); sheets never print 24h
+        if ap:
+            ap = ap.lower()
+            hh = h % 12 + (12 if ap == "pm" else 0)
+            yield f"{hh:02d}:{mm}", True
+        else:
+            yield f"{h}:{mm}", False
 
 
-def times_in(text: str) -> Counter:
-    return Counter(norm(*m.groups()) for m in TIME_RE.finditer(text or ""))
+def anchored_times(text: str) -> Counter:
+    """Times with explicit am/pm, normalized to 24h."""
+    return Counter(t for t, known in tokens_in(text) if known)
 
 
 def fixture_times(fx: dict) -> Counter:
@@ -37,11 +47,13 @@ def fixture_times(fx: dict) -> Counter:
     for b in fx.get("blocks", []):
         for e in b.get("entries", []):
             c[e["time"]] += 1
-        c += times_in(b.get("molad_raw") or "")
-        for n in b.get("notes", []):
-            c += times_in(n)
-        for s in b.get("suspected_errata", []):
-            pass  # errata strings describe, not account
+        for extra in [b.get("molad_raw") or ""] + list(b.get("notes", [])):
+            for t, known in tokens_in(extra):
+                if known:
+                    c[t] += 1
+                else:
+                    # bare time in a note: account for it under its 12h form
+                    c["~" + t] += 1
     return c
 
 
@@ -53,11 +65,32 @@ def main() -> int:
             print(f"MISSING FIXTURE: {txt.stem}")
             bad += 1
             continue
-        source = times_in(txt.read_text())
-        fx = json.loads(fixture.read_text())
-        have = fixture_times(fx)
-        missing = source - have
-        extra = have - source
+        text = txt.read_text()
+        have = fixture_times(json.loads(fixture.read_text()))
+        # split fixture side into anchored and bare-note buckets
+        bare_notes = Counter({k[1:]: v for k, v in have.items() if k.startswith("~")})
+        anchored_have = Counter({k: v for k, v in have.items() if not k.startswith("~")})
+
+        missing = Counter()
+        for tok, known in tokens_in(text):
+            if known:
+                if anchored_have[tok] > 0:
+                    anchored_have[tok] -= 1
+                else:
+                    missing[tok] += 1
+            else:
+                # bare token: try both half-days in fixture entries, then bare notes
+                h, mm = tok.split(":")
+                am, pm = f"{int(h)%12:02d}:{mm}", f"{int(h)%12+12:02d}:{mm}"
+                if anchored_have[pm] > 0:
+                    anchored_have[pm] -= 1
+                elif anchored_have[am] > 0:
+                    anchored_have[am] -= 1
+                elif bare_notes[tok] > 0:
+                    bare_notes[tok] -= 1
+                else:
+                    missing[tok] += 1
+        extra = Counter({k: v for k, v in anchored_have.items() if v > 0})
         if missing or extra:
             bad += 1
             print(f"MISMATCH {txt.stem}:")
@@ -66,7 +99,7 @@ def main() -> int:
             if extra:
                 print(f"  in fixture but not source: {dict(extra)}")
         else:
-            print(f"ok {txt.stem} ({sum(source.values())} times)")
+            print(f"ok {txt.stem}")
     return 1 if bad else 0
 
 

@@ -1,0 +1,1129 @@
+{
+  "source_pdf": "5785 times -wk 23 to 25 CORRECTED.pdf",
+  "readable_name": "5785 times -wk 23 to 25 CORRECTED",
+  "hebrew_year": 5785,
+  "format": "weekly",
+  "blocks": [
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Tetzaveh:",
+      "parsha": "Tetzaveh",
+      "shabbos_labels": ["Zachor"],
+      "hebrew_dates_raw": "2–8 Adar 5785",
+      "civil_start": "2025-03-02",
+      "civil_end": "2025-03-08",
+      "friday": "2025-03-07",
+      "shabbos": "2025-03-08",
+      "entries": [
+        {
+          "section": null,
+          "label": "Mi'sheyakir",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "06:02",
+          "qualifier": "approx",
+          "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun-Fri ...... approx 6:02am"
+        },
+        {
+          "section": null,
+          "label": "Netz Hachamah",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "06:48",
+          "qualifier": null,
+          "raw": "Netz Hachamah (sunrise) Sun-Fri ...... 6:48am"
+        },
+        {
+          "section": null,
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "09:53",
+          "qualifier": "finish by",
+          "raw": "Morning Shema Sun-Fri ...... finish by 9:53am"
+        },
+        {
+          "section": null,
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Thurs",
+          "date": null,
+          "time": "19:25",
+          "qualifier": null,
+          "raw": "Shkia Sun-Thurs ...... 7:25pm"
+        },
+        {
+          "section": null,
+          "label": "Tzeis",
+          "kind": "zman",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "19:56",
+          "qualifier": null,
+          "raw": "Tzeis Sun–Thurs ...... 7:56pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun",
+          "date": "2025-03-02",
+          "time": "08:00",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun",
+          "date": "2025-03-02",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon–Fri",
+          "date": null,
+          "time": "06:15",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon–Fri",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon, Wed, Thurs",
+          "date": null,
+          "time": "09:00",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "14:00",
+          "qualifier": null,
+          "raw": "Mincha ...... Sun–Thurs 2:00pm & 7:15pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "19:15",
+          "qualifier": null,
+          "raw": "Mincha ...... Sun–Thurs 2:00pm & 7:15pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "19:56",
+          "qualifier": null,
+          "raw": "Maariv ...... Sun–Thurs 7:56pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Plag Hamincha",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "18:09",
+          "qualifier": null,
+          "raw": "Plag Hamincha ...... 6:09pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:24",
+          "qualifier": null,
+          "raw": "Shkia ...... 7:24pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Tzeis hachochavim",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:50",
+          "qualifier": null,
+          "raw": "Tzeis hachochavim ...... 7:50pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "17:49",
+          "qualifier": null,
+          "raw": "• Mincha ...... 5:49pm (must be completely finished before Plag Hamincha)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "18:09",
+          "qualifier": "not before",
+          "raw": "• Candle lighting ...... not before 6:09pm, not after approx 6:19pm (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "18:19",
+          "qualifier": "not after approx",
+          "raw": "• Candle lighting ...... not before 6:09pm, not after approx 6:19pm (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Minyan Kabbolas Shabbos",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "18:09",
+          "qualifier": null,
+          "raw": "• Minyan Kabbolas Shabbos (L’chu Ne’ranena) ...... 6:09pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:20",
+          "qualifier": "before",
+          "raw": "• Start Kiddush & meal * ...... before 7:20pm or after 7:50pm (earlier than ½ hour before Tzeis Hachochavim) (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:50",
+          "qualifier": "after",
+          "raw": "• Start Kiddush & meal * ...... before 7:20pm or after 7:50pm (earlier than ½ hour before Tzeis Hachochavim) (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kerias Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:50",
+          "qualifier": "from",
+          "raw": "• Kerias Shema (said from Tzeis Hachochavim) ...... from 7:50pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Eat another kezayis bread after Tzeis Hachochavim",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:50",
+          "qualifier": "after",
+          "raw": "• Eat another kezayis bread after Tzeis Hachochavim ...... after 7:50pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:06",
+          "qualifier": null,
+          "raw": "Candle lighting ...... 7:06pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:14",
+          "qualifier": null,
+          "raw": "Mincha ...... 7:14pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Kabbolas Shabbos followed by Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-07",
+          "time": "19:40",
+          "qualifier": null,
+          "raw": "Kabbolas Shabbos followed by Maariv ...... 7:40pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Chassidus",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-08",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Chassidus ...... 9:15am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-08",
+          "time": "09:55",
+          "qualifier": "finish by",
+          "raw": "Morning Shema ...... finish by 9:55am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-08",
+          "time": "10:00",
+          "qualifier": null,
+          "raw": "Shacharis (followed by Musaf) ...... 10:00am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Halacha shiur, from the Shulchan Aruch Harav",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-08",
+          "time": "18:35",
+          "qualifier": null,
+          "raw": "Halacha shiur, from the Shulchan Aruch Harav ...... 6:35pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Mincha followed by Seder Nigunim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-08",
+          "time": "19:05",
+          "qualifier": null,
+          "raw": "Mincha followed by Seder Nigunim ...... 7:05pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Motzaei Shabbos, Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-08",
+          "time": "20:00",
+          "qualifier": null,
+          "raw": "Motzaei Shabbos, Maariv ...... 8:00pm"
+        }
+      ],
+      "molad_raw": null,
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Ki Tissa, Purim:",
+      "parsha": "Ki Tissa",
+      "shabbos_labels": ["Shushan Purim"],
+      "hebrew_dates_raw": "9–15 Adar 5785",
+      "civil_start": "2025-03-09",
+      "civil_end": "2025-03-15",
+      "friday": "2025-03-14",
+      "shabbos": "2025-03-15",
+      "entries": [
+        {
+          "section": "Fast of Esther",
+          "label": "Fast start",
+          "kind": "fast",
+          "day_spec_raw": "13 Adar, Thurs 13 Mar.",
+          "date": "2025-03-13",
+          "time": "05:33",
+          "qualifier": null,
+          "raw": "13 Adar, Thurs 13 Mar. Fast of Esther. Starts at 5:33am, ends 7:42pm"
+        },
+        {
+          "section": "Fast of Esther",
+          "label": "Fast end",
+          "kind": "fast",
+          "day_spec_raw": "13 Adar, Thurs 13 Mar.",
+          "date": "2025-03-13",
+          "time": "19:42",
+          "qualifier": null,
+          "raw": "13 Adar, Thurs 13 Mar. Fast of Esther. Starts at 5:33am, ends 7:42pm"
+        },
+        {
+          "section": null,
+          "label": "Mi'sheyakir",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "06:08",
+          "qualifier": "approx",
+          "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun-Fri ...... approx 6:08am"
+        },
+        {
+          "section": null,
+          "label": "Netz Hachamah",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "06:53",
+          "qualifier": null,
+          "raw": "Netz Hachamah (sunrise) Sun-Fri ...... 6:53am"
+        },
+        {
+          "section": null,
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "09:55",
+          "qualifier": "finish by",
+          "raw": "Morning Shema Sun-Fri ...... finish by 9:55am"
+        },
+        {
+          "section": null,
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Thurs",
+          "date": null,
+          "time": "19:16",
+          "qualifier": null,
+          "raw": "Shkia Sun-Thurs ...... 7:16pm"
+        },
+        {
+          "section": null,
+          "label": "Tzeis",
+          "kind": "zman",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "19:47",
+          "qualifier": null,
+          "raw": "Tzeis Sun–Thurs ...... 7:47pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun",
+          "date": "2025-03-09",
+          "time": "08:00",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun",
+          "date": "2025-03-09",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon–Thurs",
+          "date": null,
+          "time": "06:15",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon–Thurs",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon, Wed, Thurs",
+          "date": null,
+          "time": "09:00",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Fri (Purim)",
+          "date": "2025-03-14",
+          "time": "06:15",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Fri (Purim)",
+          "date": "2025-03-14",
+          "time": "07:00",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Megillah",
+          "kind": "minyan",
+          "day_spec_raw": "Fri (Purim)",
+          "date": "2025-03-14",
+          "time": "06:45",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Megillah",
+          "kind": "minyan",
+          "day_spec_raw": "Fri (Purim)",
+          "date": "2025-03-14",
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis ... Sun 8:00am & 9:15am; Mon–Thurs 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am; Fri (Purim) 6:15am and 7:00am; Megillah at 6:45am & 7:30am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Wed",
+          "date": null,
+          "time": "19:06",
+          "qualifier": null,
+          "raw": "Mincha ...... Sun–Wed 7:06pm, Thurs 6:50pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Thurs",
+          "date": "2025-03-13",
+          "time": "18:50",
+          "qualifier": null,
+          "raw": "Mincha ...... Sun–Wed 7:06pm, Thurs 6:50pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Wed",
+          "date": null,
+          "time": "19:47",
+          "qualifier": null,
+          "raw": "Maariv ..... Sun–Wed 7:47pm, Thurs 7:42pm and Megillah at 7:55pm (Refreshments after Megillah on Thurs evening)"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Thurs",
+          "date": "2025-03-13",
+          "time": "19:42",
+          "qualifier": null,
+          "raw": "Maariv ..... Sun–Wed 7:47pm, Thurs 7:42pm and Megillah at 7:55pm (Refreshments after Megillah on Thurs evening)"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Megillah",
+          "kind": "minyan",
+          "day_spec_raw": "Thurs",
+          "date": "2025-03-13",
+          "time": "19:55",
+          "qualifier": null,
+          "raw": "Maariv ..... Sun–Wed 7:47pm, Thurs 7:42pm and Megillah at 7:55pm (Refreshments after Megillah on Thurs evening)"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Plag Hamincha",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "18:01",
+          "qualifier": null,
+          "raw": "Plag Hamincha ...... 6:01pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:15",
+          "qualifier": null,
+          "raw": "Shkia ...... 7:15pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Tzeis hachochavim",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:40",
+          "qualifier": null,
+          "raw": "Tzeis hachochavim ...... 7:40pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "15:00",
+          "qualifier": null,
+          "raw": "• Mincha (Note early start time) ...... 3:00pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "18:01",
+          "qualifier": "not before",
+          "raw": "• Candle lighting ...... not before 6:01pm, not after approx 6:11pm (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "18:11",
+          "qualifier": "not after approx",
+          "raw": "• Candle lighting ...... not before 6:01pm, not after approx 6:11pm (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Minyan Kabbolas Shabbos",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "18:01",
+          "qualifier": null,
+          "raw": "• Minyan Kabbolas Shabbos (L’chu Ne’ranena) ...... 6:01pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:10",
+          "qualifier": "before",
+          "raw": "• Start Kiddush & meal * ...... before 7:10pm or after 7:40pm (earlier than ½ hour before Tzeis Hachochavim) (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:40",
+          "qualifier": "after",
+          "raw": "• Start Kiddush & meal * ...... before 7:10pm or after 7:40pm (earlier than ½ hour before Tzeis Hachochavim) (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kerias Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:40",
+          "qualifier": "from",
+          "raw": "• Kerias Shema (said from Tzeis Hachochavim) ...... from 7:40pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Eat another kezayis bread after Tzeis Hachochavim",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:40",
+          "qualifier": "after",
+          "raw": "• Eat another kezayis bread after Tzeis Hachochavim ....after 7:40pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "18:57",
+          "qualifier": null,
+          "raw": "Candle lighting ...... 6:57pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:05",
+          "qualifier": null,
+          "raw": "Mincha ...... 7:05pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Kabbolas Shabbos followed by Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-14",
+          "time": "19:30",
+          "qualifier": null,
+          "raw": "Kabbolas Shabbos followed by Maariv ...... 7:30pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Chassidus",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-15",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Chassidus ...... 9:15am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-15",
+          "time": "09:57",
+          "qualifier": "finish by",
+          "raw": "Morning Shema ...... finish by 9:57am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-15",
+          "time": "10:00",
+          "qualifier": null,
+          "raw": "Shacharis (followed by Musaf) ...... 10:00am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Halacha shiur, from the Shulchan Aruch Harav",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-15",
+          "time": "18:25",
+          "qualifier": null,
+          "raw": "Halacha shiur, from the Shulchan Aruch Harav ...... 6:25pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Mincha followed by Seder Nigunim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-15",
+          "time": "18:55",
+          "qualifier": null,
+          "raw": "Mincha followed by Seder Nigunim ...... 6:55pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Motzaei Shabbos, Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-15",
+          "time": "19:50",
+          "qualifier": null,
+          "raw": "Motzaei Shabbos, Maariv ...... 7:50pm"
+        }
+      ],
+      "molad_raw": null,
+      "notes": [],
+      "suspected_errata": []
+    },
+    {
+      "type": "week",
+      "title_raw": "The week of Parshas Vayakhel:",
+      "parsha": "Vayakhel",
+      "shabbos_labels": ["Parah"],
+      "hebrew_dates_raw": "16–22 Adar 5785",
+      "civil_start": "2025-03-16",
+      "civil_end": "2025-03-22",
+      "friday": "2025-03-21",
+      "shabbos": "2025-03-22",
+      "entries": [
+        {
+          "section": null,
+          "label": "Mi'sheyakir",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "06:14",
+          "qualifier": "approx",
+          "raw": "Mi’sheyakir (earliest tallis & tefillin) Sun-Fri ...... approx 6:14am"
+        },
+        {
+          "section": null,
+          "label": "Netz Hachamah",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "06:59",
+          "qualifier": null,
+          "raw": "Netz Hachamah (sunrise) Sun-Fri ...... 6:59am"
+        },
+        {
+          "section": null,
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Fri",
+          "date": null,
+          "time": "09:57",
+          "qualifier": "finish by",
+          "raw": "Morning Shema Sun-Fri ...... finish by 9:57am"
+        },
+        {
+          "section": null,
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": "Sun-Thurs",
+          "date": null,
+          "time": "19:07",
+          "qualifier": null,
+          "raw": "Shkia Sun-Thurs ...... 7:07pm"
+        },
+        {
+          "section": null,
+          "label": "Tzeis",
+          "kind": "zman",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "19:37",
+          "qualifier": null,
+          "raw": "Tzeis Sun–Thurs ...... 7:37pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun",
+          "date": "2025-03-16",
+          "time": "08:00",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Sun",
+          "date": "2025-03-16",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon–Fri",
+          "date": null,
+          "time": "06:15",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon–Fri",
+          "date": null,
+          "time": "07:30",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": "Mon, Wed, Thurs",
+          "date": null,
+          "time": "09:00",
+          "qualifier": null,
+          "raw": "Shacharis ...... Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am; also Mon, Wed, Thurs 9:00am"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "14:00",
+          "qualifier": null,
+          "raw": "Mincha ...... Sun–Thurs 2:00pm & 6:57pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "18:57",
+          "qualifier": null,
+          "raw": "Mincha ...... Sun–Thurs 2:00pm & 6:57pm"
+        },
+        {
+          "section": "Davening times during the week",
+          "label": "Maariv",
+          "kind": "minyan",
+          "day_spec_raw": "Sun–Thurs",
+          "date": null,
+          "time": "19:37",
+          "qualifier": null,
+          "raw": "Maariv ...... Sun–Thurs 7:37pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Plag Hamincha",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "17:53",
+          "qualifier": null,
+          "raw": "Plag Hamincha ...... 5:53pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Shkia",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:05",
+          "qualifier": null,
+          "raw": "Shkia ...... 7:05pm"
+        },
+        {
+          "section": "Erev Shabbos key times",
+          "label": "Tzeis hachochavim",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:31",
+          "qualifier": null,
+          "raw": "Tzeis hachochavim ...... 7:31pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "17:33",
+          "qualifier": null,
+          "raw": "• Mincha ...... 5:33pm (must be completely finished before Plag Hamincha)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "17:53",
+          "qualifier": "not before",
+          "raw": "• Candle lighting ...... not before 5:53pm, not after approx 6:03pm (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "18:03",
+          "qualifier": "not after approx",
+          "raw": "• Candle lighting ...... not before 5:53pm, not after approx 6:03pm (not before Plag Hamincha, and not after minyan accepts Shabbos)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Minyan Kabbolas Shabbos",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "17:53",
+          "qualifier": null,
+          "raw": "• Minyan Kabbolas Shabbos (L’chu Ne’ranena) ...... 5:53pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:01",
+          "qualifier": "before",
+          "raw": "• Start Kiddush & meal * ...... before 7:01pm or after 7:31pm (earlier than ½ hour before Tzeis Hachochavim) (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Start Kiddush & meal",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:31",
+          "qualifier": "after",
+          "raw": "• Start Kiddush & meal * ...... before 7:01pm or after 7:31pm (earlier than ½ hour before Tzeis Hachochavim) (or after Kerias Shema – Tzeis Hachochavim)"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Kerias Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:31",
+          "qualifier": "from",
+          "raw": "• Kerias Shema (said from Tzeis Hachochavim) ...... from 7:31pm"
+        },
+        {
+          "section": "Erev Shabbos early minyan (and essential halachic details)",
+          "label": "Eat another kezayis bread after Tzeis Hachochavim",
+          "kind": "other",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:31",
+          "qualifier": "after",
+          "raw": "• Eat another kezayis bread after Tzeis Hachochavim ... after 7:31pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Candle lighting",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "18:47",
+          "qualifier": null,
+          "raw": "Candle lighting ...... 6:47pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Mincha",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "18:55",
+          "qualifier": null,
+          "raw": "Mincha ...... 6:55pm"
+        },
+        {
+          "section": "Erev Shabbos regular times: candle lighting and davening",
+          "label": "Kabbolas Shabbos followed by Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-21",
+          "time": "19:21",
+          "qualifier": null,
+          "raw": "Kabbolas Shabbos followed by Maariv ...... 7:21pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Chassidus",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-22",
+          "time": "09:15",
+          "qualifier": null,
+          "raw": "Chassidus ...... 9:15am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Morning Shema",
+          "kind": "zman",
+          "day_spec_raw": null,
+          "date": "2025-03-22",
+          "time": "09:58",
+          "qualifier": "finish by",
+          "raw": "Morning Shema ...... finish by 9:58am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Shacharis",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-22",
+          "time": "10:00",
+          "qualifier": null,
+          "raw": "Shacharis (followed by Musaf) ...... 10:00am"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Halacha shiur, from the Shulchan Aruch Harav",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-22",
+          "time": "18:15",
+          "qualifier": null,
+          "raw": "Halacha shiur, from the Shulchan Aruch Harav ...... 6:15pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Mincha followed by Seder Nigunim",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-22",
+          "time": "18:45",
+          "qualifier": null,
+          "raw": "Mincha followed by Seder Nigunim ...... 6:45pm"
+        },
+        {
+          "section": "Shabbos Day and Motzaei Shabbos",
+          "label": "Motzaei Shabbos, Maariv",
+          "kind": "minyan",
+          "day_spec_raw": null,
+          "date": "2025-03-22",
+          "time": "19:41",
+          "qualifier": null,
+          "raw": "Motzaei Shabbos, Maariv ...... 7:41pm"
+        }
+      ],
+      "molad_raw": null,
+      "notes": [
+        "Erev Shabbos early minyan (and essential halachic details): (The last one until after Tishrei 5786.)",
+        "* Note: It is customary to not make Kiddush between 6.55pm and 7.55pm Daylight Saving Time in Sydney (based on Mogen Avrohom & Alter Rebbe Shulchan Aruch O.C. 271)."
+      ],
+      "suspected_errata": []
+    }
+  ]
+}
