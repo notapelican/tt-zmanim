@@ -61,3 +61,32 @@
 .ttcc-add-note, .ttcc-add-line { margin-top:6px; }
 
 .ttcc-browse-form { margin:0 0 10px; }
+
+/* Edit/Preview tabs are desktop-hidden; the split shows both panes there. */
+.ttcc-view-tabs { display:none; }
+
+/* Phone mode: stack the panes and switch between Edit and Preview with the
+   tabs, so the tall preview iframe doesn't bury the editor. */
+@media screen and (max-width: 782px) {
+	.ttcc-view-tabs { display:flex; gap:6px; margin:6px 0 10px; }
+	.ttcc-view-tab { flex:1 1 0; text-align:center; }
+	.ttcc-view-tab.is-active { background:#2271b1; border-color:#2271b1; color:#fff; }
+
+	.ttcc-split { flex-direction:column; gap:10px; }
+	.ttcc-editor { flex:1 1 auto; max-width:100%; max-height:none; }
+	.ttcc-preview-wrap { width:100%; }
+	.ttcc-preview { height:72vh; }
+
+	/* one pane at a time, chosen by the tabs */
+	.ttcc-split[data-view="editor"] .ttcc-preview-wrap { display:none; }
+	.ttcc-split[data-view="preview"] .ttcc-editor { display:none; }
+
+	/* roomier tap targets; 16px inputs stop iOS from zooming on focus */
+	.ttcc-toolbar { gap:10px; }
+	.ttcc-toolbar .button, .ttcc-design .button, .ttcc-wa .button { min-height:38px; line-height:36px; }
+	.ttcc-toolbar input, .ttcc-toolbar select, .ttcc-design input, .ttcc-design select, .ttcc-wa-text { font-size:16px; }
+	.ttcc-design { gap:10px 14px; }
+	.ttcc-design .ttcc-gfont { width:100%; min-width:150px; }
+	.ttcc-line { grid-template-columns:1fr 96px auto; }
+	.ttcc-line input.time { width:90px; min-height:34px; }
+}

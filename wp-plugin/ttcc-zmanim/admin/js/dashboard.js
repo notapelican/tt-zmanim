@@ -568,6 +568,18 @@
 	$( 'ttcc-whatsapp' ).addEventListener( 'click', doWhatsApp );
 	$( 'ttcc-wa-copy' ).addEventListener( 'click', copyWhatsApp );
 	$( 'ttcc-wa-close' ).addEventListener( 'click', function () { $( 'ttcc-wa' ).hidden = true; } );
+	// Phone mode: Edit/Preview tabs toggle which pane is visible (CSS handles
+	// the actual show/hide at the mobile breakpoint).
+	document.querySelectorAll( '.ttcc-view-tab' ).forEach( function ( t ) {
+		t.addEventListener( 'click', function () {
+			$( 'ttcc-split' ).setAttribute( 'data-view', t.dataset.view );
+			document.querySelectorAll( '.ttcc-view-tab' ).forEach( function ( x ) {
+				var on = x === t;
+				x.classList.toggle( 'is-active', on );
+				x.setAttribute( 'aria-pressed', on ? 'true' : 'false' );
+			} );
+		} );
+	} );
 	$( 'ttcc-pageguides' ).addEventListener( 'change', function () {
 		if ( state.doc ) { refresh( false ); }
 	} );
