@@ -533,7 +533,7 @@ def _add_header(doc, width, *, multi=False):
     r.font.bold = True
     r.font.color.rgb = BLUE
     if multi:
-        r2 = p.add_run("        www.ttcc.info")
+        r2 = p.add_run("        www.ttcc.org.au")
         r2.font.name = FONT_NAME
         r2.font.size = Pt(13)
         r2.font.bold = True
@@ -550,7 +550,7 @@ def _add_header(doc, width, *, multi=False):
               "Mailing address: PO Box 477 Waverley NSW 2024",
               bold=True, color=BLUE, size=Pt(12), space_after=Pt(2))
     else:
-        _para(doc, "1 Penkivil St, Bondi, NSW.    www.ttcc.info", bold=True, color=BLUE,
+        _para(doc, "1 Penkivil St, Bondi, NSW.    www.ttcc.org.au", bold=True, color=BLUE,
               align=WD_ALIGN_PARAGRAPH.CENTER)
         _para(doc, "Mailing address: PO Box 477 Waverley NSW 2024", bold=True, color=BLUE,
               align=WD_ALIGN_PARAGRAPH.CENTER, space_after=Pt(4))

@@ -271,14 +271,14 @@ def render_html(doc_data: dict) -> str:
     if multi:
         header = (
             '<div class="hdr-row"><div class="hdr-title">Tzemach Tzedek Community Centre'
-            '<span class="url">www.ttcc.info</span></div><div class="bsd">בס״ד</div></div>'
+            '<span class="url">www.ttcc.org.au</span></div><div class="bsd">בס״ד</div></div>'
             '<div class="hdr-sub">Location: 1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;'
             'Mailing address: PO Box 477 Waverley NSW 2024</div>')
     else:
         header = (
             '<div class="hdr-row"><div class="hdr-title">Tzemach Tzedek Community Centre</div>'
             '<div class="bsd">בס״ד</div></div>'
-            '<div class="hdr-sub">1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;&nbsp;www.ttcc.info<br>'
+            '<div class="hdr-sub">1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;&nbsp;www.ttcc.org.au<br>'
             'Mailing address: PO Box 477 Waverley NSW 2024</div>')
 
     body_parts = [header, '<hr class="rule">']
