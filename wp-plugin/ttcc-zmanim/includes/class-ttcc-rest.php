@@ -104,7 +104,8 @@ class TTCC_Zmanim_REST {
 			return $this->service_error( $built );
 		}
 		$variant = 'portrait' === $req->get_param( 'variant' ) ? 'portrait' : 'print';
-		$html    = TTCC_Zmanim_Service_Client::render_html_doc( $built['doc'], $variant );
+		$design  = TTCC_Zmanim_Sheet::design_from_overrides( $overrides );
+		$html    = TTCC_Zmanim_Service_Client::render_html_doc( $built['doc'], $variant, $design );
 		if ( is_wp_error( $html ) ) {
 			return $this->service_error( $html );
 		}

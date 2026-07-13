@@ -141,15 +141,44 @@ class TTCC_Zmanim_Service_Client {
 		return self::post_json( '/generate', $payload );
 	}
 
+	/**
+	 * Build the render payload for a pre-generated doc, adding the modern
+	 * template's logo/theme when requested. $design is the per-sheet design
+	 * array: {template, logo, ...theme fields}. docx has no modern renderer, so
+	 * it always renders classic.
+	 */
+	private static function render_payload( $doc, $variant, $design, $allow_modern = true ) {
+		$payload = array( 'doc' => $doc, 'variant' => $variant );
+		$design  = is_array( $design ) ? $design : array();
+		$template = ( $allow_modern && isset( $design['template'] ) && 'modern' === $design['template'] ) ? 'modern' : 'classic';
+		$payload['template'] = $template;
+		if ( 'modern' === $template ) {
+			if ( ! empty( $design['logo'] ) ) {
+				$payload['logo_url'] = (string) $design['logo'];
+			}
+			$theme = array();
+			foreach ( array( 'heading_font', 'body_font', 'base', 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
+				if ( isset( $design[ $k ] ) && '' !== $design[ $k ] ) {
+					$theme[ $k ] = $design[ $k ];
+				}
+			}
+			if ( $theme ) {
+				$payload['theme'] = $theme;
+			}
+		}
+		return $payload;
+	}
+
 	/** POST /render/html with a pre-generated doc. Returns array{html, engine_version} or WP_Error. */
-	public static function render_html_doc( $doc, $variant = 'print' ) {
-		return self::post_json( '/render/html', array( 'doc' => $doc, 'variant' => $variant ) );
+	public static function render_html_doc( $doc, $variant = 'print', $design = null ) {
+		return self::post_json( '/render/html', self::render_payload( $doc, $variant, $design ) );
 	}
 
 	/** POST /render/{pdf|png|docx} with a pre-generated doc. Returns binary array or WP_Error. */
-	public static function render_binary( $kind, $doc, $variant = 'print' ) {
+	public static function render_binary( $kind, $doc, $variant = 'print', $design = null ) {
 		$path = '/render/' . $kind;
-		return self::post_binary( $path, array( 'doc' => $doc, 'variant' => $variant ) );
+		// The modern layout is HTML-based; .docx keeps the classic renderer.
+		return self::post_binary( $path, self::render_payload( $doc, $variant, $design, 'docx' !== $kind ) );
 	}
 
 	/** GET /profiles/default. Returns array{profiles, notes} or WP_Error. */

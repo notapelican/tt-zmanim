@@ -46,6 +46,40 @@ class TTCC_Zmanim_Sheet {
 		return array( 'doc' => $doc, 'engine_version' => $engine_version );
 	}
 
+	/** Whitelisted font keys the modern renderer accepts. */
+	const FONT_KEYS = array( 'palatino', 'georgia', 'garamond', 'times', 'system', 'helvetica' );
+
+	/**
+	 * Pull the (sanitized) modern-layout design out of a stored overrides blob.
+	 * Returns {template, logo?, heading_font?, body_font?, base?, text_color?,
+	 * callout_bg?, callout_text?}. Colors must be hex, fonts must be whitelisted,
+	 * base is clamped — defense in depth alongside the service's own sanitizing.
+	 */
+	public static function design_from_overrides( $overrides ) {
+		$o        = is_array( $overrides ) ? $overrides : array();
+		$template = ( isset( $o['template'] ) && 'modern' === $o['template'] ) ? 'modern' : 'classic';
+		$d        = ( isset( $o['design'] ) && is_array( $o['design'] ) ) ? $o['design'] : array();
+		$out      = array( 'template' => $template );
+
+		if ( ! empty( $d['logo'] ) ) {
+			$out['logo'] = esc_url_raw( (string) $d['logo'] );
+		}
+		foreach ( array( 'heading_font', 'body_font' ) as $k ) {
+			if ( isset( $d[ $k ] ) && in_array( $d[ $k ], self::FONT_KEYS, true ) ) {
+				$out[ $k ] = $d[ $k ];
+			}
+		}
+		if ( isset( $d['base'] ) && is_numeric( $d['base'] ) ) {
+			$out['base'] = max( 11, min( 24, (float) $d['base'] ) );
+		}
+		foreach ( array( 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
+			if ( isset( $d[ $k ] ) && preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', (string) $d[ $k ] ) ) {
+				$out[ $k ] = $d[ $k ];
+			}
+		}
+		return $out;
+	}
+
 	/**
 	 * A stable key identifying a block for note edits: week blocks by their
 	 * Sunday (civil_start), day blocks by their date.

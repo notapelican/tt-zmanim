@@ -34,6 +34,20 @@ class TTCC_Zmanim_Settings {
 		return $slug;
 	}
 
+	/** Modern-layout defaults new sheets inherit (localized to the dashboard). */
+	public static function design_defaults() {
+		return array(
+			'template'     => 'modern' === self::get( 'default_template', 'classic' ) ? 'modern' : 'classic',
+			'logo'         => (string) self::get( 'default_logo', '' ),
+			'heading_font' => (string) self::get( 'default_heading_font', 'palatino' ),
+			'body_font'    => (string) self::get( 'default_body_font', 'system' ),
+			'base'         => (int) self::get( 'default_base', 15 ),
+			'text_color'   => (string) self::get( 'default_text_color', '#1b1e28' ),
+			'callout_bg'   => (string) self::get( 'default_callout_bg', '#fbeef1' ),
+			'callout_text' => (string) self::get( 'default_callout_text', '#a3324b' ),
+		);
+	}
+
 	public static function register() {
 		register_setting(
 			'ttcc_zmanim',
@@ -48,6 +62,19 @@ class TTCC_Zmanim_Settings {
 		$out['service_token']  = isset( $input['service_token'] ) ? sanitize_text_field( $input['service_token'] ) : '';
 		$existing_slug         = self::pisignage_slug();
 		$out['pisignage_slug'] = $existing_slug ? $existing_slug : wp_generate_password( 20, false, false );
+
+		// Modern-layout design defaults.
+		$out['default_template'] = ( isset( $input['default_template'] ) && 'modern' === $input['default_template'] ) ? 'modern' : 'classic';
+		$out['default_logo']     = isset( $input['default_logo'] ) ? esc_url_raw( trim( $input['default_logo'] ) ) : '';
+		$fonts = TTCC_Zmanim_Sheet::FONT_KEYS;
+		$out['default_heading_font'] = ( isset( $input['default_heading_font'] ) && in_array( $input['default_heading_font'], $fonts, true ) ) ? $input['default_heading_font'] : 'palatino';
+		$out['default_body_font']    = ( isset( $input['default_body_font'] ) && in_array( $input['default_body_font'], $fonts, true ) ) ? $input['default_body_font'] : 'system';
+		$base = isset( $input['default_base'] ) ? (int) $input['default_base'] : 15;
+		$out['default_base'] = max( 11, min( 24, $base ) );
+		foreach ( array( 'default_text_color' => '#1b1e28', 'default_callout_bg' => '#fbeef1', 'default_callout_text' => '#a3324b' ) as $key => $fallback ) {
+			$val = isset( $input[ $key ] ) ? (string) $input[ $key ] : '';
+			$out[ $key ] = preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $val ) ? $val : $fallback;
+		}
 		return $out;
 	}
 
@@ -104,6 +131,76 @@ class TTCC_Zmanim_Settings {
 						</td>
 					</tr>
 					<?php endif; ?>
+				</table>
+
+				<h2><?php esc_html_e( 'Modern layout — defaults', 'ttcc-zmanim' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Starting design for new sheets. Each sheet can override these in the dashboard.', 'ttcc-zmanim' ); ?></p>
+				<?php
+				$d      = self::design_defaults();
+				$fields = self::OPTION;
+				$fonts  = array(
+					'palatino'  => __( 'Palatino (serif)', 'ttcc-zmanim' ),
+					'georgia'   => __( 'Georgia (serif)', 'ttcc-zmanim' ),
+					'garamond'  => __( 'Garamond (serif)', 'ttcc-zmanim' ),
+					'times'     => __( 'Times New Roman', 'ttcc-zmanim' ),
+					'system'    => __( 'System sans', 'ttcc-zmanim' ),
+					'helvetica' => __( 'Helvetica / Arial', 'ttcc-zmanim' ),
+				);
+				?>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Default layout', 'ttcc-zmanim' ); ?></th>
+						<td>
+							<select name="<?php echo esc_attr( $fields ); ?>[default_template]">
+								<option value="classic" <?php selected( $d['template'], 'classic' ); ?>><?php esc_html_e( 'Classic', 'ttcc-zmanim' ); ?></option>
+								<option value="modern" <?php selected( $d['template'], 'modern' ); ?>><?php esc_html_e( 'Modern', 'ttcc-zmanim' ); ?></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="ttcc_default_logo"><?php esc_html_e( 'Default logo URL', 'ttcc-zmanim' ); ?></label></th>
+						<td>
+							<input type="url" id="ttcc_default_logo" name="<?php echo esc_attr( $fields ); ?>[default_logo]" class="regular-text" value="<?php echo esc_attr( $d['logo'] ); ?>" placeholder="https://ttcc.info/logo.png" />
+							<p class="description"><?php esc_html_e( 'Upload the logo to the Media Library and paste its URL. Per-sheet, you can pick a different logo from the dashboard.', 'ttcc-zmanim' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Fonts', 'ttcc-zmanim' ); ?></th>
+						<td>
+							<label><?php esc_html_e( 'Heading', 'ttcc-zmanim' ); ?>
+								<select name="<?php echo esc_attr( $fields ); ?>[default_heading_font]">
+									<?php foreach ( $fonts as $k => $label ) : ?>
+										<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $d['heading_font'], $k ); ?>><?php echo esc_html( $label ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</label>
+							&nbsp;
+							<label><?php esc_html_e( 'Body', 'ttcc-zmanim' ); ?>
+								<select name="<?php echo esc_attr( $fields ); ?>[default_body_font]">
+									<?php foreach ( $fonts as $k => $label ) : ?>
+										<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $d['body_font'], $k ); ?>><?php echo esc_html( $label ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="ttcc_default_base"><?php esc_html_e( 'Base text size', 'ttcc-zmanim' ); ?></label></th>
+						<td><input type="number" id="ttcc_default_base" name="<?php echo esc_attr( $fields ); ?>[default_base]" min="11" max="24" value="<?php echo esc_attr( $d['base'] ); ?>" /> px</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Colors', 'ttcc-zmanim' ); ?></th>
+						<td>
+							<label><?php esc_html_e( 'Text', 'ttcc-zmanim' ); ?>
+								<input type="color" name="<?php echo esc_attr( $fields ); ?>[default_text_color]" value="<?php echo esc_attr( $d['text_color'] ); ?>" /></label>
+							&nbsp;
+							<label><?php esc_html_e( 'Note box', 'ttcc-zmanim' ); ?>
+								<input type="color" name="<?php echo esc_attr( $fields ); ?>[default_callout_bg]" value="<?php echo esc_attr( $d['callout_bg'] ); ?>" /></label>
+							&nbsp;
+							<label><?php esc_html_e( 'Note text', 'ttcc-zmanim' ); ?>
+								<input type="color" name="<?php echo esc_attr( $fields ); ?>[default_callout_text]" value="<?php echo esc_attr( $d['callout_text'] ); ?>" /></label>
+						</td>
+					</tr>
 				</table>
 				<?php submit_button(); ?>
 			</form>

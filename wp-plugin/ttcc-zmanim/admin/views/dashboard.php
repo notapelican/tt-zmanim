@@ -46,6 +46,55 @@ defined( 'ABSPATH' ) || exit;
 
 	<div class="ttcc-range-label" id="ttcc-range-label" role="status" aria-live="polite"></div>
 
+	<div class="ttcc-toolbar ttcc-design-bar">
+		<label><?php esc_html_e( 'Layout', 'ttcc-zmanim' ); ?>
+			<select id="ttcc-layout">
+				<option value="classic"><?php esc_html_e( 'Classic', 'ttcc-zmanim' ); ?></option>
+				<option value="modern"><?php esc_html_e( 'Modern', 'ttcc-zmanim' ); ?></option>
+			</select>
+		</label>
+		<div id="ttcc-design" class="ttcc-design" hidden>
+			<span class="ttcc-logo-field">
+				<span class="ttcc-mini-label"><?php esc_html_e( 'Logo', 'ttcc-zmanim' ); ?></span>
+				<img id="ttcc-logo-preview" class="ttcc-logo-preview" alt="" hidden />
+				<button type="button" class="button button-small" id="ttcc-logo-choose"><?php esc_html_e( 'Choose…', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="button button-small" id="ttcc-logo-remove" hidden><?php esc_html_e( 'Remove', 'ttcc-zmanim' ); ?></button>
+			</span>
+			<label><?php esc_html_e( 'Heading', 'ttcc-zmanim' ); ?>
+				<select id="ttcc-heading-font">
+					<option value="palatino"><?php esc_html_e( 'Palatino (serif)', 'ttcc-zmanim' ); ?></option>
+					<option value="georgia"><?php esc_html_e( 'Georgia (serif)', 'ttcc-zmanim' ); ?></option>
+					<option value="garamond"><?php esc_html_e( 'Garamond (serif)', 'ttcc-zmanim' ); ?></option>
+					<option value="times"><?php esc_html_e( 'Times New Roman', 'ttcc-zmanim' ); ?></option>
+					<option value="system"><?php esc_html_e( 'System sans', 'ttcc-zmanim' ); ?></option>
+					<option value="helvetica"><?php esc_html_e( 'Helvetica / Arial', 'ttcc-zmanim' ); ?></option>
+				</select>
+			</label>
+			<label><?php esc_html_e( 'Body', 'ttcc-zmanim' ); ?>
+				<select id="ttcc-body-font">
+					<option value="system"><?php esc_html_e( 'System sans', 'ttcc-zmanim' ); ?></option>
+					<option value="helvetica"><?php esc_html_e( 'Helvetica / Arial', 'ttcc-zmanim' ); ?></option>
+					<option value="palatino"><?php esc_html_e( 'Palatino (serif)', 'ttcc-zmanim' ); ?></option>
+					<option value="georgia"><?php esc_html_e( 'Georgia (serif)', 'ttcc-zmanim' ); ?></option>
+					<option value="garamond"><?php esc_html_e( 'Garamond (serif)', 'ttcc-zmanim' ); ?></option>
+					<option value="times"><?php esc_html_e( 'Times New Roman', 'ttcc-zmanim' ); ?></option>
+				</select>
+			</label>
+			<label><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
+				<input type="range" id="ttcc-base" min="11" max="24" step="1" />
+			</label>
+			<label class="ttcc-color"><?php esc_html_e( 'Text', 'ttcc-zmanim' ); ?>
+				<input type="color" id="ttcc-text-color" />
+			</label>
+			<label class="ttcc-color"><?php esc_html_e( 'Note box', 'ttcc-zmanim' ); ?>
+				<input type="color" id="ttcc-callout-bg" />
+			</label>
+			<label class="ttcc-color"><?php esc_html_e( 'Note text', 'ttcc-zmanim' ); ?>
+				<input type="color" id="ttcc-callout-text" />
+			</label>
+		</div>
+	</div>
+
 	<div class="ttcc-toolbar ttcc-exports">
 		<strong><?php esc_html_e( 'Export:', 'ttcc-zmanim' ); ?></strong>
 		<button type="button" class="button" data-export="pdf"><?php esc_html_e( 'PDF', 'ttcc-zmanim' ); ?></button>

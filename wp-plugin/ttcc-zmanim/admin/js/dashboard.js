@@ -21,13 +21,31 @@
 		return;
 	}
 
+	// Modern-layout design defaults (a global default set may arrive from
+	// Settings via cfg.designDefaults; fall back to the renderer's own defaults).
+	var DESIGN_DEFAULTS = ( cfg.designDefaults && 'object' === typeof cfg.designDefaults ) ? cfg.designDefaults : {};
+	function defaultDesign() {
+		return {
+			logo:         DESIGN_DEFAULTS.logo || '',
+			heading_font: DESIGN_DEFAULTS.heading_font || 'palatino',
+			body_font:    DESIGN_DEFAULTS.body_font || 'system',
+			base:         parseInt( DESIGN_DEFAULTS.base, 10 ) || 15,
+			text_color:   DESIGN_DEFAULTS.text_color || '#1b1e28',
+			callout_bg:   DESIGN_DEFAULTS.callout_bg || '#fbeef1',
+			callout_text: DESIGN_DEFAULTS.callout_text || '#a3324b'
+		};
+	}
+	function defaultOverrides() {
+		return { lines: {}, notes: {}, template: DESIGN_DEFAULTS.template || 'classic', design: defaultDesign() };
+	}
+
 	var state = {
 		sheetId: parseInt( app.dataset.sheetId || '0', 10 ),
 		start: '',
 		end: '',
 		title: '',
 		status: 'draft',
-		overrides: { lines: {}, notes: {} },
+		overrides: defaultOverrides(),
 		originalNotes: {}, // blockKey -> [strings]
 		doc: null,
 		serviceOk: true
@@ -382,7 +400,8 @@
 	function doGenerate() {
 		state.start = $( 'ttcc-start' ).value;
 		state.end = $( 'ttcc-end' ).value;
-		state.overrides = { lines: {}, notes: {} };
+		// New range clears line/note edits but keeps the chosen layout + design.
+		state.overrides = { lines: {}, notes: {}, template: state.overrides.template, design: state.overrides.design };
 		if ( ! state.start || ! state.end ) { window.alert( 'Pick a start and end date.' ); return; }
 		captureOriginalNotes().then( function () { refresh( true ); } );
 	}
@@ -431,15 +450,83 @@
 			state.start = sheet.start_date;
 			state.end = sheet.end_date;
 			state.status = sheet.status;
-			state.overrides = ( sheet.overrides && sheet.overrides.lines ) ? sheet.overrides : { lines: {}, notes: {} };
+			var ov = ( sheet.overrides && sheet.overrides.lines ) ? sheet.overrides : {};
+			state.overrides = {
+				lines: ov.lines || {}, notes: ov.notes || {},
+				template: ov.template || 'classic',
+				design: Object.assign( defaultDesign(), ov.design || {} )
+			};
 			$( 'ttcc-start' ).value = state.start;
 			$( 'ttcc-end' ).value = state.end;
 			$( 'ttcc-title' ).value = sheet.title || '';
 			$( 'ttcc-status' ).value = state.status;
 			setWeeksSelectFromDates();
+			syncDesignUI();
 			captureOriginalNotes().then( function () { refresh( true ); } );
 		} ).catch( function ( e ) {
 			$( 'ttcc-preview-note' ).textContent = 'Load failed: ' + e.message;
+		} );
+	}
+
+	// --- design panel (modern layout) -------------------------------------
+	function updateLogoPreview() {
+		var img = $( 'ttcc-logo-preview' ), rm = $( 'ttcc-logo-remove' );
+		var url = state.overrides.design.logo;
+		if ( url ) { img.src = url; img.hidden = false; rm.hidden = false; }
+		else { img.removeAttribute( 'src' ); img.hidden = true; rm.hidden = true; }
+	}
+	function syncDesignUI() {
+		var d = state.overrides.design;
+		$( 'ttcc-layout' ).value = state.overrides.template || 'classic';
+		$( 'ttcc-design' ).hidden = ( 'modern' !== state.overrides.template );
+		$( 'ttcc-heading-font' ).value = d.heading_font;
+		$( 'ttcc-body-font' ).value = d.body_font;
+		$( 'ttcc-base' ).value = d.base;
+		$( 'ttcc-text-color' ).value = d.text_color;
+		$( 'ttcc-callout-bg' ).value = d.callout_bg;
+		$( 'ttcc-callout-text' ).value = d.callout_text;
+		updateLogoPreview();
+	}
+	var mediaFrame = null;
+	function chooseLogo() {
+		if ( window.wp && window.wp.media ) {
+			if ( ! mediaFrame ) {
+				mediaFrame = window.wp.media( { title: 'Select logo', button: { text: 'Use this logo' }, multiple: false, library: { type: 'image' } } );
+				mediaFrame.on( 'select', function () {
+					var att = mediaFrame.state().get( 'selection' ).first().toJSON();
+					state.overrides.design.logo = att.url;
+					updateLogoPreview();
+					schedulePreview();
+				} );
+			}
+			mediaFrame.open();
+			return;
+		}
+		var url = window.prompt( 'Logo image URL' );
+		if ( url ) { state.overrides.design.logo = url; updateLogoPreview(); schedulePreview(); }
+	}
+	function wireDesign() {
+		$( 'ttcc-layout' ).addEventListener( 'change', function () {
+			state.overrides.template = $( 'ttcc-layout' ).value;
+			$( 'ttcc-design' ).hidden = ( 'modern' !== state.overrides.template );
+			if ( state.doc ) { refresh( false ); }
+		} );
+		[ [ 'ttcc-heading-font', 'heading_font' ], [ 'ttcc-body-font', 'body_font' ],
+		  [ 'ttcc-base', 'base' ], [ 'ttcc-text-color', 'text_color' ],
+		  [ 'ttcc-callout-bg', 'callout_bg' ], [ 'ttcc-callout-text', 'callout_text' ] ]
+		.forEach( function ( pair ) {
+			$( pair[ 0 ] ).addEventListener( 'input', function () {
+				var v = $( pair[ 0 ] ).value;
+				if ( 'base' === pair[ 1 ] ) { v = parseInt( v, 10 ) || 15; }
+				state.overrides.design[ pair[ 1 ] ] = v;
+				schedulePreview();
+			} );
+		} );
+		$( 'ttcc-logo-choose' ).addEventListener( 'click', function ( e ) { e.preventDefault(); chooseLogo(); } );
+		$( 'ttcc-logo-remove' ).addEventListener( 'click', function () {
+			state.overrides.design.logo = '';
+			updateLogoPreview();
+			schedulePreview();
 		} );
 	}
 
@@ -471,6 +558,8 @@
 	$( 'ttcc-end' ).value = addDays( sun, 6 );
 	$( 'ttcc-weeks' ).value = '1';
 	updateRangeLabel( null );
+	wireDesign();
+	syncDesignUI();
 
 	pollHealth();
 	setInterval( pollHealth, 30000 );

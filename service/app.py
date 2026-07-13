@@ -69,6 +69,9 @@ class RenderHtmlRequest(GenerateRequest):
     doc: dict | None = None          # pre-generated generate() dict; render it
                                      # directly (reprint a stored snapshot) with
                                      # no recompute
+    template: str = "classic"        # "classic" (engine renderer) | "modern"
+    logo_url: str | None = None      # modern only: masthead logo (URL/data URI)
+    theme: dict | None = None        # modern only: fonts/size/colors (sanitized)
 
 
 # --- helpers ----------------------------------------------------------------
@@ -129,6 +132,19 @@ def _resolve_doc(req: RenderHtmlRequest) -> dict:
     return _generate_doc(req)
 
 
+def _render_html_str(req: RenderHtmlRequest, doc: dict) -> str:
+    """Render the resolved doc to HTML with the requested template. The modern
+    template is a service-side renderer; classic is the engine renderer. Both
+    consume the identical doc — no time is recomputed."""
+    if req.template == "modern":
+        from .render_modern import render_modern
+
+        return render_modern(
+            doc, variant=req.variant, logo_url=req.logo_url, theme=req.theme
+        )
+    return render_html(doc)
+
+
 # --- endpoints --------------------------------------------------------------
 
 @app.get("/health")
@@ -151,14 +167,14 @@ def post_generate(req: GenerateRequest) -> dict:
 @app.post("/render/html", dependencies=[Depends(require_auth)])
 def post_render_html(req: RenderHtmlRequest) -> dict:
     doc = _resolve_doc(req)
-    return {"html": render_html(doc), "engine_version": engine_version()}
+    return {"html": _render_html_str(req, doc), "engine_version": engine_version()}
 
 
 @app.post("/render/pdf", dependencies=[Depends(require_auth)])
 def post_render_pdf(req: RenderHtmlRequest) -> Response:
     from .raster import html_to_pdf
 
-    html = render_html(_resolve_doc(req))
+    html = _render_html_str(req, _resolve_doc(req))
     pdf = html_to_pdf(html, timeout_ms=SETTINGS.render_timeout_ms)
     return Response(content=pdf, media_type="application/pdf")
 
@@ -167,7 +183,7 @@ def post_render_pdf(req: RenderHtmlRequest) -> Response:
 def post_render_png(req: RenderHtmlRequest) -> Response:
     from .raster import html_to_png
 
-    html = render_html(_resolve_doc(req))
+    html = _render_html_str(req, _resolve_doc(req))
     png = html_to_png(
         html, variant=req.variant, timeout_ms=SETTINGS.render_timeout_ms
     )

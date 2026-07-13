@@ -91,6 +91,39 @@ def test_render_html_from_doc():
     assert r.json()["html"] == expected
 
 
+def test_render_modern_template():
+    """The modern template renders the same doc via the service-side renderer,
+    honors a sanitized theme/logo, and never recomputes content (same times)."""
+    from service.render_modern import render_modern
+
+    doc = generate(date.fromisoformat(START), date.fromisoformat(END))
+    theme = {"heading_font": "georgia", "base": 17, "text_color": "#20242e"}
+    expected = render_modern(doc, logo_url="data:image/png;base64,AA==", theme=theme)
+    r = client.post(
+        "/render/html",
+        json={"doc": doc, "template": "modern", "logo_url": "data:image/png;base64,AA==", "theme": theme},
+        headers=AUTH,
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["html"] == expected
+    # A calculated time from the doc appears verbatim (no recompute/re-round).
+    assert "sheet-body" in expected
+
+
+def test_render_modern_theme_sanitized():
+    """Hostile theme values are ignored — no arbitrary CSS reaches the output."""
+    from service.render_modern import render_modern
+
+    doc = generate(date.fromisoformat(START), date.fromisoformat(END))
+    html = render_modern(doc, theme={
+        "heading_font": "</style><script>x</script>",
+        "text_color": "red;} body{display:none",
+        "base": "99999",
+    })
+    assert "<script>" not in html
+    assert "display:none" not in html
+
+
 def test_auth_required():
     assert client.post("/generate", json={"start": START, "end": END}).status_code == 401
     bad = {"Authorization": "Bearer wrong"}

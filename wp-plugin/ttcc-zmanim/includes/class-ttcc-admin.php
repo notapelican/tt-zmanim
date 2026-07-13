@@ -59,7 +59,9 @@ class TTCC_Zmanim_Admin {
 			// Archive/settings render server-side; no editor JS needed.
 			return;
 		} else {
+			wp_enqueue_media(); // logo picker in the Design panel
 			wp_enqueue_script( 'ttcc-dashboard' );
+			$common['designDefaults'] = TTCC_Zmanim_Settings::design_defaults();
 			wp_localize_script( 'ttcc-dashboard', 'TTCC', $common );
 		}
 	}
@@ -110,6 +112,7 @@ class TTCC_Zmanim_Admin {
 				wp_die( esc_html__( 'Timesheet not found.', 'ttcc-zmanim' ) );
 			}
 			$doc      = $sheet['blocks'];
+			$design   = TTCC_Zmanim_Sheet::design_from_overrides( isset( $sheet['overrides'] ) ? $sheet['overrides'] : array() );
 			$basename = 'ttcc-' . $sheet['start_date'];
 		} else {
 			$start = isset( $_GET['start'] ) ? sanitize_text_field( wp_unslash( $_GET['start'] ) ) : '';
@@ -127,10 +130,11 @@ class TTCC_Zmanim_Admin {
 				wp_die( esc_html( $built->get_error_message() ) );
 			}
 			$doc      = $built['doc'];
+			$design   = TTCC_Zmanim_Sheet::design_from_overrides( $overrides );
 			$basename = 'ttcc-' . $start;
 		}
 
-		$result = TTCC_Zmanim_Service_Client::render_binary( $kind, $doc, $variant );
+		$result = TTCC_Zmanim_Service_Client::render_binary( $kind, $doc, $variant, $design );
 		if ( is_wp_error( $result ) ) {
 			wp_die( esc_html( $result->get_error_message() ) );
 		}
