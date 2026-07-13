@@ -1,0 +1,44 @@
+/* TTCC Timesheets admin styles */
+.ttcc-toolbar { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; margin:10px 0; }
+.ttcc-toolbar label { display:flex; flex-direction:column; font-size:12px; font-weight:600; }
+.ttcc-toolbar input[type=date], .ttcc-toolbar input[type=text], .ttcc-toolbar select { margin-top:2px; }
+.ttcc-title-field { min-width:220px; }
+.ttcc-title-field input { width:100%; }
+.ttcc-spacer { flex:1; }
+.ttcc-exports { gap:8px; align-items:center; }
+.ttcc-engine-version { color:#777; font-size:11px; font-family:monospace; margin-left:auto; }
+
+.ttcc-health { padding:8px 12px; margin:8px 0; border-left:4px solid #999; background:#fff; }
+.ttcc-health.ok { border-color:#46b450; }
+.ttcc-health.down { border-color:#dc3232; background:#fbeaea; }
+
+.ttcc-split { display:flex; gap:16px; align-items:flex-start; }
+.ttcc-editor { flex:0 0 42%; max-width:42%; background:#fff; border:1px solid #dcdcde; border-radius:4px; padding:10px 12px; max-height:80vh; overflow:auto; }
+.ttcc-preview-wrap { flex:1; }
+.ttcc-preview { width:100%; height:80vh; background:#fff; border:1px solid #dcdcde; border-radius:4px; }
+.ttcc-preview-note { font-size:12px; color:#777; margin-bottom:4px; min-height:16px; }
+
+.ttcc-block { border-top:2px solid #2271b1; margin-top:14px; padding-top:6px; }
+.ttcc-block:first-child { border-top:0; margin-top:0; }
+.ttcc-block h3 { margin:2px 0 6px; font-size:14px; }
+.ttcc-section-head { font-weight:700; font-size:12px; color:#50575e; margin:10px 0 2px; text-transform:none; }
+
+.ttcc-line { display:grid; grid-template-columns:1fr 88px auto; gap:6px; align-items:center; padding:3px 0; border-bottom:1px dotted #eee; }
+.ttcc-line.suppressed { opacity:.45; }
+.ttcc-line .lbl { font-size:13px; }
+.ttcc-line .lbl .dayspec { color:#787c82; }
+.ttcc-line input.time { width:82px; font-family:monospace; }
+.ttcc-line .badge { font-size:10px; padding:1px 5px; border-radius:8px; background:#eef; color:#334; margin-left:4px; }
+.ttcc-line .badge.override { background:#fff3cd; color:#664d03; }
+.ttcc-line .badge.manual { background:#e7f6ec; color:#1a7f37; }
+.ttcc-line .badge.zman { background:#e9e9ff; color:#3b3b8f; }
+.ttcc-line .acts { display:flex; gap:4px; justify-content:flex-end; }
+.ttcc-line .acts button { padding:0 6px; min-height:24px; line-height:22px; }
+.ttcc-warn { color:#b32d2e; font-size:11px; grid-column:1 / -1; }
+
+.ttcc-notes { margin:8px 0; }
+.ttcc-notes .note { display:flex; gap:6px; align-items:flex-start; font-size:12px; padding:2px 0; }
+.ttcc-notes textarea { width:100%; }
+.ttcc-add-note, .ttcc-add-line { margin-top:6px; }
+
+.ttcc-browse-form { margin:0 0 10px; }

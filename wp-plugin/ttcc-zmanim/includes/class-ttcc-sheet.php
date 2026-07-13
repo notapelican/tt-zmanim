@@ -1,0 +1,92 @@
+<?php
+/**
+ * Sheet assembly helper.
+ *
+ * The engine's override mechanism edits printed *lines* (keyed by rule_id) and
+ * is applied inside the service's /generate. Block-level *notes* are not lines,
+ * so the engine can't edit them — this class applies note add/remove edits
+ * plugin-side to the generated doc before rendering. That keeps the service a
+ * pure pass-through and the note-editing UX entirely in WordPress.
+ *
+ * Stored per-sheet override shape:
+ *   {
+ *     "lines": { "<rule_id>": {"time":"19:15"} | {"suppress":true}, "add:<id>": {..line..} },
+ *     "notes": { "<block_key>": { "removed": [int,...], "added": ["text",...] } }
+ *   }
+ *
+ * @package TTCC_Zmanim
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class TTCC_Zmanim_Sheet {
+
+	/**
+	 * Generate a doc for a date range and apply the stored overrides.
+	 * Returns array{doc:array, engine_version:string} or WP_Error.
+	 */
+	public static function build( $start, $end, $overrides ) {
+		$overrides = is_array( $overrides ) ? $overrides : array();
+		$lines     = isset( $overrides['lines'] ) && is_array( $overrides['lines'] ) ? $overrides['lines'] : array();
+		$notes     = isset( $overrides['notes'] ) && is_array( $overrides['notes'] ) ? $overrides['notes'] : array();
+
+		$set      = TTCC_Zmanim_Storage::get_active_profile_set();
+		$profiles = $set && ! empty( $set['profiles'] ) ? $set['profiles'] : null;
+		$note_lib = $set && ! empty( $set['notes'] ) ? $set['notes'] : null;
+
+		$doc = TTCC_Zmanim_Service_Client::generate( $start, $end, $lines, $profiles, $note_lib );
+		if ( is_wp_error( $doc ) ) {
+			return $doc;
+		}
+		$engine_version = isset( $doc['engine_version'] ) ? (string) $doc['engine_version'] : '';
+		unset( $doc['engine_version'] );
+
+		$doc = self::apply_note_edits( $doc, $notes );
+
+		return array( 'doc' => $doc, 'engine_version' => $engine_version );
+	}
+
+	/**
+	 * A stable key identifying a block for note edits: week blocks by their
+	 * Sunday (civil_start), day blocks by their date.
+	 */
+	public static function block_key( $block ) {
+		if ( isset( $block['type'] ) && 'day' === $block['type'] ) {
+			return 'day:' . ( isset( $block['date'] ) ? $block['date'] : '' );
+		}
+		return 'week:' . ( isset( $block['civil_start'] ) ? $block['civil_start'] : '' );
+	}
+
+	/**
+	 * Apply per-block note edits: drop removed indices (relative to the engine's
+	 * original notes order), then append sanitized free-text additions.
+	 */
+	public static function apply_note_edits( $doc, $note_edits ) {
+		if ( empty( $doc['blocks'] ) || ! is_array( $doc['blocks'] ) ) {
+			return $doc;
+		}
+		foreach ( $doc['blocks'] as &$block ) {
+			$key    = self::block_key( $block );
+			$orig   = isset( $block['notes'] ) && is_array( $block['notes'] ) ? array_values( $block['notes'] ) : array();
+			$edit   = isset( $note_edits[ $key ] ) && is_array( $note_edits[ $key ] ) ? $note_edits[ $key ] : array();
+			$removed = isset( $edit['removed'] ) && is_array( $edit['removed'] ) ? array_map( 'intval', $edit['removed'] ) : array();
+			$added   = isset( $edit['added'] ) && is_array( $edit['added'] ) ? $edit['added'] : array();
+
+			$kept = array();
+			foreach ( $orig as $i => $text ) {
+				if ( ! in_array( $i, $removed, true ) ) {
+					$kept[] = $text;
+				}
+			}
+			foreach ( $added as $text ) {
+				$text = trim( wp_strip_all_tags( (string) $text ) );
+				if ( '' !== $text ) {
+					$kept[] = $text;
+				}
+			}
+			$block['notes'] = $kept;
+		}
+		unset( $block );
+		return $doc;
+	}
+}
