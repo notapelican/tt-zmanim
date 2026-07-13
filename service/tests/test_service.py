@@ -124,6 +124,22 @@ def test_render_modern_theme_sanitized():
     assert "display:none" not in html
 
 
+def test_render_whatsapp():
+    """WhatsApp broadcast keeps essential minyan times, drops astronomical zmanim,
+    and reproduces engine times verbatim."""
+    r = client.post(
+        "/render/whatsapp", json={"start": "2026-07-12", "end": "2026-07-18"}, headers=AUTH
+    )
+    assert r.status_code == 200, r.text
+    text = r.json()["text"]
+    assert "Shacharis" in text and "Candle lighting" in text
+    assert "*🕍 Tzemach Tzedek" in text
+    assert "::" not in text  # no double-colon on the Shacharis label
+    # astronomical zmanim are omitted from the broadcast
+    for dropped in ("Mi'sheyakir", "Netz Hachamah", "Plag Hamincha", "Tzeis hachochavim"):
+        assert dropped not in text, dropped
+
+
 def test_auth_required():
     assert client.post("/generate", json={"start": START, "end": END}).status_code == 401
     bad = {"Authorization": "Bearer wrong"}

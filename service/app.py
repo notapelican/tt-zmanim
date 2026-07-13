@@ -170,6 +170,14 @@ def post_render_html(req: RenderHtmlRequest) -> dict:
     return {"html": _render_html_str(req, doc), "engine_version": engine_version()}
 
 
+@app.post("/render/whatsapp", dependencies=[Depends(require_auth)])
+def post_render_whatsapp(req: RenderHtmlRequest) -> dict:
+    from .render_whatsapp import render_whatsapp
+
+    doc = _resolve_doc(req)
+    return {"text": render_whatsapp(doc), "engine_version": engine_version()}
+
+
 @app.post("/render/pdf", dependencies=[Depends(require_auth)])
 def post_render_pdf(req: RenderHtmlRequest) -> Response:
     from .raster import html_to_pdf

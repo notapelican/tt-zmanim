@@ -157,7 +157,7 @@ class TTCC_Zmanim_Service_Client {
 				$payload['logo_url'] = (string) $design['logo'];
 			}
 			$theme = array();
-			foreach ( array( 'heading_font', 'body_font', 'base', 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
+			foreach ( array( 'heading_font', 'body_font', 'heading_google', 'body_google', 'base', 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
 				if ( isset( $design[ $k ] ) && '' !== $design[ $k ] ) {
 					$theme[ $k ] = $design[ $k ];
 				}
@@ -179,6 +179,11 @@ class TTCC_Zmanim_Service_Client {
 		$path = '/render/' . $kind;
 		// The modern layout is HTML-based; .docx keeps the classic renderer.
 		return self::post_binary( $path, self::render_payload( $doc, $variant, $design, 'docx' !== $kind ) );
+	}
+
+	/** POST /render/whatsapp with a pre-generated doc. Returns array{text, engine_version} or WP_Error. */
+	public static function whatsapp_text( $doc ) {
+		return self::post_json( '/render/whatsapp', array( 'doc' => $doc ) );
 	}
 
 	/** GET /profiles/default. Returns array{profiles, notes} or WP_Error. */

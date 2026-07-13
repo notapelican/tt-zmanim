@@ -110,6 +110,36 @@ def _color(v) -> str | None:
     return None
 
 
+_GF_RE = re.compile(r"[^A-Za-z0-9 ]")
+
+
+def _gfamily(v) -> str | None:
+    """Sanitize a Google-Fonts family name to letters/digits/spaces so it can be
+    safely dropped into a stylesheet URL and a font-family value."""
+    if not isinstance(v, str):
+        return None
+    name = _GF_RE.sub("", v).strip()
+    return name[:50] if name else None
+
+
+def _google_links(theme: dict | None) -> str:
+    """<link> tags loading any requested Google-Fonts families. Chromium fetches
+    these at render time; if egress is blocked the fallback stack is used."""
+    if not isinstance(theme, dict):
+        return ""
+    fams: list[str] = []
+    for k in ("heading_google", "body_google"):
+        fam = _gfamily(theme.get(k))
+        if fam and fam not in fams:
+            fams.append(fam)
+    links = "".join(
+        f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+        f'family={fam.replace(" ", "+")}:wght@400;600;700&display=swap">'
+        for fam in fams
+    )
+    return links
+
+
 def _theme_css(theme: dict | None) -> str:
     """Build a sanitized ``:root`` / ``.sheet`` override block from the theme
     dict. Only whitelisted fonts and hex colors are honored; everything else is
@@ -123,6 +153,14 @@ def _theme_css(theme: dict | None) -> str:
     bf = theme.get("body_font")
     if bf in _FONTS:
         root.append(f"--sans:{_FONTS[bf]};")
+    # Custom Google-Fonts families win over the whitelisted stacks (appended
+    # after, so the later --serif/--sans declaration takes effect).
+    hg = _gfamily(theme.get("heading_google"))
+    if hg:
+        root.append(f'--serif:"{hg}",Georgia,"Times New Roman",serif;')
+    bg = _gfamily(theme.get("body_google"))
+    if bg:
+        root.append(f'--sans:"{bg}",-apple-system,"Segoe UI",Arial,sans-serif;')
     text = _color(theme.get("text_color"))
     if text:
         root.append(f"--ink:{text};--soft:{text};")
@@ -295,5 +333,5 @@ def render_modern(doc_data: dict, *, variant: str = "print",
     return (
         '<!doctype html><html><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        f'<style>{_CSS}</style>{_theme_css(theme)}</head>'
+        f'<style>{_CSS}</style>{_google_links(theme)}{_theme_css(theme)}</head>'
         f'<body class="sheet-body"><div class="sheet">{body}</div></body></html>')

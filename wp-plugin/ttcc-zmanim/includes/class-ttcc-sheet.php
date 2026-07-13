@@ -69,6 +69,14 @@ class TTCC_Zmanim_Sheet {
 				$out[ $k ] = $d[ $k ];
 			}
 		}
+		foreach ( array( 'heading_google', 'body_google' ) as $k ) {
+			if ( ! empty( $d[ $k ] ) ) {
+				$name = trim( preg_replace( '/[^A-Za-z0-9 ]/', '', (string) $d[ $k ] ) );
+				if ( '' !== $name ) {
+					$out[ $k ] = substr( $name, 0, 50 );
+				}
+			}
+		}
 		if ( isset( $d['base'] ) && is_numeric( $d['base'] ) ) {
 			$out['base'] = max( 11, min( 24, (float) $d['base'] ) );
 		}

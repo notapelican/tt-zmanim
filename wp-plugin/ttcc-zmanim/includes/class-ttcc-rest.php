@@ -30,6 +30,12 @@ class TTCC_Zmanim_REST {
 			'permission_callback' => $perm,
 		) );
 
+		register_rest_route( self::NS, '/whatsapp', array(
+			'methods'             => 'POST',
+			'callback'            => array( $this, 'whatsapp' ),
+			'permission_callback' => $perm,
+		) );
+
 		register_rest_route( self::NS, '/timesheets', array(
 			array(
 				'methods'             => 'GET',
@@ -114,6 +120,30 @@ class TTCC_Zmanim_REST {
 			'doc'            => $built['doc'],
 			'engine_version' => $built['engine_version'],
 		) );
+	}
+
+	/**
+	 * Build a doc for the range + overrides and render the WhatsApp broadcast.
+	 * Returns {text}. 503 if the service is unreachable.
+	 */
+	public function whatsapp( WP_REST_Request $req ) {
+		$start = $this->req_date( $req, 'start' );
+		$end   = $this->req_date( $req, 'end' );
+		if ( ! $start || ! $end ) {
+			return new WP_Error( 'ttcc_bad_request', __( 'start and end (YYYY-MM-DD) are required.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
+		}
+		$overrides = $req->get_param( 'overrides' );
+		$overrides = is_array( $overrides ) ? $overrides : array();
+
+		$built = TTCC_Zmanim_Sheet::build( $start, $end, $overrides );
+		if ( is_wp_error( $built ) ) {
+			return $this->service_error( $built );
+		}
+		$res = TTCC_Zmanim_Service_Client::whatsapp_text( $built['doc'] );
+		if ( is_wp_error( $res ) ) {
+			return $this->service_error( $res );
+		}
+		return rest_ensure_response( array( 'text' => isset( $res['text'] ) ? $res['text'] : '' ) );
 	}
 
 	public function list_timesheets() {

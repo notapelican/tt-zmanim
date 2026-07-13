@@ -29,6 +29,8 @@
 			logo:         DESIGN_DEFAULTS.logo || '',
 			heading_font: DESIGN_DEFAULTS.heading_font || 'palatino',
 			body_font:    DESIGN_DEFAULTS.body_font || 'system',
+			heading_google: DESIGN_DEFAULTS.heading_google || '',
+			body_google:  DESIGN_DEFAULTS.body_google || '',
 			base:         parseInt( DESIGN_DEFAULTS.base, 10 ) || 15,
 			text_color:   DESIGN_DEFAULTS.text_color || '#1b1e28',
 			callout_bg:   DESIGN_DEFAULTS.callout_bg || '#fbeef1',
@@ -91,7 +93,7 @@
 			e.textContent = ( cfg.i18n && cfg.i18n.offline ) || ( 'Sheet service offline: ' + ( h && h.error || '' ) );
 		}
 		var dis = ! ok;
-		[ 'ttcc-generate' ].forEach( function ( id ) { if ( $( id ) ) { $( id ).disabled = dis; } } );
+		[ 'ttcc-generate', 'ttcc-whatsapp' ].forEach( function ( id ) { if ( $( id ) ) { $( id ).disabled = dis; } } );
 		document.querySelectorAll( '[data-export]' ).forEach( function ( b ) { b.disabled = dis; } );
 	}
 	function pollHealth() {
@@ -468,6 +470,31 @@
 		} );
 	}
 
+	// --- WhatsApp broadcast -----------------------------------------------
+	function doWhatsApp() {
+		if ( ! state.start || ! state.end ) { window.alert( 'Pick a start and end date, then Generate.' ); return; }
+		var panel = $( 'ttcc-wa' ), ta = $( 'ttcc-wa-text' ), st = $( 'ttcc-wa-status' );
+		panel.hidden = false;
+		st.textContent = '';
+		ta.value = '…';
+		api( '/whatsapp', 'POST', { start: state.start, end: state.end, overrides: state.overrides } )
+			.then( function ( data ) { ta.value = data.text || ''; } )
+			.catch( function ( e ) {
+				ta.value = '';
+				st.textContent = 'Failed: ' + e.message;
+				if ( 503 === e.status ) { setHealth( false, { error: e.message } ); }
+			} );
+	}
+	function copyWhatsApp() {
+		var ta = $( 'ttcc-wa-text' ), st = $( 'ttcc-wa-status' );
+		var done = function () { st.textContent = 'Copied!'; };
+		if ( navigator.clipboard && navigator.clipboard.writeText ) {
+			navigator.clipboard.writeText( ta.value ).then( done, function () { ta.select(); document.execCommand( 'copy' ); done(); } );
+		} else {
+			ta.select(); document.execCommand( 'copy' ); done();
+		}
+	}
+
 	// --- design panel (modern layout) -------------------------------------
 	function updateLogoPreview() {
 		var img = $( 'ttcc-logo-preview' ), rm = $( 'ttcc-logo-remove' );
@@ -481,6 +508,8 @@
 		$( 'ttcc-design' ).hidden = ( 'modern' !== state.overrides.template );
 		$( 'ttcc-heading-font' ).value = d.heading_font;
 		$( 'ttcc-body-font' ).value = d.body_font;
+		$( 'ttcc-heading-google' ).value = d.heading_google || '';
+		$( 'ttcc-body-google' ).value = d.body_google || '';
 		$( 'ttcc-base' ).value = d.base;
 		$( 'ttcc-text-color' ).value = d.text_color;
 		$( 'ttcc-callout-bg' ).value = d.callout_bg;
@@ -512,6 +541,7 @@
 			if ( state.doc ) { refresh( false ); }
 		} );
 		[ [ 'ttcc-heading-font', 'heading_font' ], [ 'ttcc-body-font', 'body_font' ],
+		  [ 'ttcc-heading-google', 'heading_google' ], [ 'ttcc-body-google', 'body_google' ],
 		  [ 'ttcc-base', 'base' ], [ 'ttcc-text-color', 'text_color' ],
 		  [ 'ttcc-callout-bg', 'callout_bg' ], [ 'ttcc-callout-text', 'callout_text' ] ]
 		.forEach( function ( pair ) {
@@ -533,6 +563,9 @@
 	// --- wire up ----------------------------------------------------------
 	$( 'ttcc-generate' ).addEventListener( 'click', doGenerate );
 	$( 'ttcc-save' ).addEventListener( 'click', doSave );
+	$( 'ttcc-whatsapp' ).addEventListener( 'click', doWhatsApp );
+	$( 'ttcc-wa-copy' ).addEventListener( 'click', copyWhatsApp );
+	$( 'ttcc-wa-close' ).addEventListener( 'click', function () { $( 'ttcc-wa' ).hidden = true; } );
 	$( 'ttcc-pageguides' ).addEventListener( 'change', function () {
 		if ( state.doc ) { refresh( false ); }
 	} );

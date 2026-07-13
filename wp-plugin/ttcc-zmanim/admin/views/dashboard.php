@@ -80,6 +80,12 @@ defined( 'ABSPATH' ) || exit;
 					<option value="times"><?php esc_html_e( 'Times New Roman', 'ttcc-zmanim' ); ?></option>
 				</select>
 			</label>
+			<label title="<?php esc_attr_e( 'Optional: a Google Fonts family name, e.g. Playfair Display. Overrides the Heading choice.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Heading (Google)', 'ttcc-zmanim' ); ?>
+				<input type="text" id="ttcc-heading-google" class="ttcc-gfont" placeholder="e.g. Playfair Display" />
+			</label>
+			<label title="<?php esc_attr_e( 'Optional: a Google Fonts family name for body text. Overrides the Body choice.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Body (Google)', 'ttcc-zmanim' ); ?>
+				<input type="text" id="ttcc-body-google" class="ttcc-gfont" placeholder="e.g. Inter" />
+			</label>
 			<label><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
 				<input type="range" id="ttcc-base" min="11" max="24" step="1" />
 			</label>
@@ -100,7 +106,19 @@ defined( 'ABSPATH' ) || exit;
 		<button type="button" class="button" data-export="pdf"><?php esc_html_e( 'PDF', 'ttcc-zmanim' ); ?></button>
 		<button type="button" class="button" data-export="png" data-variant="portrait"><?php esc_html_e( 'PNG (portrait)', 'ttcc-zmanim' ); ?></button>
 		<button type="button" class="button" data-export="docx"><?php esc_html_e( 'Word (.docx)', 'ttcc-zmanim' ); ?></button>
+		<button type="button" class="button" id="ttcc-whatsapp"><?php esc_html_e( 'WhatsApp message', 'ttcc-zmanim' ); ?></button>
 		<span class="ttcc-engine-version" id="ttcc-engine-version"></span>
+	</div>
+
+	<div class="ttcc-wa" id="ttcc-wa" hidden>
+		<div class="ttcc-wa-head">
+			<strong><?php esc_html_e( 'WhatsApp broadcast', 'ttcc-zmanim' ); ?></strong>
+			<button type="button" class="button button-small" id="ttcc-wa-copy"><?php esc_html_e( 'Copy', 'ttcc-zmanim' ); ?></button>
+			<button type="button" class="button button-small" id="ttcc-wa-close"><?php esc_html_e( 'Close', 'ttcc-zmanim' ); ?></button>
+			<span class="ttcc-wa-status" id="ttcc-wa-status" role="status" aria-live="polite"></span>
+		</div>
+		<textarea id="ttcc-wa-text" class="ttcc-wa-text" rows="16" readonly></textarea>
+		<p class="description"><?php esc_html_e( 'Essential minyan times only. Paste into WhatsApp — the *asterisks* become bold.', 'ttcc-zmanim' ); ?></p>
 	</div>
 
 	<div class="ttcc-split">
