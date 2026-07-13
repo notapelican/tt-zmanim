@@ -17,6 +17,15 @@ defined( 'ABSPATH' ) || exit;
 		<label><?php esc_html_e( 'Week of (Sunday)', 'ttcc-zmanim' ); ?>
 			<input type="date" id="ttcc-start" />
 		</label>
+		<label><?php esc_html_e( 'Weeks', 'ttcc-zmanim' ); ?>
+			<select id="ttcc-weeks">
+				<option value="1"><?php esc_html_e( '1 week', 'ttcc-zmanim' ); ?></option>
+				<option value="2"><?php esc_html_e( '2 weeks', 'ttcc-zmanim' ); ?></option>
+				<option value="3"><?php esc_html_e( '3 weeks', 'ttcc-zmanim' ); ?></option>
+				<option value="4"><?php esc_html_e( '4 weeks', 'ttcc-zmanim' ); ?></option>
+				<option value="custom"><?php esc_html_e( 'Custom…', 'ttcc-zmanim' ); ?></option>
+			</select>
+		</label>
 		<label><?php esc_html_e( 'Through', 'ttcc-zmanim' ); ?>
 			<input type="date" id="ttcc-end" />
 		</label>
@@ -34,6 +43,8 @@ defined( 'ABSPATH' ) || exit;
 			<label><input type="checkbox" id="ttcc-pageguides" checked /> <?php esc_html_e( 'Show page boundaries', 'ttcc-zmanim' ); ?></label>
 		</span>
 	</div>
+
+	<div class="ttcc-range-label" id="ttcc-range-label" role="status" aria-live="polite"></div>
 
 	<div class="ttcc-toolbar ttcc-exports">
 		<strong><?php esc_html_e( 'Export:', 'ttcc-zmanim' ); ?></strong>

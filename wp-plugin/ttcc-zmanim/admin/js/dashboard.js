@@ -94,6 +94,49 @@
 		d.setDate( d.getDate() + n );
 		return isoOf( d );
 	}
+	function daysBetween( a, b ) {
+		return Math.round( ( new Date( b + 'T00:00:00' ) - new Date( a + 'T00:00:00' ) ) / 86400000 );
+	}
+
+	// --- multi-week range -------------------------------------------------
+	// The engine already lays out multiple weeks (two-column stacked sheet)
+	// for any range spanning >1 week; this UI just makes the range easy to set
+	// and shows how many weeks it covers.
+	function syncEndFromWeeks() {
+		var sel = $( 'ttcc-weeks' ), start = $( 'ttcc-start' ).value;
+		if ( ! sel || 'custom' === sel.value || ! start ) { return; }
+		$( 'ttcc-end' ).value = addDays( start, parseInt( sel.value, 10 ) * 7 - 1 );
+	}
+	function setWeeksSelectFromDates() {
+		var sel = $( 'ttcc-weeks' ), s = $( 'ttcc-start' ).value, e = $( 'ttcc-end' ).value;
+		if ( ! sel || ! s || ! e ) { return; }
+		var days = daysBetween( s, e ) + 1, wk = days / 7;
+		sel.value = ( days > 0 && 0 === days % 7 && wk >= 1 && wk <= 4 ) ? String( wk ) : 'custom';
+	}
+	function weekTitle( b ) { return b.parsha || b.title || ''; }
+	function updateRangeLabel( doc ) {
+		var lbl = $( 'ttcc-range-label' );
+		if ( ! lbl ) { return; }
+		if ( doc && doc.blocks ) {
+			var weeks = doc.blocks.filter( function ( b ) { return 'week' === b.type; } );
+			if ( weeks.length ) {
+				var n = weeks.length, first = weekTitle( weeks[ 0 ] ), last = weekTitle( weeks[ n - 1 ] );
+				var span = n + ( 1 === n ? ' week' : ' weeks' );
+				var range = ( n > 1 && first && last ) ? ( ': ' + first + ' → ' + last )
+					: ( first ? ( ': ' + first ) : '' );
+				lbl.textContent = 'This sheet spans ' + span + range + '.';
+				return;
+			}
+		}
+		// provisional (before generating): estimate from the date range.
+		var s = $( 'ttcc-start' ).value, e = $( 'ttcc-end' ).value;
+		if ( s && e && daysBetween( s, e ) >= 0 ) {
+			var est = Math.max( 1, Math.round( ( daysBetween( s, e ) + 1 ) / 7 ) );
+			lbl.textContent = est + ( 1 === est ? ' week selected' : ' weeks selected' ) + ' — press Generate.';
+		} else {
+			lbl.textContent = '';
+		}
+	}
 
 	// --- preview ----------------------------------------------------------
 	var previewTimer = null;
@@ -131,6 +174,7 @@
 				$( 'ttcc-engine-version' ).textContent = data.engine_version ? ( 'engine ' + data.engine_version ) : '';
 				renderPreviewHtml( data.html );
 				if ( rebuildEditor ) { buildEditor( data.doc ); }
+				updateRangeLabel( data.doc );
 				note.textContent = '';
 			} )
 			.catch( function ( e ) {
@@ -392,6 +436,7 @@
 			$( 'ttcc-end' ).value = state.end;
 			$( 'ttcc-title' ).value = sheet.title || '';
 			$( 'ttcc-status' ).value = state.status;
+			setWeeksSelectFromDates();
 			captureOriginalNotes().then( function () { refresh( true ); } );
 		} ).catch( function ( e ) {
 			$( 'ttcc-preview-note' ).textContent = 'Load failed: ' + e.message;
@@ -407,11 +452,25 @@
 	document.querySelectorAll( '[data-export]' ).forEach( function ( b ) {
 		b.addEventListener( 'click', function () { doExport( b.dataset.export, b.dataset.variant ); } );
 	} );
+	$( 'ttcc-weeks' ).addEventListener( 'change', function () {
+		syncEndFromWeeks();
+		updateRangeLabel( null );
+	} );
+	$( 'ttcc-start' ).addEventListener( 'change', function () {
+		syncEndFromWeeks(); // keep the same number of weeks when the Sunday moves
+		updateRangeLabel( null );
+	} );
+	$( 'ttcc-end' ).addEventListener( 'change', function () {
+		setWeeksSelectFromDates(); // a manual end date reflects as a preset or "custom"
+		updateRangeLabel( null );
+	} );
 
 	// initial dates
 	var sun = currentSunday();
 	$( 'ttcc-start' ).value = sun;
 	$( 'ttcc-end' ).value = addDays( sun, 6 );
+	$( 'ttcc-weeks' ).value = '1';
+	updateRangeLabel( null );
 
 	pollHealth();
 	setInterval( pollHealth, 30000 );
