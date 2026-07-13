@@ -187,28 +187,21 @@
 		iframe.srcdoc = ( $( 'ttcc-pageguides' ).checked ) ? injectPageGuides( html ) : html;
 	}
 
-	// Size the iframe to a whole number of A4 pages at logical A4 width, then
-	// scale it down to fit the pane — giving a true A4 page ratio at any width.
+	// Render exactly one A4 page at logical A4 size and scale it to the pane
+	// width, so the preview is ALWAYS an A4 sheet ratio (210:297) — the height
+	// simply follows the width. Content that runs past one page falls off the
+	// bottom of the page (with the boundary guide, that's the "won't fit" cue).
 	function fitPreview() {
 		var frame = $( 'ttcc-preview-frame' ), iframe = $( 'ttcc-preview' );
 		if ( ! frame || ! iframe ) { return; }
 		var avail = frame.clientWidth || frame.offsetWidth;
 		if ( ! avail ) { return; }
-		var contentH = A4.H;
-		try {
-			var d = iframe.contentDocument || ( iframe.contentWindow && iframe.contentWindow.document );
-			if ( d && d.body ) {
-				contentH = Math.max( d.body.scrollHeight, d.documentElement ? d.documentElement.scrollHeight : 0, A4.H );
-			}
-		} catch ( e ) { /* same-origin srcdoc; ignore if not ready */ }
-		var pages = Math.max( 1, Math.ceil( contentH / A4.H ) );
-		var logicalH = pages * A4.H;
 		var scale = avail / A4.W;
 		iframe.style.width = A4.W + 'px';
-		iframe.style.height = logicalH + 'px';
+		iframe.style.height = A4.H + 'px';
 		iframe.style.transformOrigin = 'top left';
 		iframe.style.transform = 'scale(' + scale + ')';
-		frame.style.height = ( logicalH * scale ) + 'px';
+		frame.style.height = ( A4.H * scale ) + 'px';
 	}
 
 	/**
