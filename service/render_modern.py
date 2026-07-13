@@ -27,7 +27,7 @@ from engine.render_docx import _group_blocks
 from engine.render_html import day_items, week_items
 
 _NAME = "Tzemach Tzedek Community Centre"
-_ADDR = "1 Penkivil St, Bondi NSW · www.ttcc.info · PO Box 477 Waverley NSW 2024"
+_ADDR = "1 Penkivil St, Bondi NSW · www.ttcc.org.au · PO Box 477 Waverley NSW 2024"
 
 # Whitelisted, print-safe font stacks (key -> CSS font-family value).
 _FONTS = {

@@ -2,7 +2,7 @@
 
 One page for whoever runs the sheets each week. Architecture: a small Python
 **sheet service** (wraps the fixture-validated engine, owns Chromium) runs off
-SiteGround; the **WordPress plugin** on ttcc.info calls it. Halachic times are
+SiteGround; the **WordPress plugin** on ttcc.org.au calls it. Halachic times are
 always the engine's — the plugin never recomputes them.
 
 ## ⛔ Before production use — two halachic gates (not yet closed)
@@ -28,7 +28,7 @@ docker run -d --restart=unless-stopped -e TTCC_SERVICE_TOKEN='<long-random-secre
 Put it behind HTTPS (reverse proxy / the PaaS's TLS). Confirm `GET /health`
 returns `{"status":"ok", ... "chromium":true}`.
 
-**Plugin** (on ttcc.info): copy `wp-plugin/ttcc-zmanim/` into
+**Plugin** (on ttcc.org.au): copy `wp-plugin/ttcc-zmanim/` into
 `wp-content/plugins/` and activate. Then `Timesheets → Settings`: set the
 service URL and the same token; the banner should go green (and show Chromium
 available). Open `Timesheets → Schedule profiles` once to seed the schedule from

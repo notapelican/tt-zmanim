@@ -162,7 +162,7 @@ class TTCC_Zmanim_Settings {
 					<tr>
 						<th scope="row"><label for="ttcc_default_logo"><?php esc_html_e( 'Default logo URL', 'ttcc-zmanim' ); ?></label></th>
 						<td>
-							<input type="url" id="ttcc_default_logo" name="<?php echo esc_attr( $fields ); ?>[default_logo]" class="regular-text" value="<?php echo esc_attr( $d['logo'] ); ?>" placeholder="https://ttcc.info/logo.png" />
+							<input type="url" id="ttcc_default_logo" name="<?php echo esc_attr( $fields ); ?>[default_logo]" class="regular-text" value="<?php echo esc_attr( $d['logo'] ); ?>" placeholder="https://ttcc.org.au/logo.png" />
 							<p class="description"><?php esc_html_e( 'Upload the logo to the Media Library and paste its URL. Per-sheet, you can pick a different logo from the dashboard.', 'ttcc-zmanim' ); ?></p>
 						</td>
 					</tr>
