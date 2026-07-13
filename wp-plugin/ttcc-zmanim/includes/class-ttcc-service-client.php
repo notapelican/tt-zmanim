@@ -28,14 +28,14 @@ class TTCC_Zmanim_Service_Client {
 	}
 
 	/**
-	 * GET /healthz. Returns array{ok:bool, engine_version:string, chromium:bool, error:string}.
+	 * GET /health. Returns array{ok:bool, engine_version:string, chromium:bool, error:string}.
 	 */
 	public static function health() {
 		$base = TTCC_Zmanim_Settings::service_url();
 		if ( ! $base ) {
 			return array( 'ok' => false, 'error' => __( 'service URL not configured', 'ttcc-zmanim' ), 'engine_version' => '', 'chromium' => false );
 		}
-		$res = wp_remote_get( self::url( '/healthz' ), array( 'timeout' => 8 ) );
+		$res = wp_remote_get( self::url( '/health' ), array( 'timeout' => 8 ) );
 		if ( is_wp_error( $res ) ) {
 			return array( 'ok' => false, 'error' => $res->get_error_message(), 'engine_version' => '', 'chromium' => false );
 		}

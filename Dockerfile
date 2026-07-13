@@ -23,10 +23,12 @@ COPY service/ /app/service/
 
 EXPOSE 8000
 
-# Healthcheck hits /healthz (no auth required there). Honors $PORT so it stays
+# Healthcheck hits /health (no auth required there). Honors $PORT so it stays
 # correct on hosts that inject one; Cloud Run uses its own probes and ignores this.
+# (Path is /health, not /healthz: Google's frontend intercepts the literal
+# /healthz path on Cloud Run and never forwards it to the container.)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s \
-    CMD python3 -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.environ.get('PORT','8000')+'/healthz').status==200 else 1)"
+    CMD python3 -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.environ.get('PORT','8000')+'/health').status==200 else 1)"
 
 # Shell form so ${PORT} expands. Cloud Run injects PORT (default 8080); falls
 # back to 8000 for local/VPS runs. The same image runs unchanged everywhere.

@@ -110,8 +110,8 @@ def test_bad_dates():
     assert r.status_code == 422
 
 
-def test_healthz():
-    r = client.get("/healthz")
+def test_health():
+    r = client.get("/health")
     assert r.status_code == 200
     body = r.json()
     assert body["status"] == "ok" and body["engine_version"]

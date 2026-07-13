@@ -10,17 +10,21 @@ architecture (option a: Python engine is the source of truth; PHP calls this ser
 
 ## Endpoints
 
-All require `Authorization: Bearer <TTCC_SERVICE_TOKEN>` except `/healthz`.
+All require `Authorization: Bearer <TTCC_SERVICE_TOKEN>` except `/health`.
 
 | Method | Path | Body | Returns |
 |---|---|---|---|
-| GET | `/healthz` | — | `{status, engine_version, chromium}` |
+| GET | `/health` | — | `{status, engine_version, chromium}` |
 | POST | `/generate` | `{start, end, profiles?, notes?, overrides?}` | block dict + `engine_version` |
 | POST | `/render/html` | `{start,end,…}` **or** `{doc}` (+`variant?`) | `{html, engine_version}` |
 | POST | `/render/pdf` | same as render/html | `application/pdf` |
 | POST | `/render/png` | same (+`variant:"portrait"`) | `image/png` (3:4 social) |
 | POST | `/render/docx` | same | `.docx` (optional Word copy) |
 | GET | `/profiles/default` | — | `{profiles, notes}` seed data for the editor |
+
+> The health endpoint is `/health`, **not** `/healthz`: Google Cloud Run's
+> frontend intercepts the literal `/healthz` path and returns its own 404 before
+> the request reaches the container. Don't rename it back.
 
 `start`/`end` are ISO dates. `overrides` is keyed by `rule_id`
 (`{"<id>":{"time":"19:15"}}` edit, `{"<id>":{"suppress":true}}` drop,

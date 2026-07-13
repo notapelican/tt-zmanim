@@ -25,7 +25,7 @@ docker build -f service/Dockerfile -t ttcc-sheet-service .
 docker run -d --restart=unless-stopped -e TTCC_SERVICE_TOKEN='<long-random-secret>' \
   -p 8000:8000 ttcc-sheet-service
 ```
-Put it behind HTTPS (reverse proxy / the PaaS's TLS). Confirm `GET /healthz`
+Put it behind HTTPS (reverse proxy / the PaaS's TLS). Confirm `GET /health`
 returns `{"status":"ok", ... "chromium":true}`.
 
 **Plugin** (on ttcc.info): copy `wp-plugin/ttcc-zmanim/` into

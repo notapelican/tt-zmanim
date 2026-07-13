@@ -131,8 +131,8 @@ def _resolve_doc(req: RenderHtmlRequest) -> dict:
 
 # --- endpoints --------------------------------------------------------------
 
-@app.get("/healthz")
-def healthz() -> dict:
+@app.get("/health")
+def health() -> dict:
     from .raster import chromium_available
 
     return {
