@@ -1,0 +1,11 @@
+# Keep the Cloud Build upload lean: the Dockerfile only needs engine/ and
+# service/. Everything below is irrelevant at build/runtime.
+.git/
+__pycache__/
+*.pyc
+wp-plugin/
+samples/
+phase0/
+phase3/
+*.md
+RENDERER-CONTRACT.md

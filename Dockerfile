@@ -1,6 +1,8 @@
 # TTCC sheet service — FastAPI + headless Chromium, wrapping the Python engine.
-# Build from the repo root:  docker build -f service/Dockerfile -t ttcc-sheet-service .
-# Run:  docker run -e TTCC_SERVICE_TOKEN=... -p 8000:8000 ttcc-sheet-service
+# Lives at the repo root (its build context is the whole repo: it copies engine/
+# and service/). Root placement lets `gcloud run deploy --source .` auto-detect it.
+# Build:  docker build -t ttcc-sheet-service .
+# Run:    docker run -e TTCC_SERVICE_TOKEN=... -p 8000:8000 ttcc-sheet-service
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \

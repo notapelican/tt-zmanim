@@ -46,12 +46,23 @@ pip install -r service/requirements.txt
 TTCC_SERVICE_TOKEN=secret uvicorn service.app:app --host 0.0.0.0 --port 8000
 ```
 
-Docker (bundles Chromium):
+Docker (bundles Chromium; the `Dockerfile` lives at the repo root):
 
 ```sh
-docker build -f service/Dockerfile -t ttcc-sheet-service .
+docker build -t ttcc-sheet-service .
 docker run -e TTCC_SERVICE_TOKEN=secret -p 8000:8000 ttcc-sheet-service
 ```
+
+Google Cloud Run (from the repo root; auto-detects the root Dockerfile):
+
+```sh
+gcloud run deploy ttcc-sheet-service --source . --region <region> \
+  --allow-unauthenticated --memory 2Gi --cpu 1 --concurrency 4 \
+  --min-instances 0 --max-instances 2 --timeout 120 \
+  --set-env-vars TTCC_SERVICE_TOKEN=<token>
+```
+
+The container honors Cloud Run's `$PORT` (falls back to 8000 elsewhere).
 
 ## Tests
 
