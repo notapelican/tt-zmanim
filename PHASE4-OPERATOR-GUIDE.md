@@ -34,6 +34,11 @@ service URL and the same token; the banner should go green (and show Chromium
 available). Open `Timesheets → Schedule profiles` once to seed the schedule from
 the engine defaults.
 
+After the first install the plugin updates **over the air**: add a GitHub
+read-only token in `Timesheets → Settings → GitHub update token`, and thereafter
+new releases appear as one-click updates on the Plugins screen — no more
+zip/upload. Cutting a release is a tag push; see `RELEASING.md`.
+
 ## Weekly workflow
 
 1. `Timesheets → Dashboard`. Pick the week's Sunday (and end date for a

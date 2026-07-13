@@ -26,7 +26,11 @@ require_once TTCC_ZMANIM_DIR . 'includes/class-ttcc-sheet.php';
 require_once TTCC_ZMANIM_DIR . 'includes/class-ttcc-rest.php';
 require_once TTCC_ZMANIM_DIR . 'includes/class-ttcc-admin.php';
 require_once TTCC_ZMANIM_DIR . 'includes/class-ttcc-public.php';
+require_once TTCC_ZMANIM_DIR . 'includes/class-ttcc-updater.php';
 require_once TTCC_ZMANIM_DIR . 'includes/class-ttcc-plugin.php';
+
+// Over-the-air updates from GitHub releases (see class-ttcc-updater.php).
+TTCC_Zmanim_Updater::init();
 
 // Activation: create tables, grant the capability to administrators, seed the
 // profile set (best-effort — needs the service reachable; safe to retry later).
