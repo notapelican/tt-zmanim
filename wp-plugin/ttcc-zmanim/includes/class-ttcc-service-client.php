@@ -157,14 +157,21 @@ class TTCC_Zmanim_Service_Client {
 				$payload['logo_url'] = (string) $design['logo'];
 			}
 			$theme = array();
-			foreach ( array( 'heading_font', 'body_font', 'heading_google', 'body_google', 'base', 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
+			foreach ( array( 'heading_font', 'body_font', 'custom_heading', 'custom_body', 'font_source', 'base', 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
 				if ( isset( $design[ $k ] ) && '' !== $design[ $k ] ) {
 					$theme[ $k ] = $design[ $k ];
 				}
 			}
+			$kit = (string) TTCC_Zmanim_Settings::get( 'adobe_kit', '' );
+			if ( '' !== $kit ) {
+				$theme['adobe_kit'] = $kit;
+			}
 			if ( $theme ) {
 				$payload['theme'] = $theme;
 			}
+			// Referer = the site domain so a domain-locked Adobe Fonts kit serves
+			// during the headless PDF/PNG render.
+			$payload['referer'] = home_url();
 		}
 		return $payload;
 	}

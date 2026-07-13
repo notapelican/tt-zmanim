@@ -124,6 +124,22 @@ def test_render_modern_theme_sanitized():
     assert "display:none" not in html
 
 
+def test_render_modern_webfonts():
+    """Adobe loads its kit CSS (no Google link); Google loads per-family; both
+    apply the family and sanitize inputs."""
+    from service.render_modern import render_modern
+
+    doc = generate(date.fromisoformat(START), date.fromisoformat(END))
+    a = render_modern(doc, theme={"font_source": "adobe", "adobe_kit": "abc1def", "custom_heading": "Adobe Caslon Pro"})
+    assert "use.typekit.net/abc1def.css" in a and "fonts.googleapis.com" not in a
+    assert '--serif:"Adobe Caslon Pro"' in a
+    g = render_modern(doc, theme={"font_source": "google", "custom_heading": "Playfair Display"})
+    assert "fonts.googleapis.com/css2?family=Playfair+Display" in g
+    # kit id and family are sanitized (no path/quote escape)
+    h = render_modern(doc, theme={"adobe_kit": 'a/b"</style>', "custom_body": 'x"}<script>'})
+    assert "<script>" not in h and '"</style>' not in h
+
+
 def test_render_whatsapp():
     """WhatsApp broadcast keeps essential minyan times, drops astronomical zmanim,
     and reproduces engine times verbatim."""

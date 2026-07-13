@@ -29,8 +29,9 @@
 			logo:         DESIGN_DEFAULTS.logo || '',
 			heading_font: DESIGN_DEFAULTS.heading_font || 'palatino',
 			body_font:    DESIGN_DEFAULTS.body_font || 'system',
-			heading_google: DESIGN_DEFAULTS.heading_google || '',
-			body_google:  DESIGN_DEFAULTS.body_google || '',
+			font_source:  DESIGN_DEFAULTS.font_source || 'google',
+			custom_heading: DESIGN_DEFAULTS.custom_heading || '',
+			custom_body:  DESIGN_DEFAULTS.custom_body || '',
 			base:         parseInt( DESIGN_DEFAULTS.base, 10 ) || 15,
 			text_color:   DESIGN_DEFAULTS.text_color || '#1b1e28',
 			callout_bg:   DESIGN_DEFAULTS.callout_bg || '#fbeef1',
@@ -508,8 +509,9 @@
 		$( 'ttcc-design' ).hidden = ( 'modern' !== state.overrides.template );
 		$( 'ttcc-heading-font' ).value = d.heading_font;
 		$( 'ttcc-body-font' ).value = d.body_font;
-		$( 'ttcc-heading-google' ).value = d.heading_google || '';
-		$( 'ttcc-body-google' ).value = d.body_google || '';
+		$( 'ttcc-font-source' ).value = d.font_source || 'google';
+		$( 'ttcc-custom-heading' ).value = d.custom_heading || '';
+		$( 'ttcc-custom-body' ).value = d.custom_body || '';
 		$( 'ttcc-base' ).value = d.base;
 		$( 'ttcc-text-color' ).value = d.text_color;
 		$( 'ttcc-callout-bg' ).value = d.callout_bg;
@@ -541,7 +543,7 @@
 			if ( state.doc ) { refresh( false ); }
 		} );
 		[ [ 'ttcc-heading-font', 'heading_font' ], [ 'ttcc-body-font', 'body_font' ],
-		  [ 'ttcc-heading-google', 'heading_google' ], [ 'ttcc-body-google', 'body_google' ],
+		  [ 'ttcc-font-source', 'font_source' ], [ 'ttcc-custom-heading', 'custom_heading' ], [ 'ttcc-custom-body', 'custom_body' ],
 		  [ 'ttcc-base', 'base' ], [ 'ttcc-text-color', 'text_color' ],
 		  [ 'ttcc-callout-bg', 'callout_bg' ], [ 'ttcc-callout-text', 'callout_text' ] ]
 		.forEach( function ( pair ) {

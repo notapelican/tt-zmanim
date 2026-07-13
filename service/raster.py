@@ -133,7 +133,18 @@ def _inject_head(html: str, snippet: str) -> str:
     return html[:idx] + snippet + html[idx:]
 
 
-def html_to_pdf(html: str, *, timeout_ms: int = 20000) -> bytes:
+def _apply_referer(page, referer: str | None) -> None:
+    """Send a Referer on sub-resource fetches so domain-locked web fonts (Adobe
+    Fonts / Typekit projects restricted to the site's domain) serve during a
+    headless render. Harmless for open fonts (Google) and the rest of the page."""
+    if referer:
+        try:
+            page.set_extra_http_headers({"Referer": referer})
+        except Exception:
+            pass
+
+
+def html_to_pdf(html: str, *, timeout_ms: int = 20000, referer: str | None = None) -> bytes:
     """Print the HTML to PDF, honoring the sheet's own ``@page`` size/margins
     and printing background colors (the blue/purple section bars)."""
     from playwright.sync_api import sync_playwright
@@ -143,6 +154,7 @@ def html_to_pdf(html: str, *, timeout_ms: int = 20000) -> bytes:
         try:
             page = browser.new_page()
             page.set_default_timeout(timeout_ms)
+            _apply_referer(page, referer)
             page.set_content(html, wait_until="networkidle")
             return page.pdf(print_background=True, prefer_css_page_size=True)
         finally:
@@ -150,7 +162,7 @@ def html_to_pdf(html: str, *, timeout_ms: int = 20000) -> bytes:
 
 
 def html_to_png(
-    html: str, *, variant: str = "print", timeout_ms: int = 20000
+    html: str, *, variant: str = "print", timeout_ms: int = 20000, referer: str | None = None
 ) -> bytes:
     """Screenshot the HTML. ``variant="portrait"`` scales the sheet to fill a 3:4
     social canvas (1080x1440, emitted at 2x = 2160x2880); otherwise a full-page
@@ -170,6 +182,7 @@ def html_to_png(
                     device_scale_factor=2,
                 )
                 page.set_default_timeout(timeout_ms)
+                _apply_referer(page, referer)
                 page.set_content(html, wait_until="networkidle")
                 # Fit-to-canvas: screenshot() ignores @page, so we scale in-page
                 # and clip to an exact 1080x1440 region.
@@ -183,6 +196,7 @@ def html_to_png(
                 device_scale_factor=2,
             )
             page.set_default_timeout(timeout_ms)
+            _apply_referer(page, referer)
             page.set_content(html, wait_until="networkidle")
             return page.screenshot(full_page=True, type="png")
         finally:

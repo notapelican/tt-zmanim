@@ -72,6 +72,9 @@ class RenderHtmlRequest(GenerateRequest):
     template: str = "classic"        # "classic" (engine renderer) | "modern"
     logo_url: str | None = None      # modern only: masthead logo (URL/data URI)
     theme: dict | None = None        # modern only: fonts/size/colors (sanitized)
+    referer: str | None = None       # Referer for the headless render, so a
+                                     # domain-locked web-font kit (Adobe Fonts)
+                                     # serves during PDF/PNG export
 
 
 # --- helpers ----------------------------------------------------------------
@@ -183,7 +186,7 @@ def post_render_pdf(req: RenderHtmlRequest) -> Response:
     from .raster import html_to_pdf
 
     html = _render_html_str(req, _resolve_doc(req))
-    pdf = html_to_pdf(html, timeout_ms=SETTINGS.render_timeout_ms)
+    pdf = html_to_pdf(html, timeout_ms=SETTINGS.render_timeout_ms, referer=req.referer)
     return Response(content=pdf, media_type="application/pdf")
 
 
@@ -193,7 +196,7 @@ def post_render_png(req: RenderHtmlRequest) -> Response:
 
     html = _render_html_str(req, _resolve_doc(req))
     png = html_to_png(
-        html, variant=req.variant, timeout_ms=SETTINGS.render_timeout_ms
+        html, variant=req.variant, timeout_ms=SETTINGS.render_timeout_ms, referer=req.referer
     )
     return Response(content=png, media_type="image/png")
 

@@ -80,11 +80,17 @@ defined( 'ABSPATH' ) || exit;
 					<option value="times"><?php esc_html_e( 'Times New Roman', 'ttcc-zmanim' ); ?></option>
 				</select>
 			</label>
-			<label title="<?php esc_attr_e( 'Optional: a Google Fonts family name, e.g. Playfair Display. Overrides the Heading choice.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Heading (Google)', 'ttcc-zmanim' ); ?>
-				<input type="text" id="ttcc-heading-google" class="ttcc-gfont" placeholder="e.g. Playfair Display" />
+			<label title="<?php esc_attr_e( 'Where custom font names come from. Adobe uses the Web Project ID set in Settings.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Font source', 'ttcc-zmanim' ); ?>
+				<select id="ttcc-font-source">
+					<option value="google"><?php esc_html_e( 'Google Fonts', 'ttcc-zmanim' ); ?></option>
+					<option value="adobe"><?php esc_html_e( 'Adobe Fonts', 'ttcc-zmanim' ); ?></option>
+				</select>
 			</label>
-			<label title="<?php esc_attr_e( 'Optional: a Google Fonts family name for body text. Overrides the Body choice.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Body (Google)', 'ttcc-zmanim' ); ?>
-				<input type="text" id="ttcc-body-google" class="ttcc-gfont" placeholder="e.g. Inter" />
+			<label title="<?php esc_attr_e( 'Optional custom family name. Overrides the Heading preset.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Heading (custom)', 'ttcc-zmanim' ); ?>
+				<input type="text" id="ttcc-custom-heading" class="ttcc-gfont" placeholder="e.g. Playfair Display" />
+			</label>
+			<label title="<?php esc_attr_e( 'Optional custom family name for body text. Overrides the Body preset.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Body (custom)', 'ttcc-zmanim' ); ?>
+				<input type="text" id="ttcc-custom-body" class="ttcc-gfont" placeholder="e.g. Inter" />
 			</label>
 			<label><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
 				<input type="range" id="ttcc-base" min="11" max="24" step="1" />

@@ -75,6 +75,8 @@ class TTCC_Zmanim_Settings {
 			$val = isset( $input[ $key ] ) ? (string) $input[ $key ] : '';
 			$out[ $key ] = preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $val ) ? $val : $fallback;
 		}
+		// Adobe Fonts (Typekit) web-project id — site-level; lowercase alnum.
+		$out['adobe_kit'] = isset( $input['adobe_kit'] ) ? substr( preg_replace( '/[^a-z0-9]/', '', strtolower( (string) $input['adobe_kit'] ) ), 0, 20 ) : '';
 		return $out;
 	}
 
@@ -187,6 +189,13 @@ class TTCC_Zmanim_Settings {
 					<tr>
 						<th scope="row"><label for="ttcc_default_base"><?php esc_html_e( 'Base text size', 'ttcc-zmanim' ); ?></label></th>
 						<td><input type="number" id="ttcc_default_base" name="<?php echo esc_attr( $fields ); ?>[default_base]" min="11" max="24" value="<?php echo esc_attr( $d['base'] ); ?>" /> px</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="ttcc_adobe_kit"><?php esc_html_e( 'Adobe Fonts Web Project ID', 'ttcc-zmanim' ); ?></label></th>
+						<td>
+							<input type="text" id="ttcc_adobe_kit" name="<?php echo esc_attr( $fields ); ?>[adobe_kit]" class="regular-text" value="<?php echo esc_attr( self::get( 'adobe_kit', '' ) ); ?>" placeholder="abc1def" />
+							<p class="description"><?php esc_html_e( 'From your Adobe Fonts Web Project (the id in use.typekit.net/ID.css). Add this site\'s domain to the project\'s allowed domains. Then on a sheet, set Font source = Adobe and type the family name.', 'ttcc-zmanim' ); ?></p>
+						</td>
 					</tr>
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Colors', 'ttcc-zmanim' ); ?></th>
