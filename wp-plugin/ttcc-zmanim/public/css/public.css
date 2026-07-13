@@ -1,0 +1,7 @@
+/* TTCC public embeds (widget / browse). The sheet itself renders inside an
+   isolated iframe (srcdoc), so its house-style CSS never clashes with the
+   theme; these rules only style the wrapper. */
+.ttcc-embed { display:block; width:100%; border:0; background:#fff; }
+.ttcc-embed-empty { padding:20px; text-align:center; color:#666; font-style:italic; }
+.ttcc-browse-form { margin:0 0 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.ttcc-browse-form input[type=date] { padding:4px 6px; }
