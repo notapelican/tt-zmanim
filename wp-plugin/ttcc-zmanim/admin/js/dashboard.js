@@ -166,19 +166,42 @@
 		previewTimer = setTimeout( function () { refresh( false ); }, 350 );
 	}
 
+	// A4 portrait at 96dpi (210×297mm). The preview renders at this logical width
+	// and is scaled to fit whatever width the pane has, so it always reads as an
+	// A4 page rather than a screen-shaped box.
+	var A4 = { W: 794, H: 1123 };
+
 	function injectPageGuides( html ) {
-		// Approximate A4 printable-page height (273mm content ≈ 1032px @96dpi):
-		// a visual "will it fit" guide, not exact Chromium pagination.
+		// Draw a rule at each A4 page boundary in the (unscaled) document; it
+		// scales along with the page. A "will it fit" guide, not exact pagination.
 		var css = '<style id="ttcc-guides">body{background-image:repeating-linear-gradient(' +
-			'to bottom,transparent 0,transparent 1031px,rgba(210,50,50,.5) 1031px,' +
-			'rgba(210,50,50,.5) 1033px);background-attachment:local;}</style>';
+			'to bottom,transparent 0,transparent ' + ( A4.H - 2 ) + 'px,rgba(210,50,50,.5) ' + ( A4.H - 2 ) + 'px,' +
+			'rgba(210,50,50,.5) ' + A4.H + 'px);background-attachment:local;}</style>';
 		var i = html.toLowerCase().indexOf( '</head>' );
 		return i < 0 ? css + html : html.slice( 0, i ) + css + html.slice( i );
 	}
 
 	function renderPreviewHtml( html ) {
 		var iframe = $( 'ttcc-preview' );
+		iframe.onload = fitPreview;
 		iframe.srcdoc = ( $( 'ttcc-pageguides' ).checked ) ? injectPageGuides( html ) : html;
+	}
+
+	// Render exactly one A4 page at logical A4 size and scale it to the pane
+	// width, so the preview is ALWAYS an A4 sheet ratio (210:297) — the height
+	// simply follows the width. Content that runs past one page falls off the
+	// bottom of the page (with the boundary guide, that's the "won't fit" cue).
+	function fitPreview() {
+		var frame = $( 'ttcc-preview-frame' ), iframe = $( 'ttcc-preview' );
+		if ( ! frame || ! iframe ) { return; }
+		var avail = frame.clientWidth || frame.offsetWidth;
+		if ( ! avail ) { return; }
+		var scale = avail / A4.W;
+		iframe.style.width = A4.W + 'px';
+		iframe.style.height = A4.H + 'px';
+		iframe.style.transformOrigin = 'top left';
+		iframe.style.transform = 'scale(' + scale + ')';
+		frame.style.height = ( A4.H * scale ) + 'px';
 	}
 
 	/**
@@ -568,6 +591,12 @@
 	$( 'ttcc-whatsapp' ).addEventListener( 'click', doWhatsApp );
 	$( 'ttcc-wa-copy' ).addEventListener( 'click', copyWhatsApp );
 	$( 'ttcc-wa-close' ).addEventListener( 'click', function () { $( 'ttcc-wa' ).hidden = true; } );
+	// Keep the A4 preview fitted to the pane width as the window resizes.
+	var fitTimer = null;
+	window.addEventListener( 'resize', function () {
+		clearTimeout( fitTimer );
+		fitTimer = setTimeout( fitPreview, 150 );
+	} );
 	$( 'ttcc-pageguides' ).addEventListener( 'change', function () {
 		if ( state.doc ) { refresh( false ); }
 	} );

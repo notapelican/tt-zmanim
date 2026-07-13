@@ -1,0 +1,36 @@
+name: Release plugin
+
+# Cut a plugin release by pushing a version tag, e.g.:
+#   git tag v0.2.0 && git push origin v0.2.0
+# This builds a plugin-only zip (just wp-plugin/ttcc-zmanim/, with the vendored
+# update checker) and attaches it to the GitHub release for that tag. The plugin
+# on the site then offers a one-click update (see includes/class-ttcc-updater.php).
+# Bump the Version header + TTCC_ZMANIM_VERSION in ttcc-zmanim.php to match the
+# tag before tagging, so the update actually registers as newer.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build plugin zip
+        run: |
+          cd wp-plugin
+          zip -r ../ttcc-zmanim.zip ttcc-zmanim \
+            -x '*/.git*' '*/.DS_Store' '*/node_modules/*'
+
+      - name: Publish release with the plugin asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ttcc-zmanim.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true

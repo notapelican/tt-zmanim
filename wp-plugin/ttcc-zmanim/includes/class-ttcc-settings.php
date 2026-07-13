@@ -77,6 +77,8 @@ class TTCC_Zmanim_Settings {
 		}
 		// Adobe Fonts (Typekit) web-project id — site-level; lowercase alnum.
 		$out['adobe_kit'] = isset( $input['adobe_kit'] ) ? substr( preg_replace( '/[^a-z0-9]/', '', strtolower( (string) $input['adobe_kit'] ) ), 0, 20 ) : '';
+		// GitHub token for over-the-air plugin updates from the private repo.
+		$out['github_token'] = isset( $input['github_token'] ) ? sanitize_text_field( trim( (string) $input['github_token'] ) ) : '';
 		return $out;
 	}
 
@@ -123,6 +125,15 @@ class TTCC_Zmanim_Settings {
 								class="regular-text" value="<?php echo esc_attr( isset( $opts['service_token'] ) ? $opts['service_token'] : '' ); ?>"
 								autocomplete="off" />
 							<p class="description"><?php esc_html_e( 'Shared secret (matches TTCC_SERVICE_TOKEN on the service). Sent as a bearer token; never exposed to the browser.', 'ttcc-zmanim' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="ttcc_github_token"><?php esc_html_e( 'GitHub update token', 'ttcc-zmanim' ); ?></label></th>
+						<td>
+							<input name="<?php echo esc_attr( self::OPTION ); ?>[github_token]" id="ttcc_github_token" type="password"
+								class="regular-text" value="<?php echo esc_attr( isset( $opts['github_token'] ) ? $opts['github_token'] : '' ); ?>"
+								autocomplete="off" />
+							<p class="description"><?php esc_html_e( 'Enables one-click plugin updates from the private GitHub repo. Use a fine-grained personal access token with read-only Contents access to notapelican/tt-zmanim. Leave blank to disable OTA updates.', 'ttcc-zmanim' ); ?></p>
 						</td>
 					</tr>
 					<?php if ( $sig_url ) : ?>
