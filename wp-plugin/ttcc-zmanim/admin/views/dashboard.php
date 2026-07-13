@@ -127,18 +127,15 @@ defined( 'ABSPATH' ) || exit;
 		<p class="description"><?php esc_html_e( 'Essential minyan times only. Paste into WhatsApp — the *asterisks* become bold.', 'ttcc-zmanim' ); ?></p>
 	</div>
 
-	<div class="ttcc-view-tabs" role="tablist">
-		<button type="button" class="button ttcc-view-tab is-active" data-view="editor" aria-pressed="true"><?php esc_html_e( 'Edit', 'ttcc-zmanim' ); ?></button>
-		<button type="button" class="button ttcc-view-tab" data-view="preview" aria-pressed="false"><?php esc_html_e( 'Preview', 'ttcc-zmanim' ); ?></button>
-	</div>
-
-	<div class="ttcc-split" id="ttcc-split" data-view="editor">
+	<div class="ttcc-split" id="ttcc-split">
 		<div class="ttcc-editor" id="ttcc-editor">
 			<p class="ttcc-hint"><?php esc_html_e( 'Pick a week and press Generate to start.', 'ttcc-zmanim' ); ?></p>
 		</div>
 		<div class="ttcc-preview-wrap">
 			<div class="ttcc-preview-note" id="ttcc-preview-note"></div>
-			<iframe id="ttcc-preview" class="ttcc-preview" title="<?php esc_attr_e( 'Live sheet preview', 'ttcc-zmanim' ); ?>"></iframe>
+			<div class="ttcc-preview-frame" id="ttcc-preview-frame">
+				<iframe id="ttcc-preview" class="ttcc-preview" title="<?php esc_attr_e( 'Live sheet preview', 'ttcc-zmanim' ); ?>"></iframe>
+			</div>
 		</div>
 	</div>
 </div>

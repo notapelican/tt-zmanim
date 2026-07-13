@@ -166,19 +166,49 @@
 		previewTimer = setTimeout( function () { refresh( false ); }, 350 );
 	}
 
+	// A4 portrait at 96dpi (210×297mm). The preview renders at this logical width
+	// and is scaled to fit whatever width the pane has, so it always reads as an
+	// A4 page rather than a screen-shaped box.
+	var A4 = { W: 794, H: 1123 };
+
 	function injectPageGuides( html ) {
-		// Approximate A4 printable-page height (273mm content ≈ 1032px @96dpi):
-		// a visual "will it fit" guide, not exact Chromium pagination.
+		// Draw a rule at each A4 page boundary in the (unscaled) document; it
+		// scales along with the page. A "will it fit" guide, not exact pagination.
 		var css = '<style id="ttcc-guides">body{background-image:repeating-linear-gradient(' +
-			'to bottom,transparent 0,transparent 1031px,rgba(210,50,50,.5) 1031px,' +
-			'rgba(210,50,50,.5) 1033px);background-attachment:local;}</style>';
+			'to bottom,transparent 0,transparent ' + ( A4.H - 2 ) + 'px,rgba(210,50,50,.5) ' + ( A4.H - 2 ) + 'px,' +
+			'rgba(210,50,50,.5) ' + A4.H + 'px);background-attachment:local;}</style>';
 		var i = html.toLowerCase().indexOf( '</head>' );
 		return i < 0 ? css + html : html.slice( 0, i ) + css + html.slice( i );
 	}
 
 	function renderPreviewHtml( html ) {
 		var iframe = $( 'ttcc-preview' );
+		iframe.onload = fitPreview;
 		iframe.srcdoc = ( $( 'ttcc-pageguides' ).checked ) ? injectPageGuides( html ) : html;
+	}
+
+	// Size the iframe to a whole number of A4 pages at logical A4 width, then
+	// scale it down to fit the pane — giving a true A4 page ratio at any width.
+	function fitPreview() {
+		var frame = $( 'ttcc-preview-frame' ), iframe = $( 'ttcc-preview' );
+		if ( ! frame || ! iframe ) { return; }
+		var avail = frame.clientWidth || frame.offsetWidth;
+		if ( ! avail ) { return; }
+		var contentH = A4.H;
+		try {
+			var d = iframe.contentDocument || ( iframe.contentWindow && iframe.contentWindow.document );
+			if ( d && d.body ) {
+				contentH = Math.max( d.body.scrollHeight, d.documentElement ? d.documentElement.scrollHeight : 0, A4.H );
+			}
+		} catch ( e ) { /* same-origin srcdoc; ignore if not ready */ }
+		var pages = Math.max( 1, Math.ceil( contentH / A4.H ) );
+		var logicalH = pages * A4.H;
+		var scale = avail / A4.W;
+		iframe.style.width = A4.W + 'px';
+		iframe.style.height = logicalH + 'px';
+		iframe.style.transformOrigin = 'top left';
+		iframe.style.transform = 'scale(' + scale + ')';
+		frame.style.height = ( logicalH * scale ) + 'px';
 	}
 
 	/**
@@ -568,17 +598,11 @@
 	$( 'ttcc-whatsapp' ).addEventListener( 'click', doWhatsApp );
 	$( 'ttcc-wa-copy' ).addEventListener( 'click', copyWhatsApp );
 	$( 'ttcc-wa-close' ).addEventListener( 'click', function () { $( 'ttcc-wa' ).hidden = true; } );
-	// Phone mode: Edit/Preview tabs toggle which pane is visible (CSS handles
-	// the actual show/hide at the mobile breakpoint).
-	document.querySelectorAll( '.ttcc-view-tab' ).forEach( function ( t ) {
-		t.addEventListener( 'click', function () {
-			$( 'ttcc-split' ).setAttribute( 'data-view', t.dataset.view );
-			document.querySelectorAll( '.ttcc-view-tab' ).forEach( function ( x ) {
-				var on = x === t;
-				x.classList.toggle( 'is-active', on );
-				x.setAttribute( 'aria-pressed', on ? 'true' : 'false' );
-			} );
-		} );
+	// Keep the A4 preview fitted to the pane width as the window resizes.
+	var fitTimer = null;
+	window.addEventListener( 'resize', function () {
+		clearTimeout( fitTimer );
+		fitTimer = setTimeout( fitPreview, 150 );
 	} );
 	$( 'ttcc-pageguides' ).addEventListener( 'change', function () {
 		if ( state.doc ) { refresh( false ); }

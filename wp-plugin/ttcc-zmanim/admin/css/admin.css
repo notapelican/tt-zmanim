@@ -33,8 +33,10 @@
 
 .ttcc-split { display:flex; gap:16px; align-items:flex-start; }
 .ttcc-editor { flex:0 0 42%; max-width:42%; background:#fff; border:1px solid #dcdcde; border-radius:4px; padding:10px 12px; max-height:80vh; overflow:auto; }
-.ttcc-preview-wrap { flex:1; }
-.ttcc-preview { width:100%; height:80vh; background:#fff; border:1px solid #dcdcde; border-radius:4px; }
+.ttcc-preview-wrap { flex:1; min-width:0; max-height:82vh; overflow:auto; }
+/* The frame is sized by JS to a true A4 ratio and scaled to fit its width. */
+.ttcc-preview-frame { width:100%; background:#fff; border:1px solid #dcdcde; border-radius:4px; box-shadow:0 1px 5px rgba(0,0,0,.10); overflow:hidden; }
+.ttcc-preview { display:block; border:0; background:#fff; }
 .ttcc-preview-note { font-size:12px; color:#777; margin-bottom:4px; min-height:16px; }
 
 .ttcc-block { border-top:2px solid #2271b1; margin-top:14px; padding-top:6px; }
@@ -62,24 +64,12 @@
 
 .ttcc-browse-form { margin:0 0 10px; }
 
-/* Edit/Preview tabs are desktop-hidden; the split shows both panes there. */
-.ttcc-view-tabs { display:none; }
-
-/* Phone mode: stack the panes and switch between Edit and Preview with the
-   tabs, so the tall preview iframe doesn't bury the editor. */
+/* Phone mode: stack the panes with the A4 preview on top (below the toolbars,
+   above the zmanim editor); both stay visible. */
 @media screen and (max-width: 782px) {
-	.ttcc-view-tabs { display:flex; gap:6px; margin:6px 0 10px; }
-	.ttcc-view-tab { flex:1 1 0; text-align:center; }
-	.ttcc-view-tab.is-active { background:#2271b1; border-color:#2271b1; color:#fff; }
-
-	.ttcc-split { flex-direction:column; gap:10px; }
+	.ttcc-split { flex-direction:column; gap:12px; }
 	.ttcc-editor { flex:1 1 auto; max-width:100%; max-height:none; }
-	.ttcc-preview-wrap { width:100%; }
-	.ttcc-preview { height:72vh; }
-
-	/* one pane at a time, chosen by the tabs */
-	.ttcc-split[data-view="editor"] .ttcc-preview-wrap { display:none; }
-	.ttcc-split[data-view="preview"] .ttcc-editor { display:none; }
+	.ttcc-preview-wrap { width:100%; max-height:none; overflow:visible; order:-1; }
 
 	/* roomier tap targets; 16px inputs stop iOS from zooming on focus */
 	.ttcc-toolbar { gap:10px; }
