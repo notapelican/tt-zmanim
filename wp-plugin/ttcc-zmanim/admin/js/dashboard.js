@@ -33,6 +33,14 @@
 			custom_heading: DESIGN_DEFAULTS.custom_heading || '',
 			custom_body:  DESIGN_DEFAULTS.custom_body || '',
 			base:         parseInt( DESIGN_DEFAULTS.base, 10 ) || 15,
+			// Per-type typography ('' = the layout's built-in default).
+			header_font:     DESIGN_DEFAULTS.header_font || '',
+			header_size:     DESIGN_DEFAULTS.header_size || '',
+			header_align:    DESIGN_DEFAULTS.header_align || '',
+			subheader_font:  DESIGN_DEFAULTS.subheader_font || '',
+			subheader_size:  DESIGN_DEFAULTS.subheader_size || '',
+			subheader_align: DESIGN_DEFAULTS.subheader_align || '',
+			logo_size:       DESIGN_DEFAULTS.logo_size || '',
 			text_color:   DESIGN_DEFAULTS.text_color || '#1b1e28',
 			callout_bg:   DESIGN_DEFAULTS.callout_bg || '#fbeef1',
 			callout_text: DESIGN_DEFAULTS.callout_text || '#a3324b'
@@ -576,16 +584,31 @@
 		if ( url ) { img.src = url; img.hidden = false; rm.hidden = false; }
 		else { img.removeAttribute( 'src' ); img.hidden = true; rm.hidden = true; }
 	}
+	// The design panel shows for BOTH layouts; controls that only affect the
+	// modern layout (logo, colors, custom web fonts, week headings) hide on classic.
+	function syncModernOnly() {
+		var modern = ( 'modern' === state.overrides.template );
+		document.querySelectorAll( '.ttcc-modern-only' ).forEach( function ( eln ) {
+			eln.hidden = ! modern;
+		} );
+	}
 	function syncDesignUI() {
 		var d = state.overrides.design;
 		$( 'ttcc-layout' ).value = state.overrides.template || 'classic';
-		$( 'ttcc-design' ).hidden = ( 'modern' !== state.overrides.template );
+		syncModernOnly();
 		$( 'ttcc-heading-font' ).value = d.heading_font;
 		$( 'ttcc-body-font' ).value = d.body_font;
 		$( 'ttcc-font-source' ).value = d.font_source || 'google';
 		$( 'ttcc-custom-heading' ).value = d.custom_heading || '';
 		$( 'ttcc-custom-body' ).value = d.custom_body || '';
 		$( 'ttcc-base' ).value = d.base;
+		$( 'ttcc-header-font' ).value = d.header_font || '';
+		$( 'ttcc-header-size' ).value = d.header_size || '';
+		$( 'ttcc-header-align' ).value = d.header_align || '';
+		$( 'ttcc-subheader-font' ).value = d.subheader_font || '';
+		$( 'ttcc-subheader-size' ).value = d.subheader_size || '';
+		$( 'ttcc-subheader-align' ).value = d.subheader_align || '';
+		$( 'ttcc-logo-size' ).value = d.logo_size || 56;
 		$( 'ttcc-text-color' ).value = d.text_color;
 		$( 'ttcc-callout-bg' ).value = d.callout_bg;
 		$( 'ttcc-callout-text' ).value = d.callout_text;
@@ -612,12 +635,16 @@
 	function wireDesign() {
 		$( 'ttcc-layout' ).addEventListener( 'change', function () {
 			state.overrides.template = $( 'ttcc-layout' ).value;
-			$( 'ttcc-design' ).hidden = ( 'modern' !== state.overrides.template );
+			syncModernOnly();
 			if ( state.doc ) { refresh( false ); }
 		} );
 		[ [ 'ttcc-heading-font', 'heading_font' ], [ 'ttcc-body-font', 'body_font' ],
 		  [ 'ttcc-font-source', 'font_source' ], [ 'ttcc-custom-heading', 'custom_heading' ], [ 'ttcc-custom-body', 'custom_body' ],
-		  [ 'ttcc-base', 'base' ], [ 'ttcc-text-color', 'text_color' ],
+		  [ 'ttcc-base', 'base' ],
+		  [ 'ttcc-header-font', 'header_font' ], [ 'ttcc-header-size', 'header_size' ], [ 'ttcc-header-align', 'header_align' ],
+		  [ 'ttcc-subheader-font', 'subheader_font' ], [ 'ttcc-subheader-size', 'subheader_size' ], [ 'ttcc-subheader-align', 'subheader_align' ],
+		  [ 'ttcc-logo-size', 'logo_size' ],
+		  [ 'ttcc-text-color', 'text_color' ],
 		  [ 'ttcc-callout-bg', 'callout_bg' ], [ 'ttcc-callout-text', 'callout_text' ] ]
 		.forEach( function ( pair ) {
 			$( pair[ 0 ] ).addEventListener( 'input', function () {

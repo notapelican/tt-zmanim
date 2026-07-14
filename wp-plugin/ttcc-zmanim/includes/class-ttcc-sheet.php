@@ -83,6 +83,23 @@ class TTCC_Zmanim_Sheet {
 		if ( isset( $d['base'] ) && is_numeric( $d['base'] ) ) {
 			$out['base'] = max( 11, min( 24, (float) $d['base'] ) );
 		}
+		// Per-type typography: header (name line) and subheader (location line)
+		// each carry an optional font, size (px) and justification; blank keeps
+		// the layout's default. Logo size is modern-only.
+		foreach ( array( 'header', 'subheader' ) as $t ) {
+			if ( isset( $d[ $t . '_font' ] ) && in_array( $d[ $t . '_font' ], self::FONT_KEYS, true ) ) {
+				$out[ $t . '_font' ] = $d[ $t . '_font' ];
+			}
+			if ( isset( $d[ $t . '_size' ] ) && is_numeric( $d[ $t . '_size' ] ) && $d[ $t . '_size' ] > 0 ) {
+				$out[ $t . '_size' ] = max( 8, min( 48, (float) $d[ $t . '_size' ] ) );
+			}
+			if ( isset( $d[ $t . '_align' ] ) && in_array( $d[ $t . '_align' ], array( 'left', 'center', 'right' ), true ) ) {
+				$out[ $t . '_align' ] = $d[ $t . '_align' ];
+			}
+		}
+		if ( isset( $d['logo_size'] ) && is_numeric( $d['logo_size'] ) && $d['logo_size'] > 0 ) {
+			$out['logo_size'] = max( 20, min( 140, (float) $d['logo_size'] ) );
+		}
 		foreach ( array( 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
 			if ( isset( $d[ $k ] ) && preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', (string) $d[ $k ] ) ) {
 				$out[ $k ] = $d[ $k ];

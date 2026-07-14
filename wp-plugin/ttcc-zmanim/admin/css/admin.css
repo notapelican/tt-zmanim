@@ -10,15 +10,21 @@
 .ttcc-range-label { margin:2px 0 10px; color:#555; font-size:12px; font-style:italic; }
 
 .ttcc-design-bar { align-items:center; }
-.ttcc-design { display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-	padding:6px 10px; border:1px solid #dcdcde; border-radius:6px; background:#fff; }
+.ttcc-design { display:flex; align-items:center; gap:6px 0; flex-wrap:wrap;
+	padding:4px 10px; border:1px solid #dcdcde; border-radius:6px; background:#fff; }
 .ttcc-design[hidden] { display:none; }
 .ttcc-design label { flex-direction:column; font-size:11px; font-weight:600; color:#50575e; }
+.ttcc-design-group { display:flex; align-items:center; gap:5px; padding:3px 10px 3px 0;
+	margin-right:10px; border-right:1px solid #ececee; }
+.ttcc-design-group:last-child { border-right:0; margin-right:0; }
+.ttcc-design-group[hidden] { display:none; }
+.ttcc-design .ttcc-size { width:58px; }
+.ttcc-design .ttcc-inline { display:flex; flex-direction:row; align-items:center; gap:4px; }
 .ttcc-design .ttcc-color input[type=color] { width:38px; height:26px; padding:0; border:1px solid #ccc; cursor:pointer; }
-.ttcc-design input[type=range] { width:110px; }
+.ttcc-design input[type=range] { width:100px; }
 .ttcc-design .ttcc-gfont { width:130px; }
 .ttcc-logo-field { display:flex; align-items:center; gap:6px; }
-.ttcc-mini-label { font-size:11px; font-weight:600; color:#50575e; }
+.ttcc-mini-label { font-size:11px; font-weight:600; color:#50575e; white-space:nowrap; }
 .ttcc-logo-preview { width:30px; height:30px; object-fit:contain; border:1px solid #e0e0e0; border-radius:4px; background:#fff; }
 
 .ttcc-wa { margin:6px 0 12px; padding:10px 12px; border:1px solid #dcdcde; border-radius:6px; background:#fff; max-width:620px; }

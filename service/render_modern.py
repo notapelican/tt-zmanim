@@ -64,10 +64,11 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .logo img{width:100%;height:100%;object-fit:contain;}
 .logo .ph{font-family:var(--sans);font-size:.58em;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);}
-.mast-txt{flex:1 1 auto;}
+.mast-txt{flex:1 1 auto;min-width:0;}
 .mast-txt h1{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);
-  letter-spacing:-.01em;font-size:2.05em;line-height:1.05;}
-.mast-txt .addr{margin-top:.4em;color:var(--muted);font-size:.72em;letter-spacing:.03em;}
+  letter-spacing:-.01em;font-size:2.05em;line-height:1.05;white-space:nowrap;}
+.mast-txt .addr{margin-top:.4em;color:var(--muted);font-size:.72em;letter-spacing:.03em;
+  white-space:nowrap;}
 .bsd{flex:0 0 auto;align-self:flex-start;color:var(--muted);font-size:1em;font-family:var(--serif);}
 
 .page-cells{margin-top:1.3em;}
@@ -144,6 +145,35 @@ def _kit(v) -> str | None:
     return k[:20] if k else None
 
 
+def _align(v) -> str | None:
+    return v if v in ("left", "center", "right") else None
+
+
+def _px(v, lo: float, hi: float) -> float | None:
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return max(lo, min(hi, f))
+
+
+def _type_rules(theme: dict, font_key: str, size_key: str,
+                align_key: str | None) -> str:
+    """font-family/font-size/text-align declarations for one text type
+    (header / subheader), sanitized: whitelist fonts, clamped px, enum align."""
+    r: list[str] = []
+    f = theme.get(font_key)
+    if f in _FONTS:
+        r.append(f"font-family:{_FONTS[f]};")
+    s = _px(theme.get(size_key), 8, 48)
+    if s is not None:
+        r.append(f"font-size:{s:g}px;")
+    a = _align(theme.get(align_key)) if align_key else None
+    if a:
+        r.append(f"text-align:{a};")
+    return "".join(r)
+
+
 def _webfont_links(theme: dict | None) -> str:
     """<link> tags for custom web fonts. Adobe loads its whole kit (families come
     from the project); Google loads each requested family. Chromium fetches these
@@ -207,10 +237,58 @@ def _theme_css(theme: dict | None) -> str:
         base = max(11.0, min(24.0, base))
         sheet = f".sheet{{font-size:{base:g}px;}}"
 
-    if not root and not sheet:
+    # Per-type typography: header (name line), subheader (address line),
+    # and the masthead logo size. All sanitized; blank = the design default.
+    extra: list[str] = []
+    hdr = _type_rules(theme, "header_font", "header_size", "header_align")
+    if hdr:
+        extra.append(f".mast-txt h1{{{hdr}}}")
+    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align")
+    if sub:
+        extra.append(f".mast-txt .addr{{{sub}}}")
+    logo = _px(theme.get("logo_size"), 20, 140)
+    if logo is not None:
+        extra.append(f".logo{{width:{logo:g}px;height:{logo:g}px;}}")
+
+    if not root and not sheet and not extra:
         return ""
     root_css = f":root{{{''.join(root)}}}" if root else ""
-    return f'<style id="ttcc-theme">{root_css}{sheet}</style>'
+    return f'<style id="ttcc-theme">{root_css}{sheet}{"".join(extra)}</style>'
+
+
+def classic_theme_css(theme: dict | None) -> str:
+    """Typography overrides for the CLASSIC sheet, injected service-side (the
+    engine renderer stays fixture-pure and never learns about themes).
+
+    Honors the same per-type fields as the modern theme — header (name line),
+    subheader (location line), content font + size — with identical
+    sanitizing. Colors and section styling stay the classic house style.
+    Selectors are prefixed with .page so they outrank the engine's own
+    .single/.multi sizing rules.
+    """
+    if not isinstance(theme, dict):
+        return ""
+    rules: list[str] = []
+    hdr = _type_rules(theme, "header_font", "header_size", "header_align")
+    if hdr:
+        rules.append(f".page .hdr-title{{{hdr}}}")
+    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align")
+    if sub:
+        rules.append(f".page .hdr-sub{{{sub}}}")
+    cf = _gfamily(theme.get("custom_body"))
+    bf = theme.get("body_font")
+    if cf:
+        rules.append(f'body{{font-family:"{cf}","Times New Roman",Times,serif;}}')
+    elif bf in _FONTS:
+        rules.append(f"body{{font-family:{_FONTS[bf]};}}")
+    base = _px(theme.get("base"), 8, 24)
+    if base is not None:
+        # Keep the classic single:multi size ratio (11pt : 8.5pt ≈ 0.77).
+        rules.append(f".page.single{{font-size:{base:g}px;}}")
+        rules.append(f".page.multi{{font-size:{base * 0.77:.4g}px;}}")
+    if not rules:
+        return ""
+    return f'<style id="ttcc-theme">{"".join(rules)}</style>'
 
 
 def _row(lbl: str, val: str, bullet: bool) -> str:
@@ -350,8 +428,8 @@ def render_modern(doc_data: dict, *, variant: str = "print",
     masthead = (
         '<div class="masthead">'
         f'{_logo_html(logo_url)}'
-        f'<div class="mast-txt"><h1>{_esc(_NAME)}</h1>'
-        f'<div class="addr">{_esc(_ADDR)}</div></div>'
+        f'<div class="mast-txt"><h1 class="fit-line">{_esc(_NAME)}</h1>'
+        f'<div class="addr fit-line">{_esc(_ADDR)}</div></div>'
         '<div class="bsd">בס״ד</div>'
         '</div>')
     body = pages_html(paginate(cards), chrome=masthead,

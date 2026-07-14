@@ -148,7 +148,14 @@ def _render_html_str(req: RenderHtmlRequest, doc: dict) -> str:
             doc, variant=req.variant, logo_url=req.logo_url, theme=req.theme
         )
     else:
+        from .render_modern import _webfont_links, classic_theme_css
+
         html = render_html(doc)
+        # Classic typography theme (header/subheader/content fonts, sizes,
+        # alignment) is injected here so the engine renderer stays pure.
+        extra = _webfont_links(req.theme) + classic_theme_css(req.theme)
+        if extra:
+            html = html.replace("</head>", extra + "</head>", 1)
     if not req.fit:
         # Neutralize the embedded fit script's inline transform so content
         # renders at its natural size (may overflow the page box).

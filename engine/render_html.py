@@ -209,11 +209,14 @@ _CSS = """
 * { box-sizing: border-box; }
 body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .sheet { }
-.hdr-row { display:flex; align-items:flex-start; justify-content:space-between; }
-.hdr-title { color:var(--blue); font-weight:bold; }
+/* The title fills the row (so it can take any text-align) with בס״ד as a
+   fixed flex item in the corner — the two can never overlap. Both header
+   lines are single-line by contract (.fit-line). */
+.hdr-row { display:flex; align-items:flex-start; }
+.hdr-title { flex:1 1 auto; min-width:0; color:var(--blue); font-weight:bold; white-space:nowrap; }
 .hdr-title .url { text-decoration:underline; margin-left:1.2em; font-size:0.72em; }
-.bsd { font-weight:bold; }
-.hdr-sub { color:var(--blue); font-weight:bold; text-align:center; }
+.bsd { flex:0 0 auto; font-weight:bold; margin-left:10px; order:2; }
+.hdr-sub { color:var(--blue); font-weight:bold; text-align:center; white-space:nowrap; }
 .rule { border:0; border-top:3px double #000; margin:4px 0 8px; }
 .title { color:var(--blue); font-weight:bold; margin-top:2px; }
 .subtitle { color:var(--blue); font-weight:bold; margin-bottom:5px; }
@@ -276,18 +279,14 @@ def render_html(doc_data: dict) -> str:
         for day in g["days"]:
             cells.append(_day_cell_html(day))
 
-    if multi:
-        header = (
-            '<div class="hdr-row"><div class="hdr-title">Tzemach Tzedek Community Centre'
-            '<span class="url">www.ttcc.org.au</span></div><div class="bsd">בס״ד</div></div>'
-            '<div class="hdr-sub">Location: 1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;'
-            'Mailing address: PO Box 477 Waverley NSW 2024</div>')
-    else:
-        header = (
-            '<div class="hdr-row"><div class="hdr-title">Tzemach Tzedek Community Centre</div>'
-            '<div class="bsd">בס״ד</div></div>'
-            '<div class="hdr-sub">1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;&nbsp;www.ttcc.org.au<br>'
-            'Mailing address: PO Box 477 Waverley NSW 2024</div>')
+    # One header for every layout; name and location are single lines by
+    # contract (.fit-line + nowrap — the fit script shrinks them to fit).
+    header = (
+        '<div class="hdr-row"><span class="bsd">בס״ד</span>'
+        '<div class="hdr-title fit-line">Tzemach Tzedek Community Centre'
+        '<span class="url">www.ttcc.org.au</span></div></div>'
+        '<div class="hdr-sub fit-line">Location: 1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;'
+        'Mailing address: PO Box 477 Waverley NSW 2024</div>')
     chrome = header + '<hr class="rule">'
 
     if multi:

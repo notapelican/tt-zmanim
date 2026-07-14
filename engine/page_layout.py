@@ -82,6 +82,26 @@ FIT_JS = """
 <script id="ttcc-fit">
 (function () {
   var MIN = %(min)s, MAX = %(max)s;
+  function fitLines(root) {
+    // Headers marked .fit-line must NEVER wrap: shrink the font until the
+    // text fits on one line. Proportional first jump (text width scales with
+    // font size), then fine steps; absolute floor of 6px.
+    var els = root.querySelectorAll('.fit-line'), i;
+    for (i = 0; i < els.length; i++) {
+      var el = els[i];
+      el.style.fontSize = ''; // re-measure from the styled size
+      var size = parseFloat(getComputedStyle(el).fontSize);
+      var w = el.clientWidth, sw = el.scrollWidth;
+      if (!size || !w || sw <= w + 0.5) { continue; }
+      size = Math.max(6, size * (w / sw) * 0.98);
+      el.style.fontSize = size + 'px';
+      var guard = 0;
+      while (el.scrollWidth > el.clientWidth + 0.5 && size > 6 && guard++ < 30) {
+        size -= 0.25;
+        el.style.fontSize = size + 'px';
+      }
+    }
+  }
   function fitPage(page) {
     var m = page.querySelector('.page-margin');
     var c = page.querySelector('.page-content');
@@ -118,7 +138,9 @@ FIT_JS = """
   }
   function fitAll() {
     var pages = document.querySelectorAll('.page'), i;
-    for (i = 0; i < pages.length; i++) { fitPage(pages[i]); }
+    // fitPage first so .fit-line headers are measured at the page's final
+    // content width; shrinking them afterwards only reduces height.
+    for (i = 0; i < pages.length; i++) { fitPage(pages[i]); fitLines(pages[i]); }
     fitViewport();
     document.documentElement.setAttribute('data-ttcc-fitted', '1');
   }
