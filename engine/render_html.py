@@ -194,21 +194,19 @@ def _item_html(it: tuple) -> str:
     return ""
 
 
-def _group_html(group: dict, *, notes_inline: bool, colbreak: bool = False) -> str:
-    parts = [f'<div class="week{" colbreak" if colbreak else ""}">']
-    parts += [_item_html(it) for it in week_items(group["week"], notes_inline=notes_inline)]
-    parts.append('</div>')
-    for day in group["days"]:
-        parts.append('<div class="week">')
-        parts += [_item_html(it) for it in day_items(day)]
-        parts.append('</div>')
-    return "".join(parts)
+def _week_cell_html(week: dict, *, notes_inline: bool) -> str:
+    body = "".join(_item_html(it) for it in week_items(week, notes_inline=notes_inline))
+    return f'<div class="week">{body}</div>'
+
+
+def _day_cell_html(day: dict) -> str:
+    body = "".join(_item_html(it) for it in day_items(day))
+    return f'<div class="week">{body}</div>'
 
 
 _CSS = """
 :root { --blue:#0000ff; --purple:#800080; }
 * { box-sizing: border-box; }
-@page { size: A4; margin: 12mm; }
 body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .sheet { }
 .hdr-row { display:flex; align-items:flex-start; justify-content:space-between; }
@@ -233,12 +231,13 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .molad { font-style:italic; margin:1px 0 1px 4mm; }
 .fastbox { border:2px solid #ee0000; background:#fff2cc; text-align:center;
            font-style:italic; font-weight:bold; padding:4px 8px; margin:6px auto; width:88%; }
-/* CSS multi-column paginates correctly (unlike a flex row) and gives the
-   divider via column-rule; a forced break at the pairing boundary keeps the
-   sample's "first-half weeks left, rest right" split. */
-.cols { column-count:2; column-gap:16px; column-rule:1px solid #000; }
-.week { break-inside:avoid; padding:0 0 5px; }
-.week.colbreak { break-after:column; }
+.week { padding:0 0 5px; }
+/* House-style dividers between grid cells (vertical rule between columns,
+   horizontal rule between grid rows). Gaps come from the cell padding. */
+.page-cells.grid > .cell, .page-cells.two > .cell { padding:0 3mm 2mm 0; }
+.page-cells.grid > .cell:nth-child(2n), .page-cells.two > .cell:nth-child(2n) {
+  border-left:1px solid #000; padding:0 0 2mm 3mm; }
+.page-cells.grid > .cell:nth-child(n+3) { border-top:1px solid #000; padding-top:2mm; }
 .foot { border-top:1px solid #000; margin-top:6px; padding-top:4px;
         text-align:center; font-size:0.92em; }
 .single { font-size:11pt; }
@@ -256,17 +255,26 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 
 
 def render_html(doc_data: dict) -> str:
+    from .page_layout import FIT_JS, page_css, paginate, pages_html
     from .render_docx import _group_blocks
     groups = _group_blocks(doc_data["blocks"])
-    multi = len(groups) > 1
+    n_cells = sum(1 + len(g["days"]) for g in groups)
+    multi = n_cells > 1  # multiple blocks share pages (grid/columns)
 
+    # Hoist notes common to every week to a single last-page footer.
     shared_notes: list[str] = []
-    if multi:
-        common = set.intersection(*(set(g["week"]["notes"]) for g in groups)) if groups else set()
+    if len(groups) > 1:
+        common = set.intersection(*(set(g["week"]["notes"]) for g in groups))
         shared_notes = [n for n in groups[0]["week"]["notes"] if n in common]
         for g in groups:
             g["week"] = dict(g["week"],
                              notes=[n for n in g["week"]["notes"] if n not in common])
+
+    cells: list[str] = []
+    for g in groups:
+        cells.append(_week_cell_html(g["week"], notes_inline=multi))
+        for day in g["days"]:
+            cells.append(_day_cell_html(day))
 
     if multi:
         header = (
@@ -280,31 +288,18 @@ def render_html(doc_data: dict) -> str:
             '<div class="bsd">בס״ד</div></div>'
             '<div class="hdr-sub">1 Penkivil St, Bondi, NSW.&nbsp;&nbsp;&nbsp;www.ttcc.org.au<br>'
             'Mailing address: PO Box 477 Waverley NSW 2024</div>')
+    chrome = header + '<hr class="rule">'
 
-    body_parts = [header, '<hr class="rule">']
     if multi:
-        half = (len(groups) + 1) // 2
-        blocks = "".join(
-            _group_html(g, notes_inline=True, colbreak=(i == half - 1))
-            for i, g in enumerate(groups))
-        body_parts.append(f'<div class="cols">{blocks}</div>')
-        for n in shared_notes:
-            body_parts.append(f'<div class="foot"><b>Note:</b> {_esc(n)}</div>')
-    else:
-        for g in groups:
-            body_parts.append(_group_html(g, notes_inline=False))
-        for g in groups:
-            for n in g["week"].get("notes", []):
-                pass  # single-week notes handled inside week via notes_foot below
-        # single-week foot: render each week's notes under it
-        notes = [n for g in groups for n in g["week"].get("notes", [])]
-        for n in notes:
-            body_parts.append(f'<div class="foot">{_esc(n)}</div>')
+        foot = "".join(f'<div class="foot"><b>Note:</b> {_esc(n)}</div>' for n in shared_notes)
+    else:  # single week: notes render as the page footer, not inline
+        foot = "".join(f'<div class="foot">{_esc(n)}</div>'
+                       for g in groups for n in g["week"].get("notes", []))
 
-    cls = "multi" if multi else "single"
+    body = pages_html(paginate(cells), chrome=chrome, foot=foot)
     return (f'<!doctype html><html><head><meta charset="utf-8">'
-            f'<style>{_CSS}</style></head>'
-            f'<body class="sheet {cls}">{"".join(body_parts)}</body></html>')
+            f'<style>{page_css(12)}{_CSS}</style></head>'
+            f'<body class="sheet">{body}{FIT_JS}</body></html>')
 
 
 def save_html(doc_data: dict, path: str) -> None:

@@ -23,6 +23,7 @@ from __future__ import annotations
 import html as _html
 import re
 
+from engine.page_layout import FIT_JS, page_css, paginate, pages_html
 from engine.render_docx import _group_blocks
 from engine.render_html import day_items, week_items
 
@@ -53,8 +54,7 @@ _CSS = """
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
   font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.4;}
-@page{size:A4;margin:15mm;}
-.sheet{max-width:1040px;margin:0 auto;font-size:15px;}
+.sheet{font-size:15px;}
 
 .masthead{display:flex;align-items:center;gap:1.2em;
   padding-bottom:.95em;border-bottom:1px solid var(--ink);}
@@ -70,8 +70,8 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .mast-txt .addr{margin-top:.4em;color:var(--muted);font-size:.72em;letter-spacing:.03em;}
 .bsd{flex:0 0 auto;align-self:flex-start;color:var(--muted);font-size:1em;font-family:var(--serif);}
 
-.grid{display:grid;grid-template-columns:1fr;gap:1.7em;margin-top:1.3em;}
-.grid.multi{grid-template-columns:repeat(2,1fr);gap:1.4em 2.2em;}
+.page-cells{margin-top:1.3em;}
+.page-cells.grid,.page-cells.two{gap:1.4em 2.2em;}
 .wk{break-inside:avoid;}
 .wk-h{margin-bottom:.4em;}
 .wk-h h2{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);
@@ -97,6 +97,20 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .notes{margin-top:1em;border-top:1px solid var(--hair);padding-top:.6em;}
 .foot-notes{margin-top:1.4em;border-top:1px solid var(--ink);padding-top:.65em;}
 .note{color:var(--muted);font-style:italic;margin:.2em 0;font-size:.76em;}
+
+/* Denser rhythm on shared (grid / two-column) pages so four week cards fit an
+   A4 page; the fit script then scales the whole page uniformly. */
+.page.many .masthead{padding-bottom:.5em;}
+.page.many .mast-txt h1{font-size:1.7em;}
+.page.many .page-cells{margin-top:.8em;}
+.page.many .wk-h h2{font-size:1.22em;}
+.page.many .row{padding:.16em 0;}
+.page.many .sec{margin-top:.55em;}
+.page.many .sec.plain{margin-top:.3em;}
+.page.many .sec-h{padding-bottom:.18em;margin-bottom:.1em;}
+.page.many .subhead{margin:.35em 0 0;}
+.page.many .callout{margin-top:.5em;padding:.4em .7em;}
+.page.many .notes{margin-top:.5em;padding-top:.35em;}
 """
 
 
@@ -340,11 +354,11 @@ def render_modern(doc_data: dict, *, variant: str = "print",
         f'<div class="addr">{_esc(_ADDR)}</div></div>'
         '<div class="bsd">בס״ד</div>'
         '</div>')
-    grid_cls = "grid multi" if multi else "grid"
-    body = (f'{masthead}<div class="{grid_cls}">{"".join(cards)}</div>'
-            f'{_notes_html(shared_notes, "foot-notes")}')
+    body = pages_html(paginate(cards), chrome=masthead,
+                      foot=_notes_html(shared_notes, "foot-notes"),
+                      page_class="sheet", one_class="one", many_class="many")
     return (
         '<!doctype html><html><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        f'<style>{_CSS}</style>{_webfont_links(theme)}{_theme_css(theme)}</head>'
-        f'<body class="sheet-body"><div class="sheet">{body}</div></body></html>')
+        f'<style>{page_css(15)}{_CSS}</style>{_webfont_links(theme)}{_theme_css(theme)}</head>'
+        f'<body class="sheet-body">{body}{FIT_JS}</body></html>')
