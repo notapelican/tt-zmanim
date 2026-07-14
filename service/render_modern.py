@@ -53,8 +53,10 @@ _CSS = """
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
   font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.4;}
-@page{size:A4;margin:15mm;}
-.sheet{max-width:1040px;margin:0 auto;font-size:15px;}
+@page{size:A4;margin:0;}
+/* Margins live on the sheet (not @page) so the preview, PNG and PDF all frame
+   the content identically: text fills the page but keeps clear side margins. */
+.sheet{max-width:1040px;margin:0 auto;font-size:15px;padding:9mm 14mm;}
 
 .masthead{display:flex;align-items:center;gap:1.2em;
   padding-bottom:.95em;border-bottom:1px solid var(--ink);}

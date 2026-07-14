@@ -187,20 +187,24 @@
 		iframe.srcdoc = ( $( 'ttcc-pageguides' ).checked ) ? injectPageGuides( html ) : html;
 	}
 
-	// Render exactly one A4 page at logical A4 size and scale it to the pane
-	// width, so the preview is ALWAYS an A4 sheet ratio (210:297) — the height
-	// simply follows the width. Content that runs past one page falls off the
-	// bottom of the page (with the boundary guide, that's the "won't fit" cue).
+	// Fit one whole A4 page inside the available space (width AND height), so the
+	// full sheet is always visible at any window size — A4 ratio locked, the page
+	// just shrinks to fit. The frame is sized to the scaled page and centered.
 	function fitPreview() {
 		var frame = $( 'ttcc-preview-frame' ), iframe = $( 'ttcc-preview' );
 		if ( ! frame || ! iframe ) { return; }
-		var avail = frame.clientWidth || frame.offsetWidth;
-		if ( ! avail ) { return; }
-		var scale = avail / A4.W;
+		var wrap = frame.parentElement;
+		var availW = ( wrap ? wrap.clientWidth : frame.clientWidth );
+		if ( ! availW ) { return; }
+		// Vertical room from the frame's top to the bottom of the viewport.
+		var top = frame.getBoundingClientRect().top;
+		var availH = Math.max( 260, window.innerHeight - top - 20 );
+		var scale = Math.min( availW / A4.W, availH / A4.H );
 		iframe.style.width = A4.W + 'px';
 		iframe.style.height = A4.H + 'px';
 		iframe.style.transformOrigin = 'top left';
 		iframe.style.transform = 'scale(' + scale + ')';
+		frame.style.width = ( A4.W * scale ) + 'px';
 		frame.style.height = ( A4.H * scale ) + 'px';
 	}
 

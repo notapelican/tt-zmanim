@@ -33,9 +33,10 @@
 
 .ttcc-split { display:flex; gap:16px; align-items:flex-start; }
 .ttcc-editor { flex:0 0 42%; max-width:42%; background:#fff; border:1px solid #dcdcde; border-radius:4px; padding:10px 12px; max-height:80vh; overflow:auto; }
-.ttcc-preview-wrap { flex:1; min-width:0; max-height:82vh; overflow:auto; }
-/* The frame is sized by JS to a true A4 ratio and scaled to fit its width. */
-.ttcc-preview-frame { width:100%; background:#fff; border:1px solid #dcdcde; border-radius:4px; box-shadow:0 1px 5px rgba(0,0,0,.10); overflow:hidden; }
+.ttcc-preview-wrap { flex:1; min-width:0; }
+/* The frame is sized by JS to a whole A4 page that fits the available space
+   (width and height), then centered — so the full sheet is always visible. */
+.ttcc-preview-frame { margin:0 auto; background:#fff; border:1px solid #dcdcde; border-radius:4px; box-shadow:0 1px 5px rgba(0,0,0,.10); overflow:hidden; }
 .ttcc-preview { display:block; border:0; background:#fff; }
 .ttcc-preview-note { font-size:12px; color:#777; margin-bottom:4px; min-height:16px; }
 
