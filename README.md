@@ -2,15 +2,17 @@
 
 ## ⚠ Follow-ups needed (action required)
 
-- [ ] **Confirm chabad.org's exact Sydney coordinate/elevation.** chabad.org is unreachable
-  from the build sandbox, so the engine's location (`engine/zmanim.py`: −33.88, 151.22, 10 m)
-  is fit-derived. This is the source of the remaining ±1-minute residuals in the golden
-  regression. To close it: open chabad.org's zmanim page for Sydney and paste back either the
-  coordinates it displays, or its printed times (candle lighting, shkia, tzeis, misheyakir,
-  sof zman Shema) for 3–4 scattered dates (one summer Friday, one winter Friday, two weekdays).
-- [ ] **Rov's written sign-off** on the recovered definitions — especially the **8.4°**
-  motzaei Shabbos/YT tzeis (fits 78/79 vs. the standard 8.5°) and the confirmed-errata
+- [x] **Confirm chabad.org's exact Sydney coordinate/elevation** — ✅ resolved
+  (2026-07-14) against 8 chabad.org Sydney readouts (locationId 523, ~100 readings,
+  Jul–Oct 2026 incl. DST): coordinate **(−33.88, 151.22) at SEA LEVEL** (the fitted 10 m
+  elevation was an artifact), motzaei tzeis is the standard **8.5°** (the 8.4° fit was an
+  artifact of assuming ceil display rounding — chabad displays nearest), and the sheets
+  copy chabad's *displayed* per-row roundings (documented in `engine/zmanim.py`).
+  The engine now reproduces 94/98 of the readings exactly; the 4 misses are raw values
+  within ~5 s of a minute boundary.
+- [ ] **Rov's written sign-off** on the recovered definitions and the confirmed-errata
   rulings (Tishrei Shema outliers, 9 Av am/pm slip) listed in `phase0/PHASE0-FINDINGS.md`.
+  (The 8.4°-vs-8.5° question is now settled empirically at 8.5° — see above.)
   The warplan makes this the halachic gate: nothing ships without it.
 - [x] **Confirm whether ttcc.info runs WordPress** — ✅ confirmed WordPress
   (2026-07-12): Phase 4 will be the WP-plugin route (WARPLAN.md §2, Option A).

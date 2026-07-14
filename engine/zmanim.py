@@ -12,10 +12,15 @@ reference implementation chabad.org's zmanim are built on) and confirmed against
   candle lighting            : sea-level shkia minus 18 minutes
   sof zman shema / plag      : 3 / 10.75 shaos zmanios of the netz-amiti->shkia-amitis day
 
-Location defaults to chabad.org's Sydney coordinate as identified in Phase 0
-(NOT the shul's literal Bondi address - the historical sheets were computed
-for a generic "Sydney" point). TODO(phase1): confirm exact coordinate/elevation
-against chabad.org directly once reachable; current value is fit-derived.
+Location is chabad.org's Sydney coordinate (NOT the shul's literal Bondi
+address - the historical sheets were computed for a generic "Sydney" point).
+CONFIRMED 2026-07-14 against 8 chabad.org Sydney readouts (locationId 523,
+~100 individual times spanning Jul-Oct 2026, incl. DST): a joint fit of
+latitude/longitude/elevation and per-row display rounding reproduces every
+reading at (-33.88, 151.22), SEA LEVEL, with a total residual of ~10 seconds
+across the whole dataset. The same dataset confirmed motzaei tzeis is the
+standard 8.5 deg (three discriminating Saturdays), displayed nearest-minute,
+and that chabad's shaah zmanis / shema / plag use the netz-amiti day.
 """
 from __future__ import annotations
 
@@ -28,13 +33,13 @@ from .solar import CIVIL_ZENITH, elevation_adjustment, sun_event_local, solar_no
 
 SYDNEY_LAT = -33.88
 SYDNEY_LON = 151.22
-SYDNEY_ELEVATION_M = 10.0  # fit-derived; confirm against chabad.org (see module docstring)
+SYDNEY_ELEVATION_M = 0.0  # sea level, confirmed against chabad.org (module docstring)
 SYDNEY_TZ = ZoneInfo("Australia/Sydney")
 
 ZENITH_AMITI = 90.0 + 1.583
 ZENITH_ALOS_BAAL_HATANYA = 90.0 + 16.9
 ZENITH_TZEIS_BAAL_HATANYA = 90.0 + 6.0
-ZENITH_TZEIS_GEONIM_8_5 = 90.0 + 8.4  # 78/79 fit vs. 8.5 (see phase0/PHASE0-FINDINGS.md); name kept for KosherJava cross-reference
+ZENITH_TZEIS_GEONIM_8_5 = 90.0 + 8.5  # confirmed 8.5 against chabad.org (3 discriminating Saturdays); the earlier 8.4 fit was an artifact of assuming ceil display rounding (chabad displays nearest)
 ZENITH_MISHEYAKIR_10_2 = 90.0 + 10.2
 
 CANDLE_LIGHTING_OFFSET_MIN = 18
@@ -103,15 +108,18 @@ class ZmanimEngine:
         """Weekday tzeis / minor-fast end. Default rounds UP (never end a fast early)."""
         return _round(self._sunset_zenith(d, ZENITH_TZEIS_BAAL_HATANYA), rounding)
 
-    def tzeis_shabbos(self, d: date, rounding: str = "ceil") -> datetime:
+    def tzeis_shabbos(self, d: date, rounding: str = "nearest") -> datetime:
         """Motzaei Shabbos/Yom Tov Maariv, and 'not before' 2nd-night candle lighting.
-        Default rounds UP (never end Shabbos/YT early)."""
+        Default rounds NEAREST: the printed sheets copy chabad.org's displayed
+        motzaei time, which is the nearest minute of the 8.5 deg zman."""
         return _round(self._sunset_zenith(d, ZENITH_TZEIS_GEONIM_8_5), rounding)
 
     def candle_lighting(self, d: date, offset_min: int = CANDLE_LIGHTING_OFFSET_MIN,
-                        rounding: str = "floor") -> datetime:
-        """Erev Shabbos / erev-YT candle lighting. Default rounds DOWN (never light late).
-        Subtracts the offset from the unrounded shkia so we round exactly once."""
+                        rounding: str = "nearest") -> datetime:
+        """Erev Shabbos / erev-YT candle lighting. Default rounds NEAREST — the
+        printed sheets copy chabad.org's displayed candle time, which is the
+        nearest minute of (sea-level shkia − 18). Subtracts the offset from the
+        unrounded shkia so we round exactly once."""
         raw_shkia = self._sunset_zenith(d, self._civil_zenith())
         return _round(raw_shkia - timedelta(minutes=offset_min), rounding)
 

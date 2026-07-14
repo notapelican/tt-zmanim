@@ -306,7 +306,7 @@ _BASE_RULES = (
     # Weekday Mincha: 10 min before the earliest shkia of the covered days
     # (so it is >=10 min before shkia on every covered day).
     ScheduleRule("weekday_mincha", WEEKDAY, "Mincha",
-                 ZmanAnchored("shkia", "earliest", -10, rounding="floor"),
+                 ZmanAnchored("shkia", "earliest", -10, rounding="nearest"),
                  day_spec="Sun.–Thurs.",
                  bound=Bound("shkia", "not_after")),
     # Weekday Maariv: at the latest weekday tzeis of the covered days.
@@ -318,7 +318,7 @@ _BASE_RULES = (
     # Erev Shabbos: Mincha 8 min after candle lighting; Kabbolas Shabbos 10
     # min before Friday tzeis, so the Maariv that follows lands at tzeis.
     ScheduleRule("es_mincha", EREV_SHABBOS, "Mincha",
-                 ZmanAnchored("candle_lighting", "friday", +8),
+                 ZmanAnchored("candle_lighting", "friday", +8, rounding="nearest"),
                  bound=Bound("shkia", "not_after")),
     ScheduleRule("es_kabbolas_shabbos", EREV_SHABBOS, "Kabbolas Shabbos followed by Maariv",
                  ZmanAnchored("tzeis", "friday", -10, rounding="ceil"),
@@ -338,12 +338,12 @@ _BASE_RULES = (
     # Shabbos Mincha: shkia - 18 snapped to the nearest 5-minute mark. The
     # assembler appends ", Pirkei Avos N" / ", Seder Nigunim" decorations.
     ScheduleRule("shab_mincha", SHABBOS_DAY, "Mincha",
-                 ZmanAnchored("shkia", "shabbos", -18, rounding="floor",
+                 ZmanAnchored("shkia", "shabbos", -18, rounding="nearest",
                               grid=5, grid_rounding="nearest"),
                  bound=Bound("shkia", "not_after")),
-    # Motzaei Shabbos Maariv: at tzeis 8.4 deg (never earlier).
+    # Motzaei Shabbos Maariv: at tzeis 8.5 deg as displayed by chabad.org (nearest).
     ScheduleRule("motzaei_maariv", SHABBOS_DAY, "Motzaei Shabbos, Maariv",
-                 ZmanAnchored("tzeis_shabbos", "shabbos", 0, rounding="ceil"),
+                 ZmanAnchored("tzeis_shabbos", "shabbos", 0, rounding="nearest"),
                  bound=Bound("tzeis_shabbos", "not_before")),
 )
 
@@ -391,7 +391,7 @@ _EARLY_ES_RULES = (
 _HALACHA_SHIUR_RULES = (
     ScheduleRule("shab_halacha_shiur", SHABBOS_DAY,
                  "Halacha shiur, from the Shulchan Aruch Harav",
-                 ZmanAnchored("shkia", "shabbos", -48, rounding="floor",
+                 ZmanAnchored("shkia", "shabbos", -48, rounding="nearest",
                               grid=5, grid_rounding="nearest")),
 )
 

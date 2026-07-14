@@ -140,7 +140,7 @@ def _fast_entries(sunday: date, shabbos: date, engine: ZmanimEngine) -> list[dic
             # handled on its yom tov sheet, not here.
             if f["kind"] == "night":
                 start_d = d - timedelta(days=1)
-                start = engine.shkia(start_d, "floor")
+                start = engine.shkia(start_d, "nearest")
             else:
                 start_d = d
                 start = engine.alos(d, "floor")
@@ -218,7 +218,7 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
             None, day_spec=spec_sf, qualifier="approx", rule_id="z_misheyakir"))
         entries.append(_zman_line(
             "Netz Hachamah (sunrise)",
-            _fmt(max((engine.netz(d, "ceil") for d in sun_fri), key=tod)),
+            _fmt(max((engine.netz(d, "nearest") for d in sun_fri), key=tod)),
             None, day_spec=spec_sf, rule_id="z_netz"))
         entries.append(_zman_line(
             "Morning Shema",
@@ -227,7 +227,7 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     if sun_thu:
         spec_st = format_day_spec(sun_thu)
         entries.append(_zman_line(
-            "Shkia", _fmt(min((engine.shkia(d, "floor") for d in sun_thu), key=tod)),
+            "Shkia", _fmt(min((engine.shkia(d, "nearest") for d in sun_thu), key=tod)),
             None, day_spec=spec_st, rule_id="z_shkia_wk"))
         entries.append(_zman_line(
             "Tzeis", _fmt(max((engine.tzeis(d, "ceil") for d in sun_thu), key=tod)),
@@ -267,7 +267,7 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     if ctx.friday is not None:
         entries.append(_zman_line("Plag Hamincha", _fmt(engine.plag_hamincha(friday, "ceil")),
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_plag_fri"))
-        entries.append(_zman_line("Shkia", _fmt(engine.shkia(friday, "floor")),
+        entries.append(_zman_line("Shkia", _fmt(engine.shkia(friday, "nearest")),
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_shkia_fri"))
         entries.append(_zman_line("Tzeis hachochavim", _fmt(engine.tzeis(friday, "ceil")),
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_tzeis_fri"))
@@ -339,12 +339,12 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
     if is_yt:
         add("Shacharis", datetime(d.year, d.month, d.day, 10, 0), kind="minyan",
             rule_id="yt_shacharis")
-        add("Mincha", engine.shkia(d, "floor") - timedelta(minutes=10),
+        add("Mincha", engine.shkia(d, "nearest") - timedelta(minutes=10),
             kind="minyan", rule_id="yt_mincha")
         if next_yt:
-            add("Candle lighting", engine.tzeis_shabbos(d, "ceil"),
+            add("Candle lighting", engine.tzeis_shabbos(d, "nearest"),
                 qualifier="not before", rule_id="yt_candles_2nd")
-            add("Maariv", engine.tzeis_shabbos(d, "ceil"), kind="minyan",
+            add("Maariv", engine.tzeis_shabbos(d, "nearest"), kind="minyan",
                 rule_id="yt_maariv_2nd")
         elif next_shabbos:
             add("Candle lighting", engine.candle_lighting(d),
@@ -352,7 +352,7 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
             add("Kabbolas Shabbos & Maariv", engine.tzeis(d, "ceil") - timedelta(minutes=10),
                 kind="minyan", rule_id="yt_ks")
         else:
-            add("Yom Tov ends; Maariv", engine.tzeis_shabbos(d, "ceil"),
+            add("Yom Tov ends; Maariv", engine.tzeis_shabbos(d, "nearest"),
                 kind="minyan", rule_id="yt_ends")
     else:
         # erev yom tov (or an interleaved chol day on a yom tov sheet)
@@ -360,7 +360,7 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
             add("Candle lighting", engine.candle_lighting(d), rule_id="erev_yt_candles")
             add("Mincha", engine.candle_lighting(d) + timedelta(minutes=8),
                 kind="minyan", rule_id="erev_yt_mincha")
-            add("Shkia", engine.shkia(d, "floor"), rule_id="erev_yt_shkia")
+            add("Shkia", engine.shkia(d, "nearest"), rule_id="erev_yt_shkia")
             add("Maariv (Yom Tov)", engine.tzeis(d, "ceil"), kind="minyan",
                 rule_id="erev_yt_maariv")
 

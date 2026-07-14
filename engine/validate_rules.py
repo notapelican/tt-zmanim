@@ -156,7 +156,7 @@ def main():
 
 # Regression floor: exact hits achieved by the recovered rule set; every
 # residual is triaged in phase3/PHASE3-FINDINGS.md. Raise when improved.
-BASELINE_HITS = 777
+BASELINE_HITS = 778
 
 
 if __name__ == "__main__":

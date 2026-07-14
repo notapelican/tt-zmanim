@@ -23,10 +23,10 @@ def m(dt):
 
 
 FAMILY_FUNCS = {
-    "shkia_fri": ("single", lambda o: m(engine.shkia(o["date"], "floor"))),
-    "shkia_wk": ("range_min", lambda d: m(engine.shkia(d, "floor"))),
+    "shkia_fri": ("single", lambda o: m(engine.shkia(o["date"], "nearest"))),
+    "shkia_wk": ("range_min", lambda d: m(engine.shkia(d, "nearest"))),
     "candle_fri": ("single", lambda o: m(engine.candle_lighting(o["date"]))),
-    "netz_wk": ("range_max", lambda d: m(engine.netz(d, "ceil"))),
+    "netz_wk": ("range_max", lambda d: m(engine.netz(d, "nearest"))),
     "tzeis_fri": ("single", lambda o: m(engine.tzeis(o["date"]))),
     "tzeis_wk": ("range_max", lambda d: m(engine.tzeis(d, "ceil"))),
     "motzaei": ("single", lambda o: m(engine.tzeis_shabbos(o["date"]))),
@@ -39,7 +39,7 @@ FAMILY_FUNCS = {
     "shema_day": ("single", lambda o: m(engine.sof_zman_shema(o["date"], "floor"))),
     "plag_fri": ("single", lambda o: m(engine.plag_hamincha(o["date"]))),
     "candle_day": ("single", lambda o: m(engine.candle_lighting(o["date"]))),
-    "shkia_day": ("single", lambda o: m(engine.shkia(o["date"], "floor"))),
+    "shkia_day": ("single", lambda o: m(engine.shkia(o["date"], "nearest"))),
     "chatzot": ("single", lambda o: m(engine.chatzos(o["date"]))),
 }
 # alos excluded: fixtures mix fast-start (alos) with explicit "alos"/"dawn" lines
