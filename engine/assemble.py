@@ -168,6 +168,29 @@ def build_week_context(sunday: date, engine: ZmanimEngine | None = None) -> Week
         engine=engine)
 
 
+def scope_overrides(overrides: dict[str, dict] | None, block_key: str) -> dict[str, dict]:
+    """Reduce a sheet-wide overrides dict to one block's overrides.
+
+    Keys may be block-scoped as "<block_key>|<rule_id>" where block_key is
+    "week:<civil_start ISO>" or "day:<date ISO>" (the same keys the plugin
+    uses for note edits). Scoped keys apply only to their block, with the
+    prefix stripped so apply_overrides sees plain rule_ids (including
+    "add:<id>" insertions). Bare legacy keys apply to every block, which
+    preserves the behaviour of overrides stored before scoping existed.
+    """
+    if not overrides:
+        return {}
+    out: dict[str, dict] = {}
+    for key, ov in overrides.items():
+        if "|" in key and key.split("|", 1)[0].startswith(("week:", "day:")):
+            bk, rid = key.split("|", 1)
+            if bk == block_key and rid:
+                out[rid] = ov
+        else:
+            out[key] = ov
+    return out
+
+
 def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
                   profiles=DEFAULT_PROFILES, notes=DEFAULT_NOTES,
                   overrides: dict[str, dict] | None = None) -> dict:
@@ -267,7 +290,8 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
         if l["section"] == SECTION_TITLES[EREV_SHABBOS]:
             l["section"] = es_title
 
-    entries = apply_overrides(entries, overrides or {})
+    entries = apply_overrides(
+        entries, scope_overrides(overrides, f"week:{sunday.isoformat()}"))
 
     parsha = luach.week_parsha(shabbos)
     block = {
@@ -347,7 +371,8 @@ def apply_day_block(d, h, labels, entries, overrides):
         "date": d.isoformat(),
         "labels": labels,
         "omer_day": luach.omer_day(d),
-        "entries": apply_overrides(entries, overrides or {}),
+        "entries": apply_overrides(
+            entries, scope_overrides(overrides, f"day:{d.isoformat()}")),
         "notes": [],
     }
 

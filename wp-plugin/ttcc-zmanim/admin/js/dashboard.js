@@ -254,9 +254,21 @@
 		return '';
 	}
 
-	function lineRow( entry ) {
+	/**
+	 * Overrides are keyed per block ("week:<sunday>|<rule_id>") so an edit on a
+	 * multi-week sheet only touches its own week. Bare legacy keys (old saved
+	 * sheets) still apply sheet-wide; the first edit migrates them to the block.
+	 */
+	function lineRow( entry, bkey ) {
 		var rid = entry.rule_id;
-		var ov = state.overrides.lines[ rid ] || {};
+		var okey = bkey + '|' + rid;
+		function readOv() { return state.overrides.lines[ okey ] || state.overrides.lines[ rid ] || {}; }
+		function writeOv( v ) {
+			delete state.overrides.lines[ rid ]; // migrate any legacy sheet-wide key
+			if ( v ) { state.overrides.lines[ okey ] = v; }
+			else { delete state.overrides.lines[ okey ]; }
+		}
+		var ov = readOv();
 		var row = el( 'div', 'ttcc-line' + ( ov.suppress ? ' suppressed' : '' ) );
 
 		var lbl = el( 'div', 'lbl' );
@@ -285,30 +297,33 @@
 		}
 
 		timeInput.addEventListener( 'input', function () {
-			state.overrides.lines[ rid ] = Object.assign( {}, state.overrides.lines[ rid ], { time: timeInput.value } );
-			delete state.overrides.lines[ rid ].suppress;
+			var next = Object.assign( {}, readOv(), { time: timeInput.value } );
+			delete next.suppress;
+			writeOv( next );
 			badge.textContent = 'override';
 			badge.className = 'badge override';
 			showWarn();
 			schedulePreview();
 		} );
 
+		var isAdded = ( 0 === rid.indexOf( 'add:' ) );
 		if ( 'zman' !== entry.kind ) {
-			var supBtn = el( 'button', 'button button-small', ov.suppress ? 'Restore' : 'Remove' );
+			// Rule lines toggle suppress/restore; manually added lines are simply
+			// deleted (there is no calculated line to restore behind them).
+			var supBtn = el( 'button', 'button button-small', isAdded ? 'Delete' : ( ov.suppress ? 'Restore' : 'Remove' ) );
 			supBtn.addEventListener( 'click', function () {
-				var cur = state.overrides.lines[ rid ] || {};
-				if ( cur.suppress ) { delete state.overrides.lines[ rid ]; }
-				else { state.overrides.lines[ rid ] = { suppress: true }; }
+				if ( isAdded || readOv().suppress ) { writeOv( null ); }
+				else { writeOv( { suppress: true } ); }
 				refresh( true );
 			} );
 			acts.appendChild( supBtn );
 		}
 
-		if ( state.overrides.lines[ rid ] && ( state.overrides.lines[ rid ].time || state.overrides.lines[ rid ].suppress ) && 0 !== rid.indexOf( 'add:' ) ) {
+		if ( ( ov.time || ov.suppress ) && ! isAdded ) {
 			var revBtn = el( 'button', 'button button-small', 'Revert' );
 			revBtn.title = 'Revert to the calculated value';
 			revBtn.addEventListener( 'click', function () {
-				delete state.overrides.lines[ rid ];
+				writeOv( null );
 				refresh( true );
 			} );
 			acts.appendChild( revBtn );
@@ -385,7 +400,8 @@
 			if ( ! label ) { return; }
 			var time = window.prompt( 'Time (HH:MM, 24-hour)', '19:00' ) || '19:00';
 			var id = 'add:' + Date.now().toString( 36 );
-			state.overrides.lines[ id ] = {
+			// Scoped key: the added line belongs to THIS block only.
+			state.overrides.lines[ blockKey( block ) + '|' + id ] = {
 				rule_id: id, section: null, label: label, kind: 'minyan',
 				day_spec: null, date: block.date || null, time: time,
 				qualifier: null, source: 'manual'
@@ -413,7 +429,7 @@
 					curSection = sec;
 					if ( sec ) { b.appendChild( el( 'div', 'ttcc-section-head', sec ) ); }
 				}
-				b.appendChild( lineRow( entry ) );
+				b.appendChild( lineRow( entry, blockKey( block ) ) );
 			} );
 
 			b.appendChild( addLineButton( block ) );
