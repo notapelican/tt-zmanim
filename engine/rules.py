@@ -262,6 +262,10 @@ class Timesheet:
         {"<rule_id>": {"time": "19:15"}}         edit a time
         {"<rule_id>": {"suppress": true}}        drop the line/section
         {"add:<id>": {full line dict}}           insert a manual line
+    Keys may be block-scoped as "week:<sunday ISO>|<rule_id>" or
+    "day:<date ISO>|<rule_id>" so an edit applies to one block of a
+    multi-week/yom-tov sheet (see assemble.scope_overrides). Bare keys
+    apply to every block (legacy sheets).
     """
     start: date
     end: date

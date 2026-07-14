@@ -175,12 +175,13 @@ class TTCC_Zmanim_Public {
 		return substr( $html, 0, $pos ) . $snippet . substr( $html, $pos );
 	}
 
-	/** Large-type, high-contrast overrides for signage screens. */
+	/** Large-type, high-contrast overrides for signage screens. The sheet is
+	 * fixed A4 .page boxes; zoom scales them (content included) to screen size. */
 	private static function signage_css() {
 		return '<style id="ttcc-signage">'
 			. 'html{background:#fff}'
-			. 'body{zoom:1.6;max-width:none;margin:0 auto;padding:2vh 3vw}'
-			. '.single{width:auto}'
+			. 'body{zoom:1.6;margin:0;padding:1vh 0}'
+			. '.page{margin:0 auto}'
 			. '@media (min-width:1600px){body{zoom:2.1}}'
 			. '</style>';
 	}

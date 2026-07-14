@@ -152,26 +152,32 @@ class TTCC_Zmanim_Service_Client {
 		$design  = is_array( $design ) ? $design : array();
 		$template = ( $allow_modern && isset( $design['template'] ) && 'modern' === $design['template'] ) ? 'modern' : 'classic';
 		$payload['template'] = $template;
-		if ( 'modern' === $template ) {
-			if ( ! empty( $design['logo'] ) ) {
-				$payload['logo_url'] = (string) $design['logo'];
+
+		// Typography theme travels with BOTH templates (the service themes the
+		// classic sheet too); the masthead logo is modern-only.
+		$theme = array();
+		foreach ( array(
+			'heading_font', 'body_font', 'custom_heading', 'custom_body', 'font_source', 'base',
+			'header_font', 'header_size', 'header_align',
+			'subheader_font', 'subheader_size', 'subheader_align',
+			'logo_size', 'text_color', 'callout_bg', 'callout_text',
+		) as $k ) {
+			if ( isset( $design[ $k ] ) && '' !== $design[ $k ] ) {
+				$theme[ $k ] = $design[ $k ];
 			}
-			$theme = array();
-			foreach ( array( 'heading_font', 'body_font', 'custom_heading', 'custom_body', 'font_source', 'base', 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
-				if ( isset( $design[ $k ] ) && '' !== $design[ $k ] ) {
-					$theme[ $k ] = $design[ $k ];
-				}
-			}
-			$kit = (string) TTCC_Zmanim_Settings::get( 'adobe_kit', '' );
-			if ( '' !== $kit ) {
-				$theme['adobe_kit'] = $kit;
-			}
-			if ( $theme ) {
-				$payload['theme'] = $theme;
-			}
+		}
+		$kit = (string) TTCC_Zmanim_Settings::get( 'adobe_kit', '' );
+		if ( '' !== $kit ) {
+			$theme['adobe_kit'] = $kit;
+		}
+		if ( $theme ) {
+			$payload['theme'] = $theme;
 			// Referer = the site domain so a domain-locked Adobe Fonts kit serves
 			// during the headless PDF/PNG render.
 			$payload['referer'] = home_url();
+		}
+		if ( 'modern' === $template && ! empty( $design['logo'] ) ) {
+			$payload['logo_url'] = (string) $design['logo'];
 		}
 		return $payload;
 	}
@@ -183,9 +189,15 @@ class TTCC_Zmanim_Service_Client {
 
 	/** POST /render/{pdf|png|docx} with a pre-generated doc. Returns binary array or WP_Error. */
 	public static function render_binary( $kind, $doc, $variant = 'print', $design = null ) {
-		$path = '/render/' . $kind;
+		$path    = '/render/' . $kind;
 		// The modern layout is HTML-based; .docx keeps the classic renderer.
-		return self::post_binary( $path, self::render_payload( $doc, $variant, $design, 'docx' !== $kind ) );
+		$payload = self::render_payload( $doc, $variant, $design, 'docx' !== $kind );
+		// Exports match the preview's fit-to-page scaling unless the Settings
+		// override asks for natural (unscaled) output.
+		if ( 'natural' === TTCC_Zmanim_Settings::get( 'export_fit', 'fit' ) ) {
+			$payload['fit'] = false;
+		}
+		return self::post_binary( $path, $payload );
 	}
 
 	/** POST /render/whatsapp with a pre-generated doc. Returns array{text, engine_version} or WP_Error. */

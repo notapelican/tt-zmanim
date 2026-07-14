@@ -42,6 +42,14 @@ class TTCC_Zmanim_Settings {
 			'heading_font' => (string) self::get( 'default_heading_font', 'palatino' ),
 			'body_font'    => (string) self::get( 'default_body_font', 'system' ),
 			'base'         => (int) self::get( 'default_base', 15 ),
+			// Per-type typography (blank = the layout's built-in default).
+			'header_font'     => (string) self::get( 'default_header_font', '' ),
+			'header_size'     => (string) self::get( 'default_header_size', '' ),
+			'header_align'    => (string) self::get( 'default_header_align', '' ),
+			'subheader_font'  => (string) self::get( 'default_subheader_font', '' ),
+			'subheader_size'  => (string) self::get( 'default_subheader_size', '' ),
+			'subheader_align' => (string) self::get( 'default_subheader_align', '' ),
+			'logo_size'       => (string) self::get( 'default_logo_size', '' ),
 			'text_color'   => (string) self::get( 'default_text_color', '#1b1e28' ),
 			'callout_bg'   => (string) self::get( 'default_callout_bg', '#fbeef1' ),
 			'callout_text' => (string) self::get( 'default_callout_text', '#a3324b' ),
@@ -75,6 +83,9 @@ class TTCC_Zmanim_Settings {
 			$val = isset( $input[ $key ] ) ? (string) $input[ $key ] : '';
 			$out[ $key ] = preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $val ) ? $val : $fallback;
 		}
+		// Export sizing: 'fit' (default — exports match the preview's
+		// fit-to-page scaling) or 'natural' (no scaling; may overflow pages).
+		$out['export_fit'] = ( isset( $input['export_fit'] ) && 'natural' === $input['export_fit'] ) ? 'natural' : 'fit';
 		// Adobe Fonts (Typekit) web-project id — site-level; lowercase alnum.
 		$out['adobe_kit'] = isset( $input['adobe_kit'] ) ? substr( preg_replace( '/[^a-z0-9]/', '', strtolower( (string) $input['adobe_kit'] ) ), 0, 20 ) : '';
 		// GitHub token for over-the-air plugin updates from the private repo.
@@ -134,6 +145,16 @@ class TTCC_Zmanim_Settings {
 								class="regular-text" value="<?php echo esc_attr( isset( $opts['github_token'] ) ? $opts['github_token'] : '' ); ?>"
 								autocomplete="off" />
 							<p class="description"><?php esc_html_e( 'Enables one-click plugin updates from the private GitHub repo. Use a fine-grained personal access token with read-only Contents access to notapelican/tt-zmanim. Leave blank to disable OTA updates.', 'ttcc-zmanim' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="ttcc_export_fit"><?php esc_html_e( 'Export sizing', 'ttcc-zmanim' ); ?></label></th>
+						<td>
+							<select id="ttcc_export_fit" name="<?php echo esc_attr( self::OPTION ); ?>[export_fit]">
+								<option value="fit" <?php selected( self::get( 'export_fit', 'fit' ), 'fit' ); ?>><?php esc_html_e( 'Fit to page (default — matches the preview)', 'ttcc-zmanim' ); ?></option>
+								<option value="natural" <?php selected( self::get( 'export_fit', 'fit' ), 'natural' ); ?>><?php esc_html_e( 'Natural size (no fit-to-page scaling)', 'ttcc-zmanim' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'PDF/PNG exports are scaled to fill each A4 page exactly like the preview. Choose "Natural size" to export at 100% instead.', 'ttcc-zmanim' ); ?></p>
 						</td>
 					</tr>
 					<?php if ( $sig_url ) : ?>

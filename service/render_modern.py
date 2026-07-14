@@ -23,6 +23,7 @@ from __future__ import annotations
 import html as _html
 import re
 
+from engine.page_layout import FIT_JS, page_css, paginate, pages_html
 from engine.render_docx import _group_blocks
 from engine.render_html import day_items, week_items
 
@@ -53,8 +54,7 @@ _CSS = """
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
   font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.4;}
-@page{size:A4;margin:15mm;}
-.sheet{max-width:1040px;margin:0 auto;font-size:15px;}
+.sheet{font-size:15px;}
 
 .masthead{display:flex;align-items:center;gap:1.2em;
   padding-bottom:.95em;border-bottom:1px solid var(--ink);}
@@ -64,14 +64,15 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .logo img{width:100%;height:100%;object-fit:contain;}
 .logo .ph{font-family:var(--sans);font-size:.58em;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);}
-.mast-txt{flex:1 1 auto;}
+.mast-txt{flex:1 1 auto;min-width:0;}
 .mast-txt h1{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);
-  letter-spacing:-.01em;font-size:2.05em;line-height:1.05;}
-.mast-txt .addr{margin-top:.4em;color:var(--muted);font-size:.72em;letter-spacing:.03em;}
+  letter-spacing:-.01em;font-size:2.05em;line-height:1.05;white-space:nowrap;}
+.mast-txt .addr{margin-top:.4em;color:var(--muted);font-size:.72em;letter-spacing:.03em;
+  white-space:nowrap;}
 .bsd{flex:0 0 auto;align-self:flex-start;color:var(--muted);font-size:1em;font-family:var(--serif);}
 
-.grid{display:grid;grid-template-columns:1fr;gap:1.7em;margin-top:1.3em;}
-.grid.multi{grid-template-columns:repeat(2,1fr);gap:1.4em 2.2em;}
+.page-cells{margin-top:1.3em;}
+.page-cells.grid,.page-cells.two{gap:1.4em 2.2em;}
 .wk{break-inside:avoid;}
 .wk-h{margin-bottom:.4em;}
 .wk-h h2{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);
@@ -97,6 +98,20 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .notes{margin-top:1em;border-top:1px solid var(--hair);padding-top:.6em;}
 .foot-notes{margin-top:1.4em;border-top:1px solid var(--ink);padding-top:.65em;}
 .note{color:var(--muted);font-style:italic;margin:.2em 0;font-size:.76em;}
+
+/* Denser rhythm on shared (grid / two-column) pages so four week cards fit an
+   A4 page; the fit script then scales the whole page uniformly. */
+.page.many .masthead{padding-bottom:.5em;}
+.page.many .mast-txt h1{font-size:1.7em;}
+.page.many .page-cells{margin-top:.8em;}
+.page.many .wk-h h2{font-size:1.22em;}
+.page.many .row{padding:.16em 0;}
+.page.many .sec{margin-top:.55em;}
+.page.many .sec.plain{margin-top:.3em;}
+.page.many .sec-h{padding-bottom:.18em;margin-bottom:.1em;}
+.page.many .subhead{margin:.35em 0 0;}
+.page.many .callout{margin-top:.5em;padding:.4em .7em;}
+.page.many .notes{margin-top:.5em;padding-top:.35em;}
 """
 
 
@@ -128,6 +143,35 @@ def _kit(v) -> str | None:
         return None
     k = re.sub(r"[^a-z0-9]", "", v.strip().lower())
     return k[:20] if k else None
+
+
+def _align(v) -> str | None:
+    return v if v in ("left", "center", "right") else None
+
+
+def _px(v, lo: float, hi: float) -> float | None:
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return max(lo, min(hi, f))
+
+
+def _type_rules(theme: dict, font_key: str, size_key: str,
+                align_key: str | None) -> str:
+    """font-family/font-size/text-align declarations for one text type
+    (header / subheader), sanitized: whitelist fonts, clamped px, enum align."""
+    r: list[str] = []
+    f = theme.get(font_key)
+    if f in _FONTS:
+        r.append(f"font-family:{_FONTS[f]};")
+    s = _px(theme.get(size_key), 8, 48)
+    if s is not None:
+        r.append(f"font-size:{s:g}px;")
+    a = _align(theme.get(align_key)) if align_key else None
+    if a:
+        r.append(f"text-align:{a};")
+    return "".join(r)
 
 
 def _webfont_links(theme: dict | None) -> str:
@@ -193,10 +237,58 @@ def _theme_css(theme: dict | None) -> str:
         base = max(11.0, min(24.0, base))
         sheet = f".sheet{{font-size:{base:g}px;}}"
 
-    if not root and not sheet:
+    # Per-type typography: header (name line), subheader (address line),
+    # and the masthead logo size. All sanitized; blank = the design default.
+    extra: list[str] = []
+    hdr = _type_rules(theme, "header_font", "header_size", "header_align")
+    if hdr:
+        extra.append(f".mast-txt h1{{{hdr}}}")
+    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align")
+    if sub:
+        extra.append(f".mast-txt .addr{{{sub}}}")
+    logo = _px(theme.get("logo_size"), 20, 140)
+    if logo is not None:
+        extra.append(f".logo{{width:{logo:g}px;height:{logo:g}px;}}")
+
+    if not root and not sheet and not extra:
         return ""
     root_css = f":root{{{''.join(root)}}}" if root else ""
-    return f'<style id="ttcc-theme">{root_css}{sheet}</style>'
+    return f'<style id="ttcc-theme">{root_css}{sheet}{"".join(extra)}</style>'
+
+
+def classic_theme_css(theme: dict | None) -> str:
+    """Typography overrides for the CLASSIC sheet, injected service-side (the
+    engine renderer stays fixture-pure and never learns about themes).
+
+    Honors the same per-type fields as the modern theme — header (name line),
+    subheader (location line), content font + size — with identical
+    sanitizing. Colors and section styling stay the classic house style.
+    Selectors are prefixed with .page so they outrank the engine's own
+    .single/.multi sizing rules.
+    """
+    if not isinstance(theme, dict):
+        return ""
+    rules: list[str] = []
+    hdr = _type_rules(theme, "header_font", "header_size", "header_align")
+    if hdr:
+        rules.append(f".page .hdr-title{{{hdr}}}")
+    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align")
+    if sub:
+        rules.append(f".page .hdr-sub{{{sub}}}")
+    cf = _gfamily(theme.get("custom_body"))
+    bf = theme.get("body_font")
+    if cf:
+        rules.append(f'body{{font-family:"{cf}","Times New Roman",Times,serif;}}')
+    elif bf in _FONTS:
+        rules.append(f"body{{font-family:{_FONTS[bf]};}}")
+    base = _px(theme.get("base"), 8, 24)
+    if base is not None:
+        # Keep the classic single:multi size ratio (11pt : 8.5pt ≈ 0.77).
+        rules.append(f".page.single{{font-size:{base:g}px;}}")
+        rules.append(f".page.multi{{font-size:{base * 0.77:.4g}px;}}")
+    if not rules:
+        return ""
+    return f'<style id="ttcc-theme">{"".join(rules)}</style>'
 
 
 def _row(lbl: str, val: str, bullet: bool) -> str:
@@ -336,15 +428,15 @@ def render_modern(doc_data: dict, *, variant: str = "print",
     masthead = (
         '<div class="masthead">'
         f'{_logo_html(logo_url)}'
-        f'<div class="mast-txt"><h1>{_esc(_NAME)}</h1>'
-        f'<div class="addr">{_esc(_ADDR)}</div></div>'
+        f'<div class="mast-txt"><h1 class="fit-line">{_esc(_NAME)}</h1>'
+        f'<div class="addr fit-line">{_esc(_ADDR)}</div></div>'
         '<div class="bsd">בס״ד</div>'
         '</div>')
-    grid_cls = "grid multi" if multi else "grid"
-    body = (f'{masthead}<div class="{grid_cls}">{"".join(cards)}</div>'
-            f'{_notes_html(shared_notes, "foot-notes")}')
+    body = pages_html(paginate(cards), chrome=masthead,
+                      foot=_notes_html(shared_notes, "foot-notes"),
+                      page_class="sheet", one_class="one", many_class="many")
     return (
         '<!doctype html><html><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        f'<style>{_CSS}</style>{_webfont_links(theme)}{_theme_css(theme)}</head>'
-        f'<body class="sheet-body"><div class="sheet">{body}</div></body></html>')
+        f'<style>{page_css(15)}{_CSS}</style>{_webfont_links(theme)}{_theme_css(theme)}</head>'
+        f'<body class="sheet-body">{body}{FIT_JS}</body></html>')

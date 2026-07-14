@@ -46,6 +46,23 @@ defined( 'ABSPATH' ) || exit;
 
 	<div class="ttcc-range-label" id="ttcc-range-label" role="status" aria-live="polite"></div>
 
+	<?php
+	// Shared preset-font options; header/subheader selects add a "Default" row.
+	$ttcc_fonts = array(
+		'palatino'  => __( 'Palatino (serif)', 'ttcc-zmanim' ),
+		'georgia'   => __( 'Georgia (serif)', 'ttcc-zmanim' ),
+		'garamond'  => __( 'Garamond (serif)', 'ttcc-zmanim' ),
+		'times'     => __( 'Times New Roman', 'ttcc-zmanim' ),
+		'system'    => __( 'System sans', 'ttcc-zmanim' ),
+		'helvetica' => __( 'Helvetica / Arial', 'ttcc-zmanim' ),
+	);
+	$ttcc_aligns = array(
+		''       => __( 'Default', 'ttcc-zmanim' ),
+		'left'   => __( 'Left', 'ttcc-zmanim' ),
+		'center' => __( 'Centre', 'ttcc-zmanim' ),
+		'right'  => __( 'Right', 'ttcc-zmanim' ),
+	);
+	?>
 	<div class="ttcc-toolbar ttcc-design-bar">
 		<label><?php esc_html_e( 'Layout', 'ttcc-zmanim' ); ?>
 			<select id="ttcc-layout">
@@ -53,57 +70,75 @@ defined( 'ABSPATH' ) || exit;
 				<option value="modern"><?php esc_html_e( 'Modern', 'ttcc-zmanim' ); ?></option>
 			</select>
 		</label>
-		<div id="ttcc-design" class="ttcc-design" hidden>
-			<span class="ttcc-logo-field">
+		<div id="ttcc-design" class="ttcc-design">
+			<?php foreach ( array( 'header' => __( 'Header (name line)', 'ttcc-zmanim' ), 'subheader' => __( 'Subheader (location line)', 'ttcc-zmanim' ) ) as $t => $ttl ) : ?>
+			<span class="ttcc-design-group">
+				<span class="ttcc-mini-label"><?php echo esc_html( $ttl ); ?></span>
+				<select id="ttcc-<?php echo esc_attr( $t ); ?>-font" title="<?php esc_attr_e( 'Font', 'ttcc-zmanim' ); ?>">
+					<option value=""><?php esc_html_e( 'Default font', 'ttcc-zmanim' ); ?></option>
+					<?php foreach ( $ttcc_fonts as $k => $label ) : ?>
+						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<input type="number" id="ttcc-<?php echo esc_attr( $t ); ?>-size" class="ttcc-size" min="8" max="48" step="1"
+					placeholder="<?php esc_attr_e( 'auto', 'ttcc-zmanim' ); ?>" title="<?php esc_attr_e( 'Size (px, blank = default)', 'ttcc-zmanim' ); ?>" />
+				<select id="ttcc-<?php echo esc_attr( $t ); ?>-align" title="<?php esc_attr_e( 'Justification', 'ttcc-zmanim' ); ?>">
+					<?php foreach ( $ttcc_aligns as $k => $label ) : ?>
+						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</span>
+			<?php endforeach; ?>
+			<span class="ttcc-design-group">
+				<span class="ttcc-mini-label"><?php esc_html_e( 'Content', 'ttcc-zmanim' ); ?></span>
+				<select id="ttcc-body-font" title="<?php esc_attr_e( 'Content font', 'ttcc-zmanim' ); ?>">
+					<option value=""><?php esc_html_e( 'Default font', 'ttcc-zmanim' ); ?></option>
+					<?php foreach ( $ttcc_fonts as $k => $label ) : ?>
+						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<label class="ttcc-inline"><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
+					<input type="range" id="ttcc-base" min="11" max="24" step="1" />
+				</label>
+			</span>
+			<span class="ttcc-design-group ttcc-modern-only">
+				<span class="ttcc-mini-label"><?php esc_html_e( 'Week headings', 'ttcc-zmanim' ); ?></span>
+				<select id="ttcc-heading-font" title="<?php esc_attr_e( 'Week/section heading font (modern layout)', 'ttcc-zmanim' ); ?>">
+					<?php foreach ( $ttcc_fonts as $k => $label ) : ?>
+						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</span>
+			<span class="ttcc-design-group ttcc-modern-only ttcc-logo-field">
 				<span class="ttcc-mini-label"><?php esc_html_e( 'Logo', 'ttcc-zmanim' ); ?></span>
 				<img id="ttcc-logo-preview" class="ttcc-logo-preview" alt="" hidden />
 				<button type="button" class="button button-small" id="ttcc-logo-choose"><?php esc_html_e( 'Choose…', 'ttcc-zmanim' ); ?></button>
 				<button type="button" class="button button-small" id="ttcc-logo-remove" hidden><?php esc_html_e( 'Remove', 'ttcc-zmanim' ); ?></button>
+				<label class="ttcc-inline"><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
+					<input type="range" id="ttcc-logo-size" min="20" max="140" step="2" />
+				</label>
 			</span>
-			<label><?php esc_html_e( 'Heading', 'ttcc-zmanim' ); ?>
-				<select id="ttcc-heading-font">
-					<option value="palatino"><?php esc_html_e( 'Palatino (serif)', 'ttcc-zmanim' ); ?></option>
-					<option value="georgia"><?php esc_html_e( 'Georgia (serif)', 'ttcc-zmanim' ); ?></option>
-					<option value="garamond"><?php esc_html_e( 'Garamond (serif)', 'ttcc-zmanim' ); ?></option>
-					<option value="times"><?php esc_html_e( 'Times New Roman', 'ttcc-zmanim' ); ?></option>
-					<option value="system"><?php esc_html_e( 'System sans', 'ttcc-zmanim' ); ?></option>
-					<option value="helvetica"><?php esc_html_e( 'Helvetica / Arial', 'ttcc-zmanim' ); ?></option>
-				</select>
-			</label>
-			<label><?php esc_html_e( 'Body', 'ttcc-zmanim' ); ?>
-				<select id="ttcc-body-font">
-					<option value="system"><?php esc_html_e( 'System sans', 'ttcc-zmanim' ); ?></option>
-					<option value="helvetica"><?php esc_html_e( 'Helvetica / Arial', 'ttcc-zmanim' ); ?></option>
-					<option value="palatino"><?php esc_html_e( 'Palatino (serif)', 'ttcc-zmanim' ); ?></option>
-					<option value="georgia"><?php esc_html_e( 'Georgia (serif)', 'ttcc-zmanim' ); ?></option>
-					<option value="garamond"><?php esc_html_e( 'Garamond (serif)', 'ttcc-zmanim' ); ?></option>
-					<option value="times"><?php esc_html_e( 'Times New Roman', 'ttcc-zmanim' ); ?></option>
-				</select>
-			</label>
-			<label title="<?php esc_attr_e( 'Where custom font names come from. Adobe uses the Web Project ID set in Settings.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Font source', 'ttcc-zmanim' ); ?>
-				<select id="ttcc-font-source">
+			<span class="ttcc-design-group ttcc-modern-only">
+				<span class="ttcc-mini-label"><?php esc_html_e( 'Custom fonts', 'ttcc-zmanim' ); ?></span>
+				<select id="ttcc-font-source" title="<?php esc_attr_e( 'Where custom font names come from. Adobe uses the Web Project ID set in Settings.', 'ttcc-zmanim' ); ?>">
 					<option value="google"><?php esc_html_e( 'Google Fonts', 'ttcc-zmanim' ); ?></option>
 					<option value="adobe"><?php esc_html_e( 'Adobe Fonts', 'ttcc-zmanim' ); ?></option>
 				</select>
-			</label>
-			<label title="<?php esc_attr_e( 'Optional custom family name. Overrides the Heading preset.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Heading (custom)', 'ttcc-zmanim' ); ?>
-				<input type="text" id="ttcc-custom-heading" class="ttcc-gfont" placeholder="e.g. Playfair Display" />
-			</label>
-			<label title="<?php esc_attr_e( 'Optional custom family name for body text. Overrides the Body preset.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Body (custom)', 'ttcc-zmanim' ); ?>
-				<input type="text" id="ttcc-custom-body" class="ttcc-gfont" placeholder="e.g. Inter" />
-			</label>
-			<label><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
-				<input type="range" id="ttcc-base" min="11" max="24" step="1" />
-			</label>
-			<label class="ttcc-color"><?php esc_html_e( 'Text', 'ttcc-zmanim' ); ?>
-				<input type="color" id="ttcc-text-color" />
-			</label>
-			<label class="ttcc-color"><?php esc_html_e( 'Note box', 'ttcc-zmanim' ); ?>
-				<input type="color" id="ttcc-callout-bg" />
-			</label>
-			<label class="ttcc-color"><?php esc_html_e( 'Note text', 'ttcc-zmanim' ); ?>
-				<input type="color" id="ttcc-callout-text" />
-			</label>
+				<input type="text" id="ttcc-custom-heading" class="ttcc-gfont" placeholder="<?php esc_attr_e( 'Heading family, e.g. Playfair Display', 'ttcc-zmanim' ); ?>" />
+				<input type="text" id="ttcc-custom-body" class="ttcc-gfont" placeholder="<?php esc_attr_e( 'Body family, e.g. Inter', 'ttcc-zmanim' ); ?>" />
+			</span>
+			<span class="ttcc-design-group ttcc-modern-only">
+				<span class="ttcc-mini-label"><?php esc_html_e( 'Colors', 'ttcc-zmanim' ); ?></span>
+				<label class="ttcc-color"><?php esc_html_e( 'Text', 'ttcc-zmanim' ); ?>
+					<input type="color" id="ttcc-text-color" />
+				</label>
+				<label class="ttcc-color"><?php esc_html_e( 'Note box', 'ttcc-zmanim' ); ?>
+					<input type="color" id="ttcc-callout-bg" />
+				</label>
+				<label class="ttcc-color"><?php esc_html_e( 'Note text', 'ttcc-zmanim' ); ?>
+					<input type="color" id="ttcc-callout-text" />
+				</label>
+			</span>
 		</div>
 	</div>
 
@@ -131,8 +166,16 @@ defined( 'ABSPATH' ) || exit;
 		<div class="ttcc-editor" id="ttcc-editor">
 			<p class="ttcc-hint"><?php esc_html_e( 'Pick a week and press Generate to start.', 'ttcc-zmanim' ); ?></p>
 		</div>
-		<div class="ttcc-preview-wrap">
-			<div class="ttcc-preview-note" id="ttcc-preview-note"></div>
+		<div class="ttcc-preview-wrap" id="ttcc-preview-wrap">
+			<div class="ttcc-preview-bar">
+				<span class="ttcc-preview-note" id="ttcc-preview-note"></span>
+				<span class="ttcc-spacer"></span>
+				<label class="ttcc-zoom-label"><?php esc_html_e( 'Zoom', 'ttcc-zmanim' ); ?>
+					<input type="range" id="ttcc-zoom" min="40" max="200" step="5" value="100" />
+				</label>
+				<span class="ttcc-zoom-val" id="ttcc-zoom-val">100%</span>
+				<button type="button" class="button button-small" id="ttcc-zoom-fit"><?php esc_html_e( 'Fit width', 'ttcc-zmanim' ); ?></button>
+			</div>
 			<div class="ttcc-preview-frame" id="ttcc-preview-frame">
 				<iframe id="ttcc-preview" class="ttcc-preview" title="<?php esc_attr_e( 'Live sheet preview', 'ttcc-zmanim' ); ?>"></iframe>
 			</div>

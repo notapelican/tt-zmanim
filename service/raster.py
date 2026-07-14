@@ -133,6 +133,20 @@ def _inject_head(html: str, snippet: str) -> str:
     return html[:idx] + snippet + html[idx:]
 
 
+_FITTED = "document.documentElement.getAttribute('data-ttcc-fitted') === '1'"
+
+
+def _wait_for_fit(page, html: str, timeout_ms: int) -> None:
+    """Block until the sheet's embedded fit-to-page script has scaled every
+    page (it sets data-ttcc-fitted on <html>). No-op for HTML without it."""
+    if 'id="ttcc-fit"' not in html:
+        return
+    try:
+        page.wait_for_function(_FITTED, timeout=timeout_ms)
+    except Exception:
+        pass  # print whatever we have rather than failing the export
+
+
 def _apply_referer(page, referer: str | None) -> None:
     """Send a Referer on sub-resource fetches so domain-locked web fonts (Adobe
     Fonts / Typekit projects restricted to the site's domain) serve during a
@@ -156,6 +170,7 @@ def html_to_pdf(html: str, *, timeout_ms: int = 20000, referer: str | None = Non
             page.set_default_timeout(timeout_ms)
             _apply_referer(page, referer)
             page.set_content(html, wait_until="networkidle")
+            _wait_for_fit(page, html, timeout_ms)
             return page.pdf(print_background=True, prefer_css_page_size=True)
         finally:
             browser.close()
@@ -184,6 +199,7 @@ def html_to_png(
                 page.set_default_timeout(timeout_ms)
                 _apply_referer(page, referer)
                 page.set_content(html, wait_until="networkidle")
+                _wait_for_fit(page, html, timeout_ms)
                 # Fit-to-canvas: screenshot() ignores @page, so we scale in-page
                 # and clip to an exact 1080x1440 region.
                 page.evaluate(_PORTRAIT_FIT_JS)
@@ -198,6 +214,7 @@ def html_to_png(
             page.set_default_timeout(timeout_ms)
             _apply_referer(page, referer)
             page.set_content(html, wait_until="networkidle")
+            _wait_for_fit(page, html, timeout_ms)
             return page.screenshot(full_page=True, type="png")
         finally:
             browser.close()
