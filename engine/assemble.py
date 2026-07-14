@@ -205,27 +205,32 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     entries: list[dict] = []
 
     # --- weekly zmanim (day-selection rules per engine/validate.py) ---
+    # Ranged lines print the safe extreme BY TIME OF DAY across the covered
+    # days (same convention as rules.ZmanAnchored) — a bare max()/min() over
+    # datetimes on different dates would always pick the last/first DAY, not
+    # the latest/earliest clock time.
+    tod = lambda dt: dt.time()
     if sun_fri:
         spec_sf = format_day_spec(sun_fri)
         entries.append(_zman_line(
             "Mi'sheyakir (earliest tallis & tefillin)",
-            _fmt(max(engine.misheyakir(d, "ceil") for d in sun_fri)),
+            _fmt(max((engine.misheyakir(d, "ceil") for d in sun_fri), key=tod)),
             None, day_spec=spec_sf, qualifier="approx", rule_id="z_misheyakir"))
         entries.append(_zman_line(
             "Netz Hachamah (sunrise)",
-            _fmt(max(engine.netz(d, "ceil") for d in sun_fri)),
+            _fmt(max((engine.netz(d, "ceil") for d in sun_fri), key=tod)),
             None, day_spec=spec_sf, rule_id="z_netz"))
         entries.append(_zman_line(
             "Morning Shema",
-            _fmt(min(engine.sof_zman_shema(d, "floor") for d in sun_fri)),
+            _fmt(min((engine.sof_zman_shema(d, "floor") for d in sun_fri), key=tod)),
             None, day_spec=spec_sf, qualifier="finish by", rule_id="z_shema_wk"))
     if sun_thu:
         spec_st = format_day_spec(sun_thu)
         entries.append(_zman_line(
-            "Shkia", _fmt(min(engine.shkia(d, "floor") for d in sun_thu)),
+            "Shkia", _fmt(min((engine.shkia(d, "floor") for d in sun_thu), key=tod)),
             None, day_spec=spec_st, rule_id="z_shkia_wk"))
         entries.append(_zman_line(
-            "Tzeis", _fmt(max(engine.tzeis(d, "ceil") for d in sun_thu)),
+            "Tzeis", _fmt(max((engine.tzeis(d, "ceil") for d in sun_thu), key=tod)),
             None, day_spec=spec_st, rule_id="z_tzeis_wk"))
 
     # --- davening lines from the rules engine ---
