@@ -183,9 +183,15 @@ class TTCC_Zmanim_Service_Client {
 
 	/** POST /render/{pdf|png|docx} with a pre-generated doc. Returns binary array or WP_Error. */
 	public static function render_binary( $kind, $doc, $variant = 'print', $design = null ) {
-		$path = '/render/' . $kind;
+		$path    = '/render/' . $kind;
 		// The modern layout is HTML-based; .docx keeps the classic renderer.
-		return self::post_binary( $path, self::render_payload( $doc, $variant, $design, 'docx' !== $kind ) );
+		$payload = self::render_payload( $doc, $variant, $design, 'docx' !== $kind );
+		// Exports match the preview's fit-to-page scaling unless the Settings
+		// override asks for natural (unscaled) output.
+		if ( 'natural' === TTCC_Zmanim_Settings::get( 'export_fit', 'fit' ) ) {
+			$payload['fit'] = false;
+		}
+		return self::post_binary( $path, $payload );
 	}
 
 	/** POST /render/whatsapp with a pre-generated doc. Returns array{text, engine_version} or WP_Error. */

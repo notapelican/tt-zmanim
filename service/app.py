@@ -72,6 +72,8 @@ class RenderHtmlRequest(GenerateRequest):
     template: str = "classic"        # "classic" (engine renderer) | "modern"
     logo_url: str | None = None      # modern only: masthead logo (URL/data URI)
     theme: dict | None = None        # modern only: fonts/size/colors (sanitized)
+    fit: bool = True                 # False disables fit-to-page scaling (the
+                                     # Settings "natural size" export override)
     referer: str | None = None       # Referer for the headless render, so a
                                      # domain-locked web-font kit (Adobe Fonts)
                                      # serves during PDF/PNG export
@@ -142,10 +144,20 @@ def _render_html_str(req: RenderHtmlRequest, doc: dict) -> str:
     if req.template == "modern":
         from .render_modern import render_modern
 
-        return render_modern(
+        html = render_modern(
             doc, variant=req.variant, logo_url=req.logo_url, theme=req.theme
         )
-    return render_html(doc)
+    else:
+        html = render_html(doc)
+    if not req.fit:
+        # Neutralize the embedded fit script's inline transform so content
+        # renders at its natural size (may overflow the page box).
+        html = html.replace(
+            "</head>",
+            "<style>.page-content{transform:none!important;width:100%!important}</style></head>",
+            1,
+        )
+    return html
 
 
 # --- endpoints --------------------------------------------------------------

@@ -107,11 +107,22 @@ FIT_JS = """
       c.style.transform = 'scale(' + s + ')';
     }
   }
+  function fitViewport() {
+    // Narrow viewports (public embeds on phones): shrink whole pages to the
+    // viewport width. The A4 ratio stays locked; wide viewports are untouched.
+    var page = document.querySelector('.page');
+    if (!page) { return; }
+    var vw = document.documentElement.clientWidth, pw = page.offsetWidth;
+    if (vw && pw && vw < pw) { document.body.style.zoom = vw / pw; }
+    else { document.body.style.zoom = ''; }
+  }
   function fitAll() {
     var pages = document.querySelectorAll('.page'), i;
     for (i = 0; i < pages.length; i++) { fitPage(pages[i]); }
+    fitViewport();
     document.documentElement.setAttribute('data-ttcc-fitted', '1');
   }
+  window.addEventListener('resize', fitViewport);
   function run() {
     if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
       document.fonts.ready.then(fitAll, fitAll);

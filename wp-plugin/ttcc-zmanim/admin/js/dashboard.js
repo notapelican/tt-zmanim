@@ -166,42 +166,76 @@
 		previewTimer = setTimeout( function () { refresh( false ); }, 350 );
 	}
 
-	// A4 portrait at 96dpi (210×297mm). The preview renders at this logical width
-	// and is scaled to fit whatever width the pane has, so it always reads as an
-	// A4 page rather than a screen-shaped box.
-	var A4 = { W: 794, H: 1123 };
+	// The sheet HTML contains fixed A4 .page boxes (210×297mm ≈ 794×1123px at
+	// 96dpi) with their own fit-to-page content scaling. The preview stacks the
+	// pages vertically and scales the whole document as a unit, so every page
+	// always keeps the locked A4 ratio — never the browser window's shape.
+	var PAGE_W = 794;
+	// Preview zoom: 'fit' auto-fits the pane width (clamped so pages are never
+	// too small or too large); a manual slider value overrides it.
+	var preview = { mode: 'fit', zoom: 1 };
+	var FIT_MIN_PX = 380, FIT_MAX_PX = 900;
 
-	function injectPageGuides( html ) {
-		// Draw a rule at each A4 page boundary in the (unscaled) document; it
-		// scales along with the page. A "will it fit" guide, not exact pagination.
-		var css = '<style id="ttcc-guides">body{background-image:repeating-linear-gradient(' +
-			'to bottom,transparent 0,transparent ' + ( A4.H - 2 ) + 'px,rgba(210,50,50,.5) ' + ( A4.H - 2 ) + 'px,' +
-			'rgba(210,50,50,.5) ' + A4.H + 'px);background-attachment:local;}</style>';
-		var i = html.toLowerCase().indexOf( '</head>' );
-		return i < 0 ? css + html : html.slice( 0, i ) + css + html.slice( i );
+	function frameDoc() {
+		try { return $( 'ttcc-preview' ).contentDocument; } catch ( e ) { return null; }
+	}
+
+	// Page separation + optional red boundary outlines — injected client-side
+	// into the iframe document (no service round-trip, works offline).
+	function decoratePreview() {
+		var doc = frameDoc();
+		if ( ! doc || ! doc.head ) { return; }
+		var st = doc.getElementById( 'ttcc-preview-style' );
+		if ( ! st ) {
+			st = doc.createElement( 'style' );
+			st.id = 'ttcc-preview-style';
+			doc.head.appendChild( st );
+		}
+		var guides = $( 'ttcc-pageguides' ).checked;
+		st.textContent = guides
+			? 'body{background:#e8e8ec;}.page{margin:0 auto 12px;box-shadow:0 1px 6px rgba(0,0,0,.3);outline:1px solid rgba(210,50,50,.6);}'
+			: 'body{background:#fff;}.page{margin:0 auto;}';
+	}
+
+	function contentHeight() {
+		var doc = frameDoc();
+		return ( doc && doc.body && doc.body.scrollHeight ) || Math.round( PAGE_W * 297 / 210 );
 	}
 
 	function renderPreviewHtml( html ) {
 		var iframe = $( 'ttcc-preview' );
-		iframe.onload = fitPreview;
-		iframe.srcdoc = ( $( 'ttcc-pageguides' ).checked ) ? injectPageGuides( html ) : html;
+		iframe.onload = function () {
+			decoratePreview();
+			fitPreview();
+			// the in-page fit script may still be settling (web fonts); re-measure.
+			setTimeout( fitPreview, 250 );
+		};
+		iframe.srcdoc = html;
 	}
 
-	// Render exactly one A4 page at logical A4 size and scale it to the pane
-	// width, so the preview is ALWAYS an A4 sheet ratio (210:297) — the height
-	// simply follows the width. Content that runs past one page falls off the
-	// bottom of the page (with the boundary guide, that's the "won't fit" cue).
+	function previewScale() {
+		if ( 'fit' !== preview.mode ) { return preview.zoom; }
+		var wrap = $( 'ttcc-preview-wrap' ) || $( 'ttcc-preview-frame' ).parentNode;
+		var avail = ( wrap && ( wrap.clientWidth || wrap.offsetWidth ) ) || PAGE_W;
+		var target = Math.max( FIT_MIN_PX, Math.min( FIT_MAX_PX, avail ) );
+		return target / PAGE_W;
+	}
+
 	function fitPreview() {
 		var frame = $( 'ttcc-preview-frame' ), iframe = $( 'ttcc-preview' );
 		if ( ! frame || ! iframe ) { return; }
-		var avail = frame.clientWidth || frame.offsetWidth;
-		if ( ! avail ) { return; }
-		var scale = avail / A4.W;
-		iframe.style.width = A4.W + 'px';
-		iframe.style.height = A4.H + 'px';
+		var scale = previewScale();
+		var h = contentHeight();
+		iframe.style.width = PAGE_W + 'px';
+		iframe.style.height = h + 'px';
 		iframe.style.transformOrigin = 'top left';
 		iframe.style.transform = 'scale(' + scale + ')';
-		frame.style.height = ( A4.H * scale ) + 'px';
+		// The sizer reserves the scaled footprint so the pane scrolls naturally.
+		frame.style.width = Math.round( PAGE_W * scale ) + 'px';
+		frame.style.height = Math.round( h * scale ) + 'px';
+		var slider = $( 'ttcc-zoom' ), lbl = $( 'ttcc-zoom-val' );
+		if ( slider && 'fit' === preview.mode ) { slider.value = Math.round( scale * 100 ); }
+		if ( lbl ) { lbl.textContent = Math.round( scale * 100 ) + '%'; }
 	}
 
 	/**
@@ -614,8 +648,23 @@
 		fitTimer = setTimeout( fitPreview, 150 );
 	} );
 	$( 'ttcc-pageguides' ).addEventListener( 'change', function () {
-		if ( state.doc ) { refresh( false ); }
+		decoratePreview(); // client-side only — no service round-trip
+		fitPreview();
 	} );
+	// Preview zoom: slider takes manual control; "Fit width" returns to auto.
+	if ( $( 'ttcc-zoom' ) ) {
+		$( 'ttcc-zoom' ).addEventListener( 'input', function () {
+			preview.mode = 'manual';
+			preview.zoom = Math.max( 0.4, Math.min( 2, parseInt( $( 'ttcc-zoom' ).value, 10 ) / 100 || 1 ) );
+			fitPreview();
+		} );
+	}
+	if ( $( 'ttcc-zoom-fit' ) ) {
+		$( 'ttcc-zoom-fit' ).addEventListener( 'click', function () {
+			preview.mode = 'fit';
+			fitPreview();
+		} );
+	}
 	document.querySelectorAll( '[data-export]' ).forEach( function ( b ) {
 		b.addEventListener( 'click', function () { doExport( b.dataset.export, b.dataset.variant ); } );
 	} );

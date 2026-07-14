@@ -131,8 +131,16 @@ defined( 'ABSPATH' ) || exit;
 		<div class="ttcc-editor" id="ttcc-editor">
 			<p class="ttcc-hint"><?php esc_html_e( 'Pick a week and press Generate to start.', 'ttcc-zmanim' ); ?></p>
 		</div>
-		<div class="ttcc-preview-wrap">
-			<div class="ttcc-preview-note" id="ttcc-preview-note"></div>
+		<div class="ttcc-preview-wrap" id="ttcc-preview-wrap">
+			<div class="ttcc-preview-bar">
+				<span class="ttcc-preview-note" id="ttcc-preview-note"></span>
+				<span class="ttcc-spacer"></span>
+				<label class="ttcc-zoom-label"><?php esc_html_e( 'Zoom', 'ttcc-zmanim' ); ?>
+					<input type="range" id="ttcc-zoom" min="40" max="200" step="5" value="100" />
+				</label>
+				<span class="ttcc-zoom-val" id="ttcc-zoom-val">100%</span>
+				<button type="button" class="button button-small" id="ttcc-zoom-fit"><?php esc_html_e( 'Fit width', 'ttcc-zmanim' ); ?></button>
+			</div>
 			<div class="ttcc-preview-frame" id="ttcc-preview-frame">
 				<iframe id="ttcc-preview" class="ttcc-preview" title="<?php esc_attr_e( 'Live sheet preview', 'ttcc-zmanim' ); ?>"></iframe>
 			</div>

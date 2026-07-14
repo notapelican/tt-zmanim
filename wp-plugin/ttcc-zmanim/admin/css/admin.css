@@ -34,10 +34,16 @@
 .ttcc-split { display:flex; gap:16px; align-items:flex-start; }
 .ttcc-editor { flex:0 0 42%; max-width:42%; background:#fff; border:1px solid #dcdcde; border-radius:4px; padding:10px 12px; max-height:80vh; overflow:auto; }
 .ttcc-preview-wrap { flex:1; min-width:0; max-height:82vh; overflow:auto; }
-/* The frame is sized by JS to a true A4 ratio and scaled to fit its width. */
-.ttcc-preview-frame { width:100%; background:#fff; border:1px solid #dcdcde; border-radius:4px; box-shadow:0 1px 5px rgba(0,0,0,.10); overflow:hidden; }
+/* The frame is a sizer: JS sets it to the scaled footprint of the stacked A4
+   pages (ratio locked inside the iframe), so the pane scrolls naturally. */
+.ttcc-preview-frame { background:#fff; border:1px solid #dcdcde; border-radius:4px; box-shadow:0 1px 5px rgba(0,0,0,.10); overflow:hidden; margin:0 auto; }
 .ttcc-preview { display:block; border:0; background:#fff; }
-.ttcc-preview-note { font-size:12px; color:#777; margin-bottom:4px; min-height:16px; }
+.ttcc-preview-bar { display:flex; align-items:center; gap:8px; margin-bottom:4px; min-height:26px;
+	position:sticky; top:0; background:#f0f0f1; z-index:2; padding:2px 0; }
+.ttcc-preview-note { font-size:12px; color:#777; }
+.ttcc-zoom-label { display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:#50575e; }
+.ttcc-zoom-label input[type=range] { width:120px; }
+.ttcc-zoom-val { font-size:11px; color:#50575e; min-width:34px; font-family:monospace; }
 
 .ttcc-block { border-top:2px solid #2271b1; margin-top:14px; padding-top:6px; }
 .ttcc-block:first-child { border-top:0; margin-top:0; }
