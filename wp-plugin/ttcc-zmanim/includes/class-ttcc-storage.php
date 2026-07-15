@@ -189,6 +189,58 @@ class TTCC_Zmanim_Storage {
 		return (int) $wpdb->insert_id;
 	}
 
+	// --- style presets ------------------------------------------------------
+	// Named design presets (fonts, sizes, logo, colors, layout) stored site-wide
+	// as one option: { default: <name|''>, items: { <name>: {template, design} } }.
+
+	const PRESETS_OPTION = 'ttcc_zmanim_presets';
+
+	public static function get_presets() {
+		$opt = get_option( self::PRESETS_OPTION, array() );
+		if ( ! is_array( $opt ) ) {
+			$opt = array();
+		}
+		return array(
+			'default' => isset( $opt['default'] ) ? (string) $opt['default'] : '',
+			'items'   => ( isset( $opt['items'] ) && is_array( $opt['items'] ) ) ? $opt['items'] : array(),
+		);
+	}
+
+	/** Upsert a preset by name. $design is sanitized to the whitelisted shape. */
+	public static function save_preset( $name, $template, $design ) {
+		$name = trim( sanitize_text_field( (string) $name ) );
+		if ( '' === $name ) {
+			return false;
+		}
+		$opt = self::get_presets();
+		$opt['items'][ $name ] = array(
+			'template' => ( 'modern' === $template ) ? 'modern' : 'classic',
+			'design'   => TTCC_Zmanim_Sheet::sanitize_design( is_array( $design ) ? $design : array() ),
+		);
+		update_option( self::PRESETS_OPTION, $opt, false );
+		return true;
+	}
+
+	public static function delete_preset( $name ) {
+		$name = (string) $name;
+		$opt  = self::get_presets();
+		unset( $opt['items'][ $name ] );
+		if ( $opt['default'] === $name ) {
+			$opt['default'] = '';
+		}
+		update_option( self::PRESETS_OPTION, $opt, false );
+		return true;
+	}
+
+	/** Set (or clear, with '') the preset new sheets inherit. */
+	public static function set_default_preset( $name ) {
+		$name = (string) $name;
+		$opt  = self::get_presets();
+		$opt['default'] = ( '' === $name || isset( $opt['items'][ $name ] ) ) ? $name : $opt['default'];
+		update_option( self::PRESETS_OPTION, $opt, false );
+		return true;
+	}
+
 	// --- helpers ------------------------------------------------------------
 
 	private static function decode_json( $raw, $default ) {

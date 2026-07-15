@@ -80,6 +80,31 @@ class TTCC_Zmanim_REST {
 			'callback'            => array( $this, 'reset_profiles' ),
 			'permission_callback' => $perm,
 		) );
+
+		register_rest_route( self::NS, '/presets', array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_presets' ),
+				'permission_callback' => $perm,
+			),
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_preset' ),
+				'permission_callback' => $perm,
+			),
+		) );
+
+		register_rest_route( self::NS, '/presets/delete', array(
+			'methods'             => 'POST',
+			'callback'            => array( $this, 'delete_preset' ),
+			'permission_callback' => $perm,
+		) );
+
+		register_rest_route( self::NS, '/presets/default', array(
+			'methods'             => 'POST',
+			'callback'            => array( $this, 'set_default_preset' ),
+			'permission_callback' => $perm,
+		) );
 	}
 
 	public function can_manage() {
@@ -225,6 +250,31 @@ class TTCC_Zmanim_REST {
 		$notes    = isset( $defaults['notes'] ) ? $defaults['notes'] : array();
 		TTCC_Zmanim_Storage::save_active_profile_set( $profiles, $notes, 'Active schedule (from engine defaults)' );
 		return rest_ensure_response( array( 'profiles' => $profiles, 'notes' => $notes ) );
+	}
+
+	// --- style presets ------------------------------------------------------
+
+	public function get_presets() {
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_presets() );
+	}
+
+	public function save_preset( WP_REST_Request $req ) {
+		$name = (string) $req->get_param( 'name' );
+		if ( '' === trim( $name ) ) {
+			return new WP_Error( 'ttcc_bad_request', __( 'A preset name is required.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
+		}
+		TTCC_Zmanim_Storage::save_preset( $name, (string) $req->get_param( 'template' ), $req->get_param( 'design' ) );
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_presets() );
+	}
+
+	public function delete_preset( WP_REST_Request $req ) {
+		TTCC_Zmanim_Storage::delete_preset( (string) $req->get_param( 'name' ) );
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_presets() );
+	}
+
+	public function set_default_preset( WP_REST_Request $req ) {
+		TTCC_Zmanim_Storage::set_default_preset( (string) $req->get_param( 'name' ) );
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_presets() );
 	}
 
 	// --- helpers ------------------------------------------------------------

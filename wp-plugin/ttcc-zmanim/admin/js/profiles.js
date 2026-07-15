@@ -31,6 +31,20 @@
 	function fill( data ) {
 		$( 'ttcc-profiles-json' ).value = JSON.stringify( data.profiles || [], null, 2 );
 		$( 'ttcc-notes-json' ).value = JSON.stringify( data.notes || [], null, 2 );
+		populateRecProfiles( data.profiles || [] );
+	}
+
+	// Populate the "recurring minyan" schedule dropdown from the loaded profiles.
+	function populateRecProfiles( profiles ) {
+		var sel = $( 'ttcc-rec-profile' );
+		if ( ! sel ) { return; }
+		sel.innerHTML = '';
+		profiles.forEach( function ( p ) {
+			var o = document.createElement( 'option' );
+			o.value = p.id;
+			o.textContent = p.name || p.id;
+			sel.appendChild( o );
+		} );
 	}
 
 	function load() {
@@ -57,6 +71,43 @@
 		api( '/profiles/reset', 'POST' ).then( function ( d ) { fill( d ); status( 'Reset to engine defaults.' ); } )
 			.catch( function ( e ) { status( 'Reset failed: ' + e.message, true ); } );
 	} );
+
+	// Add-recurring-minyan form: append a fixed-time rule to the chosen profile,
+	// write it into the JSON, and save immediately.
+	if ( $( 'ttcc-rec-add' ) ) {
+		$( 'ttcc-rec-add' ).addEventListener( 'click', function () {
+			var label = $( 'ttcc-rec-label' ).value.trim();
+			var time = $( 'ttcc-rec-time' ).value;
+			if ( ! label ) { status( 'Enter a label for the minyan.', true ); return; }
+			if ( ! time ) { status( 'Enter a time.', true ); return; }
+			var profiles;
+			try { profiles = JSON.parse( $( 'ttcc-profiles-json' ).value ); }
+			catch ( e ) { status( 'Profiles JSON is invalid; fix it before adding.', true ); return; }
+			var pid = $( 'ttcc-rec-profile' ).value;
+			var target = profiles.filter( function ( p ) { return p.id === pid; } )[ 0 ];
+			if ( ! target ) { status( 'Pick a schedule.', true ); return; }
+			var days = $( 'ttcc-rec-days' ).value.trim();
+			target.rules = target.rules || [];
+			target.rules.push( {
+				id: 'extra_' + Date.now().toString( 36 ),
+				section: $( 'ttcc-rec-section' ).value,
+				label: label,
+				timing: { type: 'fixed', time: time },
+				day_spec: days || null,
+				qualifier: null, bound: null, when: null, kind: 'minyan'
+			} );
+			var notes;
+			try { notes = JSON.parse( $( 'ttcc-notes-json' ).value || '[]' ); }
+			catch ( e ) { notes = []; }
+			api( '/profiles', 'POST', { profiles: profiles, notes: notes } )
+				.then( function ( d ) {
+					fill( d );
+					$( 'ttcc-rec-label' ).value = ''; $( 'ttcc-rec-time' ).value = ''; $( 'ttcc-rec-days' ).value = '';
+					status( 'Added “' + label + '” to the schedule and saved.' );
+				} )
+				.catch( function ( e ) { status( 'Add failed: ' + e.message, true ); } );
+		} );
+	}
 
 	load();
 } )();

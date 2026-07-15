@@ -59,7 +59,17 @@ class TTCC_Zmanim_Sheet {
 		$o        = is_array( $overrides ) ? $overrides : array();
 		$template = ( isset( $o['template'] ) && 'modern' === $o['template'] ) ? 'modern' : 'classic';
 		$d        = ( isset( $o['design'] ) && is_array( $o['design'] ) ) ? $o['design'] : array();
-		$out      = array( 'template' => $template );
+		return array( 'template' => $template ) + self::sanitize_design( $d );
+	}
+
+	/**
+	 * Sanitize a design dict (whitelist fonts, clamp sizes, enum aligns, hex
+	 * colors) preserving its nested shape. Shared by design_from_overrides and
+	 * the style-preset store so both apply the identical whitelist.
+	 */
+	public static function sanitize_design( $d ) {
+		$d   = is_array( $d ) ? $d : array();
+		$out = array();
 
 		if ( ! empty( $d['logo'] ) ) {
 			$out['logo'] = esc_url_raw( (string) $d['logo'] );
