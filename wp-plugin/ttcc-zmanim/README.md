@@ -10,12 +10,21 @@ computes or re-rounds a time. See the plan record and `../../WARPLAN.md` §4.
 - **Dashboard** (`Timesheets → Dashboard`): pick a week/range → Generate → a
   block-level editor over a live HTML preview. Edit any minyan time, remove/add
   lines, add/remove notes; each line shows its source (rule / override / manual)
-  with Revert-to-calculated. Zman-anchored edits that cross the halachic bound
-  warn (never block). Page-boundary guides show fit while editing.
+  with Revert-to-calculated. **"+ Add line"** opens an inline form (label, time,
+  section, and — on week blocks — an optional day qualifier) to add a one-off
+  custom minyan to a specific block. Zman-anchored edits that cross the halachic
+  bound warn (never block). Multi-page A4 preview with zoom / fit-width; edits
+  are scoped per block, so a change on one week never leaks to another.
+- **Design + style presets**: per-sheet layout (classic / modern), per-type
+  fonts, sizes and justification (header / subheader / content), logo + logo
+  size (modern). Save a design as a named **preset**, apply it to any sheet, and
+  mark one as the default for new sheets.
 - **Archive**: saved sheets; edit/regenerate/export. Each row stores the engine
   version it was generated with.
-- **Schedule profiles**: edit the seasonal minyan sets and note templates
-  (JSON, seeded from the engine defaults; reset restores them).
+- **Schedule profiles**: edit the seasonal minyan sets and note templates. Use
+  **"Add a recurring minyan"** to append a fixed-time davening line to a schedule
+  so it appears on every sheet that schedule covers (the full set is still
+  editable as JSON below; reset restores the engine defaults).
 - **Settings**: sheet-service URL + token, service health, piSignage URL.
 - **Public surfaces**:
   - `[ttcc_week]` — current-week widget (auto-rolls), embeddable on any Elementor page.

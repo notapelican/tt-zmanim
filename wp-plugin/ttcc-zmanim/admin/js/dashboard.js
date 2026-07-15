@@ -435,22 +435,92 @@
 		return wrap;
 	}
 
+	// Distinct printed section headings present in a block, in order — the
+	// add-line form offers these so a custom line lands under the right heading.
+	function sectionOptions( block ) {
+		var seen = [];
+		( block.entries || [] ).forEach( function ( e ) {
+			if ( e.section && seen.indexOf( e.section ) === -1 ) { seen.push( e.section ); }
+		} );
+		return seen;
+	}
+
+	// Inline "add line" editor: label + time + section (existing or new) and,
+	// for week blocks, an optional day qualifier ("Wed." / "Sun.–Thurs.").
 	function addLineButton( block ) {
+		var wrap = el( 'div', 'ttcc-addline' );
 		var btn = el( 'button', 'button button-small ttcc-add-line', '+ Add line' );
-		btn.addEventListener( 'click', function () {
-			var label = window.prompt( 'Line label (e.g. "Special shiur")' );
-			if ( ! label ) { return; }
-			var time = window.prompt( 'Time (HH:MM, 24-hour)', '19:00' ) || '19:00';
+		var form = el( 'div', 'ttcc-addline-form' );
+		form.hidden = true;
+
+		var labelIn = el( 'input' );
+		labelIn.type = 'text';
+		labelIn.placeholder = 'Label — e.g. Special Mincha';
+		labelIn.className = 'ttcc-al-label';
+
+		var timeIn = el( 'input' );
+		timeIn.type = 'time';
+		timeIn.className = 'ttcc-al-time';
+
+		var secSel = el( 'select' );
+		secSel.className = 'ttcc-al-sec';
+		sectionOptions( block ).forEach( function ( s ) {
+			var o = el( 'option', '', s );
+			o.value = s;
+			secSel.appendChild( o );
+		} );
+		var newOpt = el( 'option', '', '＋ New section…' );
+		newOpt.value = '__new__';
+		secSel.appendChild( newOpt );
+
+		var newSec = el( 'input' );
+		newSec.type = 'text';
+		newSec.placeholder = 'New section heading';
+		newSec.className = 'ttcc-al-newsec';
+		newSec.hidden = true;
+		secSel.addEventListener( 'change', function () { newSec.hidden = ( '__new__' !== secSel.value ); } );
+
+		var isWeek = ( 'day' !== block.type );
+		var daysIn = el( 'input' );
+		daysIn.type = 'text';
+		daysIn.placeholder = 'Days (optional) — e.g. Wed. or Sun.–Thurs.';
+		daysIn.className = 'ttcc-al-days';
+
+		var save = el( 'button', 'button button-small button-primary', 'Add' );
+		var cancel = el( 'button', 'button button-small', 'Cancel' );
+
+		function reset() {
+			labelIn.value = ''; timeIn.value = ''; newSec.value = '';
+			daysIn.value = ''; secSel.selectedIndex = 0; newSec.hidden = ( '__new__' !== secSel.value );
+			form.hidden = true; btn.hidden = false;
+		}
+		btn.addEventListener( 'click', function () { btn.hidden = true; form.hidden = false; labelIn.focus(); } );
+		cancel.addEventListener( 'click', reset );
+		save.addEventListener( 'click', function () {
+			var label = labelIn.value.trim();
+			if ( ! label ) { labelIn.focus(); return; }
+			if ( ! timeIn.value ) { timeIn.focus(); return; } // browser enforces HH:MM
+			var section = ( '__new__' === secSel.value ) ? newSec.value.trim() : secSel.value;
 			var id = 'add:' + Date.now().toString( 36 );
-			// Scoped key: the added line belongs to THIS block only.
 			state.overrides.lines[ blockKey( block ) + '|' + id ] = {
-				rule_id: id, section: null, label: label, kind: 'minyan',
-				day_spec: null, date: block.date || null, time: time,
-				qualifier: null, source: 'manual'
+				rule_id: id, section: section || null, label: label, kind: 'minyan',
+				day_spec: ( isWeek && daysIn.value.trim() ) ? daysIn.value.trim() : null,
+				date: block.date || null, time: timeIn.value, qualifier: null, source: 'manual'
 			};
+			reset();
 			refresh( true );
 		} );
-		return btn;
+
+		form.appendChild( labelIn );
+		form.appendChild( timeIn );
+		form.appendChild( secSel );
+		form.appendChild( newSec );
+		if ( isWeek ) { form.appendChild( daysIn ); }
+		form.appendChild( save );
+		form.appendChild( cancel );
+		wrap.appendChild( btn );
+		wrap.appendChild( form );
+		return wrap;
 	}
 
 	function buildEditor( doc ) {
@@ -662,6 +732,80 @@
 		} );
 	}
 
+	// --- style presets ----------------------------------------------------
+	// Named, site-wide design presets (fonts/sizes/logo/colors/layout). Applying
+	// one copies it into the current sheet's design; "Default" marks the preset
+	// new (unsaved) sheets start from.
+	var presets = { default: '', items: {} };
+	function populatePresetSelect( selected ) {
+		var sel = $( 'ttcc-preset' );
+		if ( ! sel ) { return; }
+		sel.innerHTML = '';
+		var none = el( 'option', '', '— none —' ); none.value = ''; sel.appendChild( none );
+		Object.keys( presets.items ).sort().forEach( function ( name ) {
+			var o = el( 'option', '', name + ( name === presets.default ? ' (default)' : '' ) );
+			o.value = name;
+			sel.appendChild( o );
+		} );
+		sel.value = selected || '';
+		$( 'ttcc-preset-default' ).checked = ( sel.value && sel.value === presets.default );
+	}
+	function applyPresetToState( name ) {
+		var p = presets.items[ name ];
+		if ( ! p ) { return; }
+		state.overrides.template = ( 'modern' === p.template ) ? 'modern' : 'classic';
+		state.overrides.design = Object.assign( defaultDesign(), p.design || {} );
+	}
+	function loadPresets() {
+		if ( ! $( 'ttcc-preset' ) ) { return; }
+		api( '/presets', 'GET' ).then( function ( d ) {
+			presets = { default: d.default || '', items: d.items || {} };
+			populatePresetSelect( presets.default );
+			// A fresh, never-saved sheet inherits the default preset's look.
+			if ( ! state.sheetId && presets.default && presets.items[ presets.default ] ) {
+				applyPresetToState( presets.default );
+				syncDesignUI();
+				if ( state.doc ) { refresh( false ); }
+			}
+		} ).catch( function () { /* presets are optional; ignore load errors */ } );
+	}
+	function wirePresets() {
+		if ( ! $( 'ttcc-preset' ) ) { return; }
+		$( 'ttcc-preset-apply' ).addEventListener( 'click', function () {
+			var name = $( 'ttcc-preset' ).value;
+			if ( ! name ) { return; }
+			applyPresetToState( name );
+			syncDesignUI();
+			if ( state.doc ) { refresh( false ); }
+		} );
+		$( 'ttcc-preset-save' ).addEventListener( 'click', function () {
+			var current = $( 'ttcc-preset' ).value;
+			var name = ( window.prompt( 'Save current design as preset named:', current ) || '' ).trim();
+			if ( ! name ) { return; }
+			api( '/presets', 'POST', { name: name, template: state.overrides.template, design: state.overrides.design } )
+				.then( function ( d ) {
+					presets = { default: d.default || '', items: d.items || {} };
+					populatePresetSelect( name );
+				} ).catch( function ( e ) { window.alert( 'Save failed: ' + e.message ); } );
+		} );
+		$( 'ttcc-preset-delete' ).addEventListener( 'click', function () {
+			var name = $( 'ttcc-preset' ).value;
+			if ( ! name || ! window.confirm( 'Delete preset "' + name + '"?' ) ) { return; }
+			api( '/presets/delete', 'POST', { name: name } ).then( function ( d ) {
+				presets = { default: d.default || '', items: d.items || {} };
+				populatePresetSelect( '' );
+			} ).catch( function ( e ) { window.alert( 'Delete failed: ' + e.message ); } );
+		} );
+		$( 'ttcc-preset-default' ).addEventListener( 'change', function () {
+			var name = $( 'ttcc-preset' ).value;
+			var want = ( $( 'ttcc-preset-default' ).checked && name ) ? name : '';
+			api( '/presets/default', 'POST', { name: want } ).then( function ( d ) {
+				presets = { default: d.default || '', items: d.items || {} };
+				populatePresetSelect( name );
+			} ).catch( function ( e ) { window.alert( 'Failed: ' + e.message ); } );
+		} );
+	}
+
 	// --- wire up ----------------------------------------------------------
 	$( 'ttcc-generate' ).addEventListener( 'click', doGenerate );
 	$( 'ttcc-save' ).addEventListener( 'click', doSave );
@@ -715,7 +859,9 @@
 	$( 'ttcc-weeks' ).value = '1';
 	updateRangeLabel( null );
 	wireDesign();
+	wirePresets();
 	syncDesignUI();
+	loadPresets();
 
 	pollHealth();
 	setInterval( pollHealth, 30000 );

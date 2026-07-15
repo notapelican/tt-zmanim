@@ -20,6 +20,7 @@ foreach ( $tables as $t ) {
 }
 
 delete_option( 'ttcc_zmanim_settings' );
+delete_option( 'ttcc_zmanim_presets' );
 
 // Remove persistent last-good public caches (option keys prefixed ttcc_lastgood_).
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery

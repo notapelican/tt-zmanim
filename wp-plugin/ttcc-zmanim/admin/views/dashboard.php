@@ -71,6 +71,16 @@ defined( 'ABSPATH' ) || exit;
 			</select>
 		</label>
 		<div id="ttcc-design" class="ttcc-design">
+			<span class="ttcc-design-group ttcc-preset-group">
+				<span class="ttcc-mini-label"><?php esc_html_e( 'Preset', 'ttcc-zmanim' ); ?></span>
+				<select id="ttcc-preset" title="<?php esc_attr_e( 'Saved styling presets', 'ttcc-zmanim' ); ?>">
+					<option value=""><?php esc_html_e( '— none —', 'ttcc-zmanim' ); ?></option>
+				</select>
+				<button type="button" class="button button-small" id="ttcc-preset-apply"><?php esc_html_e( 'Apply', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="button button-small" id="ttcc-preset-save"><?php esc_html_e( 'Save current…', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="button button-small" id="ttcc-preset-delete"><?php esc_html_e( 'Delete', 'ttcc-zmanim' ); ?></button>
+				<label title="<?php esc_attr_e( 'Use this preset as the starting design for new sheets', 'ttcc-zmanim' ); ?>"><input type="checkbox" id="ttcc-preset-default" /> <?php esc_html_e( 'Default', 'ttcc-zmanim' ); ?></label>
+			</span>
 			<?php foreach ( array( 'header' => __( 'Header (name line)', 'ttcc-zmanim' ), 'subheader' => __( 'Subheader (location line)', 'ttcc-zmanim' ) ) as $t => $ttl ) : ?>
 			<span class="ttcc-design-group">
 				<span class="ttcc-mini-label"><?php echo esc_html( $ttl ); ?></span>
