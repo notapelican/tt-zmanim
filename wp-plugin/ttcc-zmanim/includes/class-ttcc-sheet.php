@@ -110,6 +110,11 @@ class TTCC_Zmanim_Sheet {
 		if ( isset( $d['logo_size'] ) && is_numeric( $d['logo_size'] ) && $d['logo_size'] > 0 ) {
 			$out['logo_size'] = max( 20, min( 140, (float) $d['logo_size'] ) );
 		}
+		// Content sizing: 'fixed' makes the base size drive the text (fit only
+		// shrinks to avoid overflow); anything else = 'fill' (auto fit-to-page).
+		if ( isset( $d['fit_mode'] ) && 'fixed' === $d['fit_mode'] ) {
+			$out['fit_mode'] = 'fixed';
+		}
 		foreach ( array( 'text_color', 'callout_bg', 'callout_text' ) as $k ) {
 			if ( isset( $d[ $k ] ) && preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', (string) $d[ $k ] ) ) {
 				$out[ $k ] = $d[ $k ];

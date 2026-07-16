@@ -82,6 +82,10 @@ FIT_JS = """
 <script id="ttcc-fit">
 (function () {
   var MIN = %(min)s, MAX = %(max)s;
+  // 'fill' (default): scale content to fill the page. 'fixed': show content at
+  // its chosen (base) size and only shrink to prevent overflow — so the
+  // content-size control has a visible effect.
+  var MODE = document.documentElement.getAttribute('data-ttcc-fit') || 'fill';
   function fitLines(root) {
     // Headers marked .fit-line must NEVER wrap: shrink the font until the
     // text fits on one line. Proportional first jump (text width scales with
@@ -108,6 +112,22 @@ FIT_JS = """
     if (!m || !c) { return; }
     var W = m.clientWidth, H = m.clientHeight;
     if (!W || !H) { return; }
+    if (MODE === 'fixed') {
+      // Natural (base) size; scale down only if it would overflow the page.
+      c.style.width = W + 'px';
+      c.style.transform = 'scale(1)';
+      var nh = c.scrollHeight;
+      var sf = Math.max(MIN, Math.min(1, nh ? H / nh : 1));
+      var g2 = 0;
+      c.style.width = (W / sf) + 'px';
+      c.style.transform = 'scale(' + sf + ')';
+      while (c.scrollHeight * sf > H + 0.5 && sf > MIN && g2++ < 60) {
+        sf -= 0.01;
+        c.style.width = (W / sf) + 'px';
+        c.style.transform = 'scale(' + sf + ')';
+      }
+      return;
+    }
     var s = 1, k, h, next;
     for (k = 0; k < 6; k++) {
       c.style.width = (W / s) + 'px';

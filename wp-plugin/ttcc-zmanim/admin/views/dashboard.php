@@ -107,6 +107,10 @@ defined( 'ABSPATH' ) || exit;
 						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
+				<select id="ttcc-fit-mode" title="<?php esc_attr_e( 'Fill page = auto-size content to fill each page. Fixed size = use the Size slider; only shrinks to avoid overflow.', 'ttcc-zmanim' ); ?>">
+					<option value="fill"><?php esc_html_e( 'Fill page', 'ttcc-zmanim' ); ?></option>
+					<option value="fixed"><?php esc_html_e( 'Fixed size', 'ttcc-zmanim' ); ?></option>
+				</select>
 				<label class="ttcc-inline"><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
 					<input type="range" id="ttcc-base" min="11" max="24" step="1" />
 				</label>

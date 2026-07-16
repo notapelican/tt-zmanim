@@ -98,6 +98,7 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .notes{margin-top:1em;border-top:1px solid var(--hair);padding-top:.6em;}
 .foot-notes{margin-top:1.4em;border-top:1px solid var(--ink);padding-top:.65em;}
 .note{color:var(--muted);font-style:italic;margin:.2em 0;font-size:.76em;}
+.freeline{color:var(--ink);font-weight:600;padding:.28em 0;font-size:.92em;border-bottom:1px solid var(--hair);}
 
 /* Denser rhythm on shared (grid / two-column) pages so four week cards fit an
    A4 page; the fit script then scales the whole page uniformly. */
@@ -349,6 +350,9 @@ class _SectionBuilder:
             elif kind == "fastbox":
                 self._close()
                 self.parts.append(f'<div class="callout">{_esc(it[1])}</div>')
+            elif kind == "freeline":
+                self._ensure_plain()
+                self.parts.append(f'<div class="freeline">{_esc(it[1])}</div>')
             elif kind == "note":
                 self._ensure_plain()
                 self.parts.append(f'<div class="note">{_esc(it[1])}</div>')
@@ -435,8 +439,9 @@ def render_modern(doc_data: dict, *, variant: str = "print",
     body = pages_html(paginate(cards), chrome=masthead,
                       foot=_notes_html(shared_notes, "foot-notes"),
                       page_class="sheet", one_class="one", many_class="many")
+    fit = 'fixed' if ( isinstance( theme, dict ) and theme.get( 'fit_mode' ) == 'fixed' ) else 'fill'
     return (
-        '<!doctype html><html><head><meta charset="utf-8">'
+        f'<!doctype html><html data-ttcc-fit="{fit}"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f'<style>{page_css(15)}{_CSS}</style>{_webfont_links(theme)}{_theme_css(theme)}</head>'
         f'<body class="sheet-body">{body}{FIT_JS}</body></html>')

@@ -246,6 +246,13 @@ def _join_dayspec_group(entries):
     continuation, e.g. 'before 8:00pm or after 8:30pm'); multiple same
     (typically qualifier-less) entries join with ' & ' (e.g. Shacharis
     8:00am & 9:15am)."""
+    # Common case — several plain times for one day-spec (e.g. a Shacharis with
+    # three minyanim): read as "a, b & c" (two stay "a & b", one stays "a").
+    if entries and all(not e["qualifier"] for e in entries):
+        pieces = [_qualified(None, e["time"]) for e in entries]
+        if len(pieces) <= 2:
+            return " & ".join(pieces)
+        return ", ".join(pieces[:-1]) + " & " + pieces[-1]
     parts = []
     for e in entries:
         piece = _qualified(e["qualifier"], e["time"])

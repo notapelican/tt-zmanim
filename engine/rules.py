@@ -278,19 +278,40 @@ class Timesheet:
 def apply_overrides(lines: list[dict], overrides: dict[str, dict]) -> list[dict]:
     """Manual overrides always win over rules. Suppressed lines are removed,
     edited lines keep their bound (so an editor can still warn), added lines
-    are appended with source='manual'."""
+    are inserted with source='manual'.
+
+    An added line may carry an ``after`` key (the rule_id it should follow); it
+    is inserted immediately after that line instead of appended. Placing it next
+    to a same-label group makes it MERGE into that printed line (e.g. a third
+    weekday Shacharis time), and lets a no-time free-text line (``kind`` =
+    'freetext', e.g. a Kiddush notice) sit exactly where the editor put it.
+    ``after`` is metadata, not a printed field, so it is stripped here."""
     out = []
     for line in lines:
         ov = overrides.get(line.get("rule_id", ""))
         if ov:
             if ov.get("suppress"):
                 continue
-            line = {**line, **{k: v for k, v in ov.items() if k != "suppress"},
+            line = {**line, **{k: v for k, v in ov.items()
+                               if k not in ("suppress", "after")},
                     "source": "override"}
         out.append(line)
     for key, ov in overrides.items():
-        if key.startswith("add:"):
-            out.append({"rule_id": key, "source": "manual", "kind": "minyan", **ov})
+        if not key.startswith("add:"):
+            continue
+        new = {"rule_id": key, "source": "manual", "kind": "minyan",
+               **{k: v for k, v in ov.items() if k != "after"}}
+        after = ov.get("after")
+        pos = None
+        if after:
+            for i, l in enumerate(out):
+                if l.get("rule_id") == after:
+                    pos = i + 1
+                    break
+        if pos is None:
+            out.append(new)
+        else:
+            out.insert(pos, new)
     return out
 
 
