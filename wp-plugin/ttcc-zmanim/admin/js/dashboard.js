@@ -716,14 +716,17 @@
 			eln.hidden = ! modern;
 		} );
 	}
-	// The content-size slider only bites in "Fixed size" mode — in "Fill page"
-	// mode the fit-to-page scaling cancels it, so disable it with a hint.
+	// The content font size only bites in "Fixed size" mode — in "Fill page"
+	// mode the fit-to-page scaling cancels it. We leave the input enabled in
+	// both modes: typing a size auto-switches to Fixed (see wireDesign), so the
+	// control always visibly bites. The hint just explains the interaction.
 	function syncFitMode() {
 		var fixed = ( 'fixed' === state.overrides.design.fit_mode );
-		var slider = $( 'ttcc-base' );
-		if ( slider ) {
-			slider.disabled = ! fixed;
-			slider.title = fixed ? '' : 'Switch Content sizing to "Fixed size" to use this.';
+		var box = $( 'ttcc-base' );
+		if ( box ) {
+			box.title = fixed
+				? 'Content font size in px. Raising it enlarges the text and tightens line spacing to fit.'
+				: 'Fill page mode auto-sizes text — set a size here to switch to Fixed and use it.';
 		}
 	}
 	function syncDesignUI() {
@@ -787,7 +790,15 @@
 		.forEach( function ( pair ) {
 			$( pair[ 0 ] ).addEventListener( 'input', function () {
 				var v = $( pair[ 0 ] ).value;
-				if ( 'base' === pair[ 1 ] ) { v = parseInt( v, 10 ) || 15; }
+				if ( 'base' === pair[ 1 ] ) {
+					v = parseInt( v, 10 ) || 15;
+					if ( v < 8 ) { v = 8; } else if ( v > 40 ) { v = 40; }
+					// Picking a font size only takes effect in Fixed mode, so
+					// switch there automatically — the control always bites.
+					state.overrides.design.fit_mode = 'fixed';
+					if ( $( 'ttcc-fit-mode' ) ) { $( 'ttcc-fit-mode' ).value = 'fixed'; }
+					syncFitMode();
+				}
 				state.overrides.design[ pair[ 1 ] ] = v;
 				if ( 'fit_mode' === pair[ 1 ] ) { syncFitMode(); }
 				schedulePreview();

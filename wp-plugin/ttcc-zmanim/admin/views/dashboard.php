@@ -107,12 +107,12 @@ defined( 'ABSPATH' ) || exit;
 						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<select id="ttcc-fit-mode" title="<?php esc_attr_e( 'Fill page = auto-size content to fill each page. Fixed size = use the Size slider; only shrinks to avoid overflow.', 'ttcc-zmanim' ); ?>">
+				<select id="ttcc-fit-mode" title="<?php esc_attr_e( 'Fill page = auto-size content to fill each page. Fixed size = use the Font size below; only shrinks to avoid overflow.', 'ttcc-zmanim' ); ?>">
 					<option value="fill"><?php esc_html_e( 'Fill page', 'ttcc-zmanim' ); ?></option>
 					<option value="fixed"><?php esc_html_e( 'Fixed size', 'ttcc-zmanim' ); ?></option>
 				</select>
-				<label class="ttcc-inline"><?php esc_html_e( 'Size', 'ttcc-zmanim' ); ?>
-					<input type="range" id="ttcc-base" min="11" max="24" step="1" />
+				<label class="ttcc-inline"><?php esc_html_e( 'Font size', 'ttcc-zmanim' ); ?>
+					<input type="number" id="ttcc-base" class="ttcc-size" min="8" max="40" step="1" title="<?php esc_attr_e( 'Content font size in px. Raising it enlarges the text and tightens line spacing to fit — it does not zoom the whole sheet. Switches sizing to Fixed automatically.', 'ttcc-zmanim' ); ?>" />
 				</label>
 			</span>
 			<span class="ttcc-design-group ttcc-modern-only">

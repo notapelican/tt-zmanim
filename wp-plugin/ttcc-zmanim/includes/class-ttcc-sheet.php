@@ -91,7 +91,7 @@ class TTCC_Zmanim_Sheet {
 			$out['font_source'] = 'adobe';
 		}
 		if ( isset( $d['base'] ) && is_numeric( $d['base'] ) ) {
-			$out['base'] = max( 11, min( 24, (float) $d['base'] ) );
+			$out['base'] = max( 8, min( 40, (float) $d['base'] ) );
 		}
 		// Per-type typography: header (name line) and subheader (location line)
 		// each carry an optional font, size (px) and justification; blank keeps

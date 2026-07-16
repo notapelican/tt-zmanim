@@ -52,67 +52,74 @@ _CSS = """
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 *{box-sizing:border-box;}
+/* --fs is the CONTENT font size (the davening rows). It is set by .sheet and
+   overridden per-sheet by the theme. Crucially, the layout rhythm (paddings,
+   gaps, section spacing, chrome type) is in FIXED px — it does NOT scale with
+   --fs — so raising the font enlarges the readable data while the line spacing
+   tightens relatively, fitting more per page instead of zooming the whole
+   sheet. Chrome (masthead, week titles, section labels) stays a stable size. */
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
-  font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.4;}
-.sheet{font-size:15px;}
+  font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.2;}
+.sheet{font-size:14px;}
 
-.masthead{display:flex;align-items:center;gap:1.2em;
-  padding-bottom:.95em;border-bottom:1px solid var(--ink);}
-.logo{flex:0 0 auto;width:3.7em;height:3.7em;border-radius:50%;
+.masthead{display:flex;align-items:center;gap:11px;
+  padding-bottom:6px;border-bottom:1px solid var(--ink);}
+.logo{flex:0 0 auto;width:42px;height:42px;border-radius:50%;
   border:1.5px solid var(--accent);display:flex;align-items:center;
   justify-content:center;overflow:hidden;}
 .logo img{width:100%;height:100%;object-fit:contain;}
-.logo .ph{font-family:var(--sans);font-size:.58em;letter-spacing:.14em;
+.logo .ph{font-family:var(--sans);font-size:8px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);}
 .mast-txt{flex:1 1 auto;min-width:0;}
 .mast-txt h1{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);
-  letter-spacing:-.01em;font-size:2.05em;line-height:1.05;white-space:nowrap;}
-.mast-txt .addr{margin-top:.4em;color:var(--muted);font-size:.72em;letter-spacing:.03em;
+  letter-spacing:-.01em;font-size:23px;line-height:1.04;white-space:nowrap;}
+.mast-txt .addr{margin-top:2px;color:var(--muted);font-size:10px;letter-spacing:.02em;
   white-space:nowrap;}
-.bsd{flex:0 0 auto;align-self:flex-start;color:var(--muted);font-size:1em;font-family:var(--serif);}
+.bsd{flex:0 0 auto;align-self:flex-start;color:var(--muted);font-size:12px;font-family:var(--serif);}
 
-.page-cells{margin-top:1.3em;}
-.page-cells.grid,.page-cells.two{gap:1.4em 2.2em;}
+.page-cells{margin-top:9px;}
+.page-cells.grid,.page-cells.two{gap:7px 20px;}
 .wk{break-inside:avoid;}
-.wk-h{margin-bottom:.4em;}
+.wk-h{margin-bottom:3px;}
 .wk-h h2{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);
-  font-size:1.5em;letter-spacing:-.01em;}
-.wk-sub{margin-top:.2em;color:var(--muted);font-size:.82em;letter-spacing:.02em;}
+  font-size:16px;line-height:1.08;letter-spacing:-.01em;}
+.wk-sub{margin-top:1px;color:var(--muted);font-size:10px;letter-spacing:.02em;}
 
-.sec{margin-top:1em;}
-.sec.plain{margin-top:.5em;}
-.sec-h{font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--accent);
-  font-size:.76em;padding-bottom:.34em;margin-bottom:.2em;border-bottom:1.5px solid var(--accent);}
+.sec{margin-top:7px;}
+.sec.plain{margin-top:3px;}
+.sec-h{font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:var(--accent);
+  font-size:9.5px;padding-bottom:2px;margin-bottom:1px;border-bottom:1px solid var(--accent);}
 .sec.shabbos .sec-h{color:var(--accent-2);border-bottom-color:var(--accent-2);}
-.row{display:flex;align-items:baseline;justify-content:space-between;gap:1.2em;
-  padding:.42em 0;border-bottom:1px solid var(--hair);}
+/* Rows are the content: text = --fs, vertical rhythm fixed & tight. */
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:1em;
+  padding:1.5px 0;border-bottom:1px solid var(--hair);}
 .row:last-child{border-bottom:none;}
-.row .lbl{flex:1 1 auto;color:var(--soft);font-size:.98em;}
+.row .lbl{flex:1 1 auto;color:var(--soft);}
 .row .val{flex:0 0 auto;color:var(--ink);font-weight:600;white-space:nowrap;
-  font-variant-numeric:tabular-nums;font-size:.98em;}
+  font-variant-numeric:tabular-nums;}
 .row.bullet .lbl::before{content:"\\2022\\00a0\\00a0";color:var(--accent-2);}
-.subhead{font-weight:700;color:var(--ink);margin:.6em 0 .05em;font-size:.82em;}
-.molad{color:var(--muted);font-style:italic;padding:.32em 0 .05em;font-size:.76em;}
-.callout{margin-top:.85em;padding:.66em .9em;border-radius:8px;background:var(--warn-bg);
-  border-left:3px solid var(--warn);color:var(--warn);font-weight:600;font-size:.9em;}
-.notes{margin-top:1em;border-top:1px solid var(--hair);padding-top:.6em;}
-.foot-notes{margin-top:1.4em;border-top:1px solid var(--ink);padding-top:.65em;}
-.note{color:var(--muted);font-style:italic;margin:.2em 0;font-size:.76em;}
-.freeline{color:var(--ink);font-weight:600;padding:.28em 0;font-size:.92em;border-bottom:1px solid var(--hair);}
+.subhead{font-weight:700;color:var(--ink);margin:4px 0 1px;font-size:.9em;}
+.molad{color:var(--muted);font-style:italic;padding:2px 0 1px;font-size:.82em;}
+.callout{margin-top:7px;padding:5px 8px;border-radius:6px;background:var(--warn-bg);
+  border-left:3px solid var(--warn);color:var(--warn);font-weight:600;font-size:.92em;}
+.notes{margin-top:7px;border-top:1px solid var(--hair);padding-top:5px;}
+.foot-notes{margin-top:10px;border-top:1px solid var(--ink);padding-top:6px;}
+.note{color:var(--muted);font-style:italic;margin:2px 0;font-size:.82em;}
+.freeline{color:var(--ink);font-weight:600;padding:1.5px 0;font-size:1em;border-bottom:1px solid var(--hair);}
 
-/* Denser rhythm on shared (grid / two-column) pages so four week cards fit an
-   A4 page; the fit script then scales the whole page uniformly. */
-.page.many .masthead{padding-bottom:.5em;}
-.page.many .mast-txt h1{font-size:1.7em;}
-.page.many .page-cells{margin-top:.8em;}
-.page.many .wk-h h2{font-size:1.22em;}
-.page.many .row{padding:.16em 0;}
-.page.many .sec{margin-top:.55em;}
-.page.many .sec.plain{margin-top:.3em;}
-.page.many .sec-h{padding-bottom:.18em;margin-bottom:.1em;}
-.page.many .subhead{margin:.35em 0 0;}
-.page.many .callout{margin-top:.5em;padding:.4em .7em;}
-.page.many .notes{margin-top:.5em;padding-top:.35em;}
+/* Shared (4-up grid / two-column) pages: tighten spacing further so four week
+   cards fit; the fit-to-page pass then normalizes any remainder. */
+.page.many .masthead{padding-bottom:4px;}
+.page.many .mast-txt h1{font-size:19px;}
+.page.many .page-cells{margin-top:6px;}
+.page.many .sec{margin-top:5px;}
+.page.many .sec.plain{margin-top:2px;}
+.page.many .row{padding:1px 0;flex-wrap:wrap;}
+/* Narrow grid columns: let an over-long value (e.g. a merged multi-time
+   Shacharis line) wrap onto its own right-aligned line instead of clipping. */
+.page.many .row .val{white-space:normal;text-align:right;min-width:0;}
+.page.many .callout{margin-top:5px;padding:4px 7px;}
+.page.many .notes{margin-top:5px;padding-top:4px;}
 """
 
 
@@ -235,7 +242,7 @@ def _theme_css(theme: dict | None) -> str:
     except (TypeError, ValueError):
         base = None
     if base is not None:
-        base = max(11.0, min(24.0, base))
+        base = max(8.0, min(40.0, base))
         sheet = f".sheet{{font-size:{base:g}px;}}"
 
     # Per-type typography: header (name line), subheader (address line),
@@ -282,7 +289,7 @@ def classic_theme_css(theme: dict | None) -> str:
         rules.append(f'body{{font-family:"{cf}","Times New Roman",Times,serif;}}')
     elif bf in _FONTS:
         rules.append(f"body{{font-family:{_FONTS[bf]};}}")
-    base = _px(theme.get("base"), 8, 24)
+    base = _px(theme.get("base"), 8, 40)
     if base is not None:
         # Keep the classic single:multi size ratio (11pt : 8.5pt ≈ 0.77).
         rules.append(f".page.single{{font-size:{base:g}px;}}")

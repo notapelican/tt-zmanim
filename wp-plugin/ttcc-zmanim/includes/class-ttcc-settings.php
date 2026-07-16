@@ -78,7 +78,7 @@ class TTCC_Zmanim_Settings {
 		$out['default_heading_font'] = ( isset( $input['default_heading_font'] ) && in_array( $input['default_heading_font'], $fonts, true ) ) ? $input['default_heading_font'] : 'palatino';
 		$out['default_body_font']    = ( isset( $input['default_body_font'] ) && in_array( $input['default_body_font'], $fonts, true ) ) ? $input['default_body_font'] : 'system';
 		$base = isset( $input['default_base'] ) ? (int) $input['default_base'] : 15;
-		$out['default_base'] = max( 11, min( 24, $base ) );
+		$out['default_base'] = max( 8, min( 40, $base ) );
 		foreach ( array( 'default_text_color' => '#1b1e28', 'default_callout_bg' => '#fbeef1', 'default_callout_text' => '#a3324b' ) as $key => $fallback ) {
 			$val = isset( $input[ $key ] ) ? (string) $input[ $key ] : '';
 			$out[ $key ] = preg_match( '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $val ) ? $val : $fallback;
@@ -220,7 +220,7 @@ class TTCC_Zmanim_Settings {
 					</tr>
 					<tr>
 						<th scope="row"><label for="ttcc_default_base"><?php esc_html_e( 'Base text size', 'ttcc-zmanim' ); ?></label></th>
-						<td><input type="number" id="ttcc_default_base" name="<?php echo esc_attr( $fields ); ?>[default_base]" min="11" max="24" value="<?php echo esc_attr( $d['base'] ); ?>" /> px</td>
+						<td><input type="number" id="ttcc_default_base" name="<?php echo esc_attr( $fields ); ?>[default_base]" min="8" max="40" value="<?php echo esc_attr( $d['base'] ); ?>" /> px</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="ttcc_adobe_kit"><?php esc_html_e( 'Adobe Fonts Web Project ID', 'ttcc-zmanim' ); ?></label></th>
