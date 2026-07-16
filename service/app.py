@@ -156,6 +156,9 @@ def _render_html_str(req: RenderHtmlRequest, doc: dict) -> str:
         extra = _webfont_links(req.theme) + classic_theme_css(req.theme)
         if extra:
             html = html.replace("</head>", extra + "</head>", 1)
+        # Content-sizing mode ('fixed' = base size drives text, fit shrinks only).
+        if isinstance(req.theme, dict) and req.theme.get("fit_mode") == "fixed":
+            html = html.replace("<html>", '<html data-ttcc-fit="fixed">', 1)
     if not req.fit:
         # Neutralize the embedded fit script's inline transform so content
         # renders at its natural size (may overflow the page box).

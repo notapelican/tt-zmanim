@@ -33,6 +33,7 @@
 			custom_heading: DESIGN_DEFAULTS.custom_heading || '',
 			custom_body:  DESIGN_DEFAULTS.custom_body || '',
 			base:         parseInt( DESIGN_DEFAULTS.base, 10 ) || 15,
+			fit_mode:     ( 'fixed' === DESIGN_DEFAULTS.fit_mode ) ? 'fixed' : 'fill',
 			// Per-type typography ('' = the layout's built-in default).
 			header_font:     DESIGN_DEFAULTS.header_font || '',
 			header_size:     DESIGN_DEFAULTS.header_size || '',
@@ -480,18 +481,44 @@
 		newSec.hidden = true;
 		secSel.addEventListener( 'change', function () { newSec.hidden = ( '__new__' !== secSel.value ); } );
 
+		// No-time toggle: a line without a time (e.g. a Kiddush notice) renders
+		// as a plain in-section line rather than a label + dotted time.
+		var noTimeWrap = el( 'label', 'ttcc-al-notime' );
+		var noTime = el( 'input' );
+		noTime.type = 'checkbox';
+		noTimeWrap.appendChild( noTime );
+		noTimeWrap.appendChild( document.createTextNode( ' No time' ) );
+		noTime.addEventListener( 'change', function () { timeIn.hidden = noTime.checked; } );
+
 		var isWeek = ( 'day' !== block.type );
 		var daysIn = el( 'input' );
 		daysIn.type = 'text';
 		daysIn.placeholder = 'Days (optional) — e.g. Wed. or Sun.–Thurs.';
 		daysIn.className = 'ttcc-al-days';
 
+		// Position: end of section, or right after an existing line (so a new
+		// time can merge into a davening group like Shacharis).
+		var posSel = el( 'select' );
+		posSel.className = 'ttcc-al-pos';
+		var endOpt = el( 'option', '', 'At end of section' );
+		endOpt.value = '';
+		posSel.appendChild( endOpt );
+		( block.entries || [] ).forEach( function ( e ) {
+			if ( ! e.rule_id ) { return; }
+			var t = e.time ? ( ' ' + e.time ) : '';
+			var o = el( 'option', '', 'After: ' + ( e.label || e.rule_id ) + t );
+			o.value = e.rule_id;
+			posSel.appendChild( o );
+		} );
+
 		var save = el( 'button', 'button button-small button-primary', 'Add' );
 		var cancel = el( 'button', 'button button-small', 'Cancel' );
 
 		function reset() {
 			labelIn.value = ''; timeIn.value = ''; newSec.value = '';
-			daysIn.value = ''; secSel.selectedIndex = 0; newSec.hidden = ( '__new__' !== secSel.value );
+			daysIn.value = ''; secSel.selectedIndex = 0; posSel.selectedIndex = 0;
+			noTime.checked = false; timeIn.hidden = false;
+			newSec.hidden = ( '__new__' !== secSel.value );
 			form.hidden = true; btn.hidden = false;
 		}
 		btn.addEventListener( 'click', function () { btn.hidden = true; form.hidden = false; labelIn.focus(); } );
@@ -499,13 +526,16 @@
 		save.addEventListener( 'click', function () {
 			var label = labelIn.value.trim();
 			if ( ! label ) { labelIn.focus(); return; }
-			if ( ! timeIn.value ) { timeIn.focus(); return; } // browser enforces HH:MM
+			if ( ! noTime.checked && ! timeIn.value ) { timeIn.focus(); return; }
 			var section = ( '__new__' === secSel.value ) ? newSec.value.trim() : secSel.value;
 			var id = 'add:' + Date.now().toString( 36 );
 			state.overrides.lines[ blockKey( block ) + '|' + id ] = {
-				rule_id: id, section: section || null, label: label, kind: 'minyan',
+				rule_id: id, section: section || null, label: label,
+				kind: noTime.checked ? 'freetext' : 'minyan',
 				day_spec: ( isWeek && daysIn.value.trim() ) ? daysIn.value.trim() : null,
-				date: block.date || null, time: timeIn.value, qualifier: null, source: 'manual'
+				date: block.date || null, time: noTime.checked ? '' : timeIn.value,
+				qualifier: null, source: 'manual',
+				after: posSel.value || undefined
 			};
 			reset();
 			refresh( true );
@@ -513,9 +543,11 @@
 
 		form.appendChild( labelIn );
 		form.appendChild( timeIn );
+		form.appendChild( noTimeWrap );
 		form.appendChild( secSel );
 		form.appendChild( newSec );
 		if ( isWeek ) { form.appendChild( daysIn ); }
+		form.appendChild( posSel );
 		form.appendChild( save );
 		form.appendChild( cancel );
 		wrap.appendChild( btn );
@@ -662,6 +694,16 @@
 			eln.hidden = ! modern;
 		} );
 	}
+	// The content-size slider only bites in "Fixed size" mode — in "Fill page"
+	// mode the fit-to-page scaling cancels it, so disable it with a hint.
+	function syncFitMode() {
+		var fixed = ( 'fixed' === state.overrides.design.fit_mode );
+		var slider = $( 'ttcc-base' );
+		if ( slider ) {
+			slider.disabled = ! fixed;
+			slider.title = fixed ? '' : 'Switch Content sizing to "Fixed size" to use this.';
+		}
+	}
 	function syncDesignUI() {
 		var d = state.overrides.design;
 		$( 'ttcc-layout' ).value = state.overrides.template || 'classic';
@@ -672,6 +714,10 @@
 		$( 'ttcc-custom-heading' ).value = d.custom_heading || '';
 		$( 'ttcc-custom-body' ).value = d.custom_body || '';
 		$( 'ttcc-base' ).value = d.base;
+		if ( $( 'ttcc-fit-mode' ) ) {
+			$( 'ttcc-fit-mode' ).value = d.fit_mode || 'fill';
+			syncFitMode();
+		}
 		$( 'ttcc-header-font' ).value = d.header_font || '';
 		$( 'ttcc-header-size' ).value = d.header_size || '';
 		$( 'ttcc-header-align' ).value = d.header_align || '';
@@ -710,7 +756,7 @@
 		} );
 		[ [ 'ttcc-heading-font', 'heading_font' ], [ 'ttcc-body-font', 'body_font' ],
 		  [ 'ttcc-font-source', 'font_source' ], [ 'ttcc-custom-heading', 'custom_heading' ], [ 'ttcc-custom-body', 'custom_body' ],
-		  [ 'ttcc-base', 'base' ],
+		  [ 'ttcc-base', 'base' ], [ 'ttcc-fit-mode', 'fit_mode' ],
 		  [ 'ttcc-header-font', 'header_font' ], [ 'ttcc-header-size', 'header_size' ], [ 'ttcc-header-align', 'header_align' ],
 		  [ 'ttcc-subheader-font', 'subheader_font' ], [ 'ttcc-subheader-size', 'subheader_size' ], [ 'ttcc-subheader-align', 'subheader_align' ],
 		  [ 'ttcc-logo-size', 'logo_size' ],
@@ -721,6 +767,7 @@
 				var v = $( pair[ 0 ] ).value;
 				if ( 'base' === pair[ 1 ] ) { v = parseInt( v, 10 ) || 15; }
 				state.overrides.design[ pair[ 1 ] ] = v;
+				if ( 'fit_mode' === pair[ 1 ] ) { syncFitMode(); }
 				schedulePreview();
 			} );
 		} );

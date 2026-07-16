@@ -50,6 +50,27 @@ def _label_run_parts(run, dayspec_before_leader, bullet):
     return (label_text, joined, bullet)
 
 
+def _emit_lines(items, ents, *, kind="line", bullet=False, dayspec_before_leader=False):
+    """Append line items for a section's entries, emitting a no-time
+    ``kind=='freetext'`` entry (e.g. a Kiddush notice) as a plain in-place
+    'freeline' item and batching the surrounding timed entries through the
+    normal label/day-spec merge."""
+    batch = []
+
+    def flush():
+        for lbl, val, b in _group_lines(batch, dayspec_before_leader=dayspec_before_leader, bullet=bullet):
+            items.append((kind, lbl, val, b))
+        batch.clear()
+
+    for e in ents:
+        if e.get("kind") == "freetext":
+            flush()
+            items.append(("freeline", e.get("label", "")))
+        else:
+            batch.append(e)
+    flush()
+
+
 def _group_lines(entries, *, dayspec_before_leader=False, bullet=False):
     merged: list[dict] = []
     for e in entries:
@@ -80,8 +101,7 @@ def week_items(block: dict, *, notes_inline: bool) -> list[tuple]:
          f"({_fmt_civil_range(block['civil_start'], block['civil_end'])})"),
     ]
     zmanim, fast_runs, named, named_order = _partition_week_entries(block["entries"])
-    for lbl, val, _ in _group_lines(zmanim, dayspec_before_leader=True):
-        items.append(("zman", lbl, val))
+    _emit_lines(items, zmanim, kind="zman", dayspec_before_leader=True)
     for run in fast_runs:
         s, e = run[0], run[1]
         title = run[0]["section"]
@@ -110,21 +130,18 @@ def week_items(block: dict, *, notes_inline: bool) -> list[tuple]:
         ents = named[section]
         if section == WEEKDAY:
             items.append(("bar", section, "blue"))
-            for lbl, val, _ in _group_lines(ents):
-                items.append(("line", lbl, val, False))
+            _emit_lines(items, ents)
             continue
         shabbos_bar()
         if section == KEY_TIMES:
             items.append(("subhead", section))
-            for lbl, val, _ in _group_lines(ents):
-                items.append(("line", lbl, val, False))
+            _emit_lines(items, ents)
         elif section == SHABBOS_DAY:
             items.append(("bar", section, "blue"))
             _shabbos_day_items(items, ents, block.get("molad"))
         else:
             items.append(("bar", section, "blue"))
-            for lbl, val, b in _group_lines(ents, bullet=(section == EARLY_ES)):
-                items.append(("line", lbl, val, b))
+            _emit_lines(items, ents, bullet=(section == EARLY_ES))
     shabbos_bar()
     return items
 
@@ -139,14 +156,11 @@ def _shabbos_day_items(items, entries, molad):
             split = idx + 1
             break
     if molad and split is not None:
-        for lbl, val, _ in _group_lines(ents[:split]):
-            items.append(("line", lbl, val, False))
+        _emit_lines(items, ents[:split])
         items.append(("molad", molad))
-        for lbl, val, _ in _group_lines(ents[split:]):
-            items.append(("line", lbl, val, False))
+        _emit_lines(items, ents[split:])
     else:
-        for lbl, val, _ in _group_lines(ents):
-            items.append(("line", lbl, val, False))
+        _emit_lines(items, ents)
         if molad:
             items.append(("molad", molad))
 
@@ -158,8 +172,7 @@ def day_items(block: dict) -> list[tuple]:
     items: list[tuple] = [("bar", heading, "blue")]
     if block.get("omer_day"):
         items.append(("note", f"Day {block['omer_day']} of the Omer"))
-    for lbl, val, _ in _group_lines(block["entries"]):
-        items.append(("line", lbl, val, False))
+    _emit_lines(items, block["entries"])
     return items
 
 
@@ -183,6 +196,8 @@ def _item_html(it: tuple) -> str:
                 f'<span class="dots"></span><span class="val">{val}</span></div>')
     if kind == "fastbox":
         return f'<div class="fastbox">{_esc(it[1])}</div>'
+    if kind == "freeline":
+        return f'<div class="freeline">{_esc(it[1])}</div>'
     if kind == "note":
         return f'<div class="note">{_esc(it[1])}</div>'
     if kind == "molad":
@@ -231,6 +246,8 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .bar.purple { background:var(--purple); }
 .subhead { font-weight:bold; margin:4px 0 1px; }
 .note { font-style:italic; margin:1px 0; }
+/* free-text (no-time) line, e.g. a Kiddush notice placed within a section */
+.freeline { margin:1px 0; font-weight:bold; }
 .molad { font-style:italic; margin:1px 0 1px 4mm; }
 .fastbox { border:2px solid #ee0000; background:#fff2cc; text-align:center;
            font-style:italic; font-weight:bold; padding:4px 8px; margin:6px auto; width:88%; }
