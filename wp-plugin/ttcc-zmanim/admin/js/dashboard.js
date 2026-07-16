@@ -42,6 +42,8 @@
 			subheader_size:  DESIGN_DEFAULTS.subheader_size || '',
 			subheader_align: DESIGN_DEFAULTS.subheader_align || '',
 			logo_size:       DESIGN_DEFAULTS.logo_size || '',
+			bsd_size:        DESIGN_DEFAULTS.bsd_size || '',
+			page_margin:     DESIGN_DEFAULTS.page_margin || '',
 			text_color:   DESIGN_DEFAULTS.text_color || '#1b1e28',
 			callout_bg:   DESIGN_DEFAULTS.callout_bg || '#fbeef1',
 			callout_text: DESIGN_DEFAULTS.callout_text || '#a3324b'
@@ -716,14 +718,17 @@
 			eln.hidden = ! modern;
 		} );
 	}
-	// The content-size slider only bites in "Fixed size" mode — in "Fill page"
-	// mode the fit-to-page scaling cancels it, so disable it with a hint.
+	// The content font size only bites in "Fixed size" mode — in "Fill page"
+	// mode the fit-to-page scaling cancels it. We leave the input enabled in
+	// both modes: typing a size auto-switches to Fixed (see wireDesign), so the
+	// control always visibly bites. The hint just explains the interaction.
 	function syncFitMode() {
 		var fixed = ( 'fixed' === state.overrides.design.fit_mode );
-		var slider = $( 'ttcc-base' );
-		if ( slider ) {
-			slider.disabled = ! fixed;
-			slider.title = fixed ? '' : 'Switch Content sizing to "Fixed size" to use this.';
+		var box = $( 'ttcc-base' );
+		if ( box ) {
+			box.title = fixed
+				? 'Content font size in px. Raising it enlarges the text and tightens line spacing to fit.'
+				: 'Fill page mode auto-sizes text — set a size here to switch to Fixed and use it.';
 		}
 	}
 	function syncDesignUI() {
@@ -747,6 +752,8 @@
 		$( 'ttcc-subheader-size' ).value = d.subheader_size || '';
 		$( 'ttcc-subheader-align' ).value = d.subheader_align || '';
 		$( 'ttcc-logo-size' ).value = d.logo_size || 56;
+		if ( $( 'ttcc-bsd-size' ) ) { $( 'ttcc-bsd-size' ).value = d.bsd_size || ''; }
+		if ( $( 'ttcc-page-margin' ) ) { $( 'ttcc-page-margin' ).value = d.page_margin || ''; }
 		$( 'ttcc-text-color' ).value = d.text_color;
 		$( 'ttcc-callout-bg' ).value = d.callout_bg;
 		$( 'ttcc-callout-text' ).value = d.callout_text;
@@ -782,12 +789,21 @@
 		  [ 'ttcc-header-font', 'header_font' ], [ 'ttcc-header-size', 'header_size' ], [ 'ttcc-header-align', 'header_align' ],
 		  [ 'ttcc-subheader-font', 'subheader_font' ], [ 'ttcc-subheader-size', 'subheader_size' ], [ 'ttcc-subheader-align', 'subheader_align' ],
 		  [ 'ttcc-logo-size', 'logo_size' ],
+		  [ 'ttcc-bsd-size', 'bsd_size' ], [ 'ttcc-page-margin', 'page_margin' ],
 		  [ 'ttcc-text-color', 'text_color' ],
 		  [ 'ttcc-callout-bg', 'callout_bg' ], [ 'ttcc-callout-text', 'callout_text' ] ]
 		.forEach( function ( pair ) {
 			$( pair[ 0 ] ).addEventListener( 'input', function () {
 				var v = $( pair[ 0 ] ).value;
-				if ( 'base' === pair[ 1 ] ) { v = parseInt( v, 10 ) || 15; }
+				if ( 'base' === pair[ 1 ] ) {
+					v = parseInt( v, 10 ) || 15;
+					if ( v < 8 ) { v = 8; } else if ( v > 40 ) { v = 40; }
+					// Picking a font size only takes effect in Fixed mode, so
+					// switch there automatically — the control always bites.
+					state.overrides.design.fit_mode = 'fixed';
+					if ( $( 'ttcc-fit-mode' ) ) { $( 'ttcc-fit-mode' ).value = 'fixed'; }
+					syncFitMode();
+				}
 				state.overrides.design[ pair[ 1 ] ] = v;
 				if ( 'fit_mode' === pair[ 1 ] ) { syncFitMode(); }
 				schedulePreview();
