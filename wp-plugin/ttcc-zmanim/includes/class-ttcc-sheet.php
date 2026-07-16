@@ -110,6 +110,13 @@ class TTCC_Zmanim_Sheet {
 		if ( isset( $d['logo_size'] ) && is_numeric( $d['logo_size'] ) && $d['logo_size'] > 0 ) {
 			$out['logo_size'] = max( 20, min( 140, (float) $d['logo_size'] ) );
 		}
+		// בס״ד marker size (px) and page-edge margin (mm); blank = defaults.
+		if ( isset( $d['bsd_size'] ) && is_numeric( $d['bsd_size'] ) && $d['bsd_size'] > 0 ) {
+			$out['bsd_size'] = max( 6, min( 36, (float) $d['bsd_size'] ) );
+		}
+		if ( isset( $d['page_margin'] ) && is_numeric( $d['page_margin'] ) && $d['page_margin'] > 0 ) {
+			$out['page_margin'] = max( 4, min( 25, (float) $d['page_margin'] ) );
+		}
 		// Content sizing: 'fixed' makes the base size drive the text (fit only
 		// shrinks to avoid overflow); anything else = 'fill' (auto fit-to-page).
 		if ( isset( $d['fit_mode'] ) && 'fixed' === $d['fit_mode'] ) {

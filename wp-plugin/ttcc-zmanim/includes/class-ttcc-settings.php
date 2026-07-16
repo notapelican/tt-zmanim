@@ -50,6 +50,8 @@ class TTCC_Zmanim_Settings {
 			'subheader_size'  => (string) self::get( 'default_subheader_size', '' ),
 			'subheader_align' => (string) self::get( 'default_subheader_align', '' ),
 			'logo_size'       => (string) self::get( 'default_logo_size', '' ),
+			'bsd_size'        => (string) self::get( 'default_bsd_size', '' ),
+			'page_margin'     => (string) self::get( 'default_page_margin', '' ),
 			'text_color'   => (string) self::get( 'default_text_color', '#1b1e28' ),
 			'callout_bg'   => (string) self::get( 'default_callout_bg', '#fbeef1' ),
 			'callout_text' => (string) self::get( 'default_callout_text', '#a3324b' ),

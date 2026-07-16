@@ -42,6 +42,8 @@
 			subheader_size:  DESIGN_DEFAULTS.subheader_size || '',
 			subheader_align: DESIGN_DEFAULTS.subheader_align || '',
 			logo_size:       DESIGN_DEFAULTS.logo_size || '',
+			bsd_size:        DESIGN_DEFAULTS.bsd_size || '',
+			page_margin:     DESIGN_DEFAULTS.page_margin || '',
 			text_color:   DESIGN_DEFAULTS.text_color || '#1b1e28',
 			callout_bg:   DESIGN_DEFAULTS.callout_bg || '#fbeef1',
 			callout_text: DESIGN_DEFAULTS.callout_text || '#a3324b'
@@ -750,6 +752,8 @@
 		$( 'ttcc-subheader-size' ).value = d.subheader_size || '';
 		$( 'ttcc-subheader-align' ).value = d.subheader_align || '';
 		$( 'ttcc-logo-size' ).value = d.logo_size || 56;
+		if ( $( 'ttcc-bsd-size' ) ) { $( 'ttcc-bsd-size' ).value = d.bsd_size || ''; }
+		if ( $( 'ttcc-page-margin' ) ) { $( 'ttcc-page-margin' ).value = d.page_margin || ''; }
 		$( 'ttcc-text-color' ).value = d.text_color;
 		$( 'ttcc-callout-bg' ).value = d.callout_bg;
 		$( 'ttcc-callout-text' ).value = d.callout_text;
@@ -785,6 +789,7 @@
 		  [ 'ttcc-header-font', 'header_font' ], [ 'ttcc-header-size', 'header_size' ], [ 'ttcc-header-align', 'header_align' ],
 		  [ 'ttcc-subheader-font', 'subheader_font' ], [ 'ttcc-subheader-size', 'subheader_size' ], [ 'ttcc-subheader-align', 'subheader_align' ],
 		  [ 'ttcc-logo-size', 'logo_size' ],
+		  [ 'ttcc-bsd-size', 'bsd_size' ], [ 'ttcc-page-margin', 'page_margin' ],
 		  [ 'ttcc-text-color', 'text_color' ],
 		  [ 'ttcc-callout-bg', 'callout_bg' ], [ 'ttcc-callout-text', 'callout_text' ] ]
 		.forEach( function ( pair ) {

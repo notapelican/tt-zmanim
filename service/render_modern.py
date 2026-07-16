@@ -64,8 +64,7 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 
 .masthead{display:flex;align-items:center;gap:11px;
   padding-bottom:6px;border-bottom:1px solid var(--ink);}
-.logo{flex:0 0 auto;width:42px;height:42px;border-radius:50%;
-  border:1.5px solid var(--accent);display:flex;align-items:center;
+.logo{flex:0 0 auto;width:42px;height:42px;display:flex;align-items:center;
   justify-content:center;overflow:hidden;}
 .logo img{width:100%;height:100%;object-fit:contain;}
 .logo .ph{font-family:var(--sans);font-size:8px;letter-spacing:.14em;
@@ -108,7 +107,9 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
 .freeline{color:var(--ink);font-weight:600;padding:1.5px 0;font-size:1em;border-bottom:1px solid var(--hair);}
 
 /* Shared (4-up grid / two-column) pages: tighten spacing further so four week
-   cards fit; the fit-to-page pass then normalizes any remainder. */
+   cards fit; the fit-to-page pass then normalizes any remainder. The page
+   margin also narrows (a theme page_margin overrides both, see _theme_css). */
+.page.many .page-margin{left:9mm;top:9mm;right:9mm;bottom:9mm;}
 .page.many .masthead{padding-bottom:4px;}
 .page.many .mast-txt h1{font-size:19px;}
 .page.many .page-cells{margin-top:6px;}
@@ -257,11 +258,27 @@ def _theme_css(theme: dict | None) -> str:
     logo = _px(theme.get("logo_size"), 20, 140)
     if logo is not None:
         extra.append(f".logo{{width:{logo:g}px;height:{logo:g}px;}}")
+    bsd = _px(theme.get("bsd_size"), 6, 36)
+    if bsd is not None:
+        extra.append(f".bsd{{font-size:{bsd:g}px;}}")
+    extra.extend(_margin_rules(theme))
 
     if not root and not sheet and not extra:
         return ""
     root_css = f":root{{{''.join(root)}}}" if root else ""
     return f'<style id="ttcc-theme">{root_css}{sheet}{"".join(extra)}</style>'
+
+
+def _margin_rules(theme: dict) -> list[str]:
+    """Page-edge padding override (mm). The doubled selector outranks any
+    renderer default for shared pages (e.g. modern's tighter .page.many)."""
+    m = _px(theme.get("page_margin"), 4, 25)
+    if m is None:
+        return []
+    return [
+        ".page .page-margin,.page.many .page-margin"
+        f"{{left:{m:g}mm;top:{m:g}mm;right:{m:g}mm;bottom:{m:g}mm;}}"
+    ]
 
 
 def classic_theme_css(theme: dict | None) -> str:
@@ -294,6 +311,10 @@ def classic_theme_css(theme: dict | None) -> str:
         # Keep the classic single:multi size ratio (11pt : 8.5pt ≈ 0.77).
         rules.append(f".page.single{{font-size:{base:g}px;}}")
         rules.append(f".page.multi{{font-size:{base * 0.77:.4g}px;}}")
+    bsd = _px(theme.get("bsd_size"), 6, 36)
+    if bsd is not None:
+        rules.append(f".page .bsd{{font-size:{bsd:g}px;}}")
+    rules.extend(_margin_rules(theme))
     if not rules:
         return ""
     return f'<style id="ttcc-theme">{"".join(rules)}</style>'
