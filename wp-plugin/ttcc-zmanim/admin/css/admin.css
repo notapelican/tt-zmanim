@@ -39,7 +39,7 @@
 
 .ttcc-split { display:flex; gap:16px; align-items:flex-start; }
 .ttcc-editor { flex:0 0 42%; max-width:42%; background:#fff; border:1px solid #dcdcde; border-radius:4px; padding:10px 12px; max-height:80vh; overflow:auto; }
-.ttcc-preview-wrap { flex:1; min-width:0; max-height:82vh; overflow:auto; }
+.ttcc-preview-wrap { flex:1; min-width:0; max-height:82vh; overflow-y:auto; overflow-x:hidden; }
 /* The frame is a sizer: JS sets it to the scaled footprint of the stacked A4
    pages (ratio locked inside the iframe), so the pane scrolls naturally. */
 .ttcc-preview-frame { background:#fff; border:1px solid #dcdcde; border-radius:4px; box-shadow:0 1px 5px rgba(0,0,0,.10); overflow:hidden; margin:0 auto; }

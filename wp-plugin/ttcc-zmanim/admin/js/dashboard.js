@@ -201,23 +201,43 @@
 			doc.head.appendChild( st );
 		}
 		var guides = $( 'ttcc-pageguides' ).checked;
-		st.textContent = guides
+		// The iframe is sized to the FULL document height (all pages), so it
+		// never needs its own scrollbars — the outer pane scrolls. Force its
+		// body to hide overflow so sub-pixel rounding can't spawn a scrollbar.
+		st.textContent = 'html,body{overflow:hidden!important;}' + ( guides
 			? 'body{background:#e8e8ec;}.page{margin:0 auto 12px;box-shadow:0 1px 6px rgba(0,0,0,.3);outline:1px solid rgba(210,50,50,.6);}'
-			: 'body{background:#fff;}.page{margin:0 auto;}';
+			: 'body{background:#fff;}.page{margin:0 auto;}' );
 	}
 
 	function contentHeight() {
 		var doc = frameDoc();
-		return ( doc && doc.body && doc.body.scrollHeight ) || Math.round( PAGE_W * 297 / 210 );
+		if ( ! doc ) { return Math.round( PAGE_W * 297 / 210 ); }
+		// +2 guards against a rounding-induced scrollbar; use the larger of the
+		// two height measures since decorate margins live on <body>.
+		return Math.max(
+			doc.documentElement ? doc.documentElement.scrollHeight : 0,
+			doc.body ? doc.body.scrollHeight : 0
+		) + 2;
 	}
 
 	function renderPreviewHtml( html ) {
 		var iframe = $( 'ttcc-preview' );
+		iframe.setAttribute( 'scrolling', 'no' ); // no internal scrollbars (legacy but effective)
 		iframe.onload = function () {
 			decoratePreview();
 			fitPreview();
-			// the in-page fit script may still be settling (web fonts); re-measure.
-			setTimeout( fitPreview, 250 );
+			// The in-page fit script settles after web fonts load; re-fit once it
+			// signals done (data-ttcc-fitted) so the height is measured correctly.
+			var tries = 0;
+			( function settle() {
+				var doc = frameDoc();
+				if ( doc && doc.documentElement && doc.documentElement.getAttribute( 'data-ttcc-fitted' ) === '1' ) {
+					decoratePreview();
+					fitPreview();
+				} else if ( tries++ < 40 ) {
+					setTimeout( settle, 100 );
+				}
+			} )();
 		};
 		iframe.srcdoc = html;
 	}
@@ -225,7 +245,9 @@
 	function previewScale() {
 		if ( 'fit' !== preview.mode ) { return preview.zoom; }
 		var wrap = $( 'ttcc-preview-wrap' ) || $( 'ttcc-preview-frame' ).parentNode;
-		var avail = ( wrap && ( wrap.clientWidth || wrap.offsetWidth ) ) || PAGE_W;
+		// Reserve room for a vertical scrollbar so a tall (multi-page) preview
+		// never forces a second, horizontal scrollbar on the pane.
+		var avail = ( ( wrap && ( wrap.clientWidth || wrap.offsetWidth ) ) || PAGE_W ) - 18;
 		var target = Math.max( FIT_MIN_PX, Math.min( FIT_MAX_PX, avail ) );
 		return target / PAGE_W;
 	}
@@ -240,8 +262,8 @@
 		iframe.style.transformOrigin = 'top left';
 		iframe.style.transform = 'scale(' + scale + ')';
 		// The sizer reserves the scaled footprint so the pane scrolls naturally.
-		frame.style.width = Math.round( PAGE_W * scale ) + 'px';
-		frame.style.height = Math.round( h * scale ) + 'px';
+		frame.style.width = Math.ceil( PAGE_W * scale ) + 'px';
+		frame.style.height = Math.ceil( h * scale ) + 'px';
 		var slider = $( 'ttcc-zoom' ), lbl = $( 'ttcc-zoom-val' );
 		if ( slider && 'fit' === preview.mode ) { slider.value = Math.round( scale * 100 ); }
 		if ( lbl ) { lbl.textContent = Math.round( scale * 100 ) + '%'; }
