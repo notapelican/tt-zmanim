@@ -169,12 +169,17 @@ def _px(v, lo: float, hi: float) -> float | None:
 
 
 def _type_rules(theme: dict, font_key: str, size_key: str,
-                align_key: str | None) -> str:
+                align_key: str | None, custom_key: str | None = None) -> str:
     """font-family/font-size/text-align declarations for one text type
-    (header / subheader), sanitized: whitelist fonts, clamped px, enum align."""
+    (header / subheader), sanitized: whitelist fonts, clamped px, enum align.
+    ``custom_key`` optionally carries a custom web-font family (a saved Google
+    name or Adobe kebab-case slug) which wins over the whitelist choice."""
     r: list[str] = []
     f = theme.get(font_key)
-    if f in _FONTS:
+    cf = _gfamily(theme.get(custom_key)) if custom_key else None
+    if cf:
+        r.append(f'font-family:"{cf}",Georgia,"Times New Roman",serif;')
+    elif f in _FONTS:
         r.append(f"font-family:{_FONTS[f]};")
     s = _px(theme.get(size_key), 8, 48)
     if s is not None:
@@ -197,7 +202,7 @@ def _webfont_links(theme: dict | None) -> str:
         links.append(f'<link rel="stylesheet" href="https://use.typekit.net/{kit}.css">')
     if "adobe" != theme.get("font_source"):  # default/Google: load each family
         fams: list[str] = []
-        for k in ("custom_heading", "custom_body"):
+        for k in ("custom_heading", "custom_body", "header_custom", "subheader_custom"):
             fam = _gfamily(theme.get(k))
             if fam and fam not in fams:
                 fams.append(fam)
@@ -251,10 +256,10 @@ def _theme_css(theme: dict | None) -> str:
     # Per-type typography: header (name line), subheader (address line),
     # and the masthead logo size. All sanitized; blank = the design default.
     extra: list[str] = []
-    hdr = _type_rules(theme, "header_font", "header_size", "header_align")
+    hdr = _type_rules(theme, "header_font", "header_size", "header_align", "header_custom")
     if hdr:
         extra.append(f".mast-txt h1{{{hdr}}}")
-    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align")
+    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align", "subheader_custom")
     if sub:
         extra.append(f".mast-txt .addr{{{sub}}}")
     logo = _px(theme.get("logo_size"), 20, 140)
@@ -296,10 +301,19 @@ def classic_theme_css(theme: dict | None) -> str:
     if not isinstance(theme, dict):
         return ""
     rules: list[str] = []
-    hdr = _type_rules(theme, "header_font", "header_size", "header_align")
+    # The custom heading family (shared with modern's week headings) styles the
+    # classic name/location lines and the week-title line. Emitted BEFORE the
+    # per-type header/subheader rules so an explicit per-type choice, at equal
+    # specificity, wins by coming later.
+    ch = _gfamily(theme.get("custom_heading"))
+    if ch:
+        rules.append(
+            f'.page .hdr-title,.page .hdr-sub,.page .title'
+            f'{{font-family:"{ch}","Times New Roman",Times,serif;}}')
+    hdr = _type_rules(theme, "header_font", "header_size", "header_align", "header_custom")
     if hdr:
         rules.append(f".page .hdr-title{{{hdr}}}")
-    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align")
+    sub = _type_rules(theme, "subheader_font", "subheader_size", "subheader_align", "subheader_custom")
     if sub:
         rules.append(f".page .hdr-sub{{{sub}}}")
     cf = _gfamily(theme.get("custom_body"))

@@ -109,6 +109,14 @@ class TTCC_Zmanim_Sheet {
 			if ( isset( $d[ $t . '_align' ] ) && in_array( $d[ $t . '_align' ], array( 'left', 'center', 'right' ), true ) ) {
 				$out[ $t . '_align' ] = $d[ $t . '_align' ];
 			}
+			// Optional custom web-font family (saved Google name or Adobe slug);
+			// same charset as custom_heading/custom_body so hyphens survive.
+			if ( ! empty( $d[ $t . '_custom' ] ) ) {
+				$name = trim( preg_replace( '/[^A-Za-z0-9 \-]/', '', (string) $d[ $t . '_custom' ] ) );
+				if ( '' !== $name ) {
+					$out[ $t . '_custom' ] = substr( $name, 0, 50 );
+				}
+			}
 		}
 		if ( isset( $d['logo_size'] ) && is_numeric( $d['logo_size'] ) && $d['logo_size'] > 0 ) {
 			$out['logo_size'] = max( 20, min( 140, (float) $d['logo_size'] ) );
