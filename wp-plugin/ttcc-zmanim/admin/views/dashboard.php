@@ -107,7 +107,6 @@ defined( 'ABSPATH' ) || exit;
 						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<button type="button" class="button button-small" id="ttcc-save-body-font" title="<?php esc_attr_e( 'Save the typed custom content font below for reuse — it will then appear in this list', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Save…', 'ttcc-zmanim' ); ?></button>
 				<select id="ttcc-fit-mode" title="<?php esc_attr_e( 'Fill page = auto-size content to fill each page. Fixed size = use the Font size below; only shrinks to avoid overflow.', 'ttcc-zmanim' ); ?>">
 					<option value="fill"><?php esc_html_e( 'Fill page', 'ttcc-zmanim' ); ?></option>
 					<option value="fixed"><?php esc_html_e( 'Fixed size', 'ttcc-zmanim' ); ?></option>
@@ -134,7 +133,6 @@ defined( 'ABSPATH' ) || exit;
 						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<button type="button" class="button button-small" id="ttcc-save-heading-font" title="<?php esc_attr_e( 'Save the typed custom heading font below for reuse — it will then appear in this list', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Save…', 'ttcc-zmanim' ); ?></button>
 			</span>
 			<span class="ttcc-design-group ttcc-modern-only ttcc-logo-field">
 				<span class="ttcc-mini-label"><?php esc_html_e( 'Logo', 'ttcc-zmanim' ); ?></span>
@@ -145,7 +143,7 @@ defined( 'ABSPATH' ) || exit;
 					<input type="range" id="ttcc-logo-size" min="20" max="140" step="2" />
 				</label>
 			</span>
-			<span class="ttcc-design-group ttcc-modern-only">
+			<span class="ttcc-design-group">
 				<span class="ttcc-mini-label"><?php esc_html_e( 'Custom fonts', 'ttcc-zmanim' ); ?></span>
 				<select id="ttcc-font-source" title="<?php esc_attr_e( 'Where custom font names come from. Adobe uses the Web Project ID set in Settings.', 'ttcc-zmanim' ); ?>">
 					<option value="google"><?php esc_html_e( 'Google Fonts', 'ttcc-zmanim' ); ?></option>
@@ -154,10 +152,12 @@ defined( 'ABSPATH' ) || exit;
 				<input type="text" id="ttcc-custom-heading" class="ttcc-gfont"
 					placeholder="<?php esc_attr_e( 'Heading family, e.g. Playfair Display', 'ttcc-zmanim' ); ?>"
 					data-google-placeholder="<?php esc_attr_e( 'Heading family, e.g. Playfair Display', 'ttcc-zmanim' ); ?>" />
+				<button type="button" class="button button-small" id="ttcc-save-heading-font" title="<?php esc_attr_e( 'Save this heading font for reuse — it will appear in every font dropdown under Custom', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Save…', 'ttcc-zmanim' ); ?></button>
 				<input type="text" id="ttcc-custom-body" class="ttcc-gfont"
 					placeholder="<?php esc_attr_e( 'Body family, e.g. Inter', 'ttcc-zmanim' ); ?>"
 					data-google-placeholder="<?php esc_attr_e( 'Body family, e.g. Inter', 'ttcc-zmanim' ); ?>" />
-				<button type="button" class="button button-small" id="ttcc-delete-saved-font" title="<?php esc_attr_e( 'Delete the saved font currently selected under Week headings or Content', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Delete saved…', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="button button-small" id="ttcc-save-body-font" title="<?php esc_attr_e( 'Save this body font for reuse — it will appear in every font dropdown under Custom', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Save…', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="button button-small" id="ttcc-delete-saved-font" title="<?php esc_attr_e( 'Delete the saved font currently selected in any font dropdown', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Delete saved…', 'ttcc-zmanim' ); ?></button>
 			</span>
 			<span class="ttcc-design-group ttcc-modern-only">
 				<span class="ttcc-mini-label"><?php esc_html_e( 'Colors', 'ttcc-zmanim' ); ?></span>

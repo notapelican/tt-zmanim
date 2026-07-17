@@ -158,8 +158,8 @@ class TTCC_Zmanim_Service_Client {
 		$theme = array();
 		foreach ( array(
 			'heading_font', 'body_font', 'custom_heading', 'custom_body', 'font_source', 'base',
-			'header_font', 'header_size', 'header_align',
-			'subheader_font', 'subheader_size', 'subheader_align',
+			'header_font', 'header_size', 'header_align', 'header_custom',
+			'subheader_font', 'subheader_size', 'subheader_align', 'subheader_custom',
 			'logo_size', 'bsd_size', 'page_margin', 'fit_mode', 'text_color', 'callout_bg', 'callout_text',
 		) as $k ) {
 			if ( isset( $design[ $k ] ) && '' !== $design[ $k ] ) {
