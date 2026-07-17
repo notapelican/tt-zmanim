@@ -125,6 +125,12 @@ defined( 'ABSPATH' ) || exit;
 					<input type="number" id="ttcc-bsd-size" class="ttcc-size" min="6" max="36" step="1"
 						placeholder="<?php esc_attr_e( 'auto', 'ttcc-zmanim' ); ?>" title="<?php esc_attr_e( 'Size of the בס״ד marker in px (blank = default)', 'ttcc-zmanim' ); ?>" />
 				</label>
+				<select id="ttcc-bsd-font" title="<?php esc_attr_e( 'בס״ד font. Saved custom fonts appear under Custom.', 'ttcc-zmanim' ); ?>">
+					<option value=""><?php esc_html_e( 'Default font', 'ttcc-zmanim' ); ?></option>
+					<?php foreach ( $ttcc_fonts as $k => $label ) : ?>
+						<option value="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
 			</span>
 			<span class="ttcc-design-group ttcc-modern-only">
 				<span class="ttcc-mini-label"><?php esc_html_e( 'Week headings', 'ttcc-zmanim' ); ?></span>

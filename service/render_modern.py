@@ -202,7 +202,8 @@ def _webfont_links(theme: dict | None) -> str:
         links.append(f'<link rel="stylesheet" href="https://use.typekit.net/{kit}.css">')
     if "adobe" != theme.get("font_source"):  # default/Google: load each family
         fams: list[str] = []
-        for k in ("custom_heading", "custom_body", "header_custom", "subheader_custom"):
+        for k in ("custom_heading", "custom_body",
+                  "header_custom", "subheader_custom", "bsd_custom"):
             fam = _gfamily(theme.get(k))
             if fam and fam not in fams:
                 fams.append(fam)
@@ -265,15 +266,30 @@ def _theme_css(theme: dict | None) -> str:
     logo = _px(theme.get("logo_size"), 20, 140)
     if logo is not None:
         extra.append(f".logo{{width:{logo:g}px;height:{logo:g}px;}}")
+    bsd_css = _family_rule(theme, "bsd_font", "bsd_custom")
     bsd = _px(theme.get("bsd_size"), 6, 36)
     if bsd is not None:
-        extra.append(f".bsd{{font-size:{bsd:g}px;}}")
+        bsd_css += f"font-size:{bsd:g}px;"
+    if bsd_css:
+        extra.append(f".bsd{{{bsd_css}}}")
     extra.extend(_margin_rules(theme))
 
     if not root and not sheet and not extra:
         return ""
     root_css = f":root{{{''.join(root)}}}" if root else ""
     return f'<style id="ttcc-theme">{root_css}{sheet}{"".join(extra)}</style>'
+
+
+def _family_rule(theme: dict, font_key: str, custom_key: str) -> str:
+    """A lone font-family declaration for a text type: the custom web-font
+    family (saved Google name / Adobe slug) wins over the whitelist choice."""
+    cf = _gfamily(theme.get(custom_key))
+    if cf:
+        return f'font-family:"{cf}",Georgia,"Times New Roman",serif;'
+    f = theme.get(font_key)
+    if f in _FONTS:
+        return f"font-family:{_FONTS[f]};"
+    return ""
 
 
 def _margin_rules(theme: dict) -> list[str]:
@@ -327,9 +343,12 @@ def classic_theme_css(theme: dict | None) -> str:
         # Keep the classic single:multi size ratio (11pt : 8.5pt ≈ 0.77).
         rules.append(f".page.single{{font-size:{base:g}px;}}")
         rules.append(f".page.multi{{font-size:{base * 0.77:.4g}px;}}")
+    bsd_css = _family_rule(theme, "bsd_font", "bsd_custom")
     bsd = _px(theme.get("bsd_size"), 6, 36)
     if bsd is not None:
-        rules.append(f".page .bsd{{font-size:{bsd:g}px;}}")
+        bsd_css += f"font-size:{bsd:g}px;"
+    if bsd_css:
+        rules.append(f".page .bsd{{{bsd_css}}}")
     rules.extend(_margin_rules(theme))
     if not rules:
         return ""

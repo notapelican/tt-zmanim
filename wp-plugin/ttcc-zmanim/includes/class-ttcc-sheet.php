@@ -121,7 +121,16 @@ class TTCC_Zmanim_Sheet {
 		if ( isset( $d['logo_size'] ) && is_numeric( $d['logo_size'] ) && $d['logo_size'] > 0 ) {
 			$out['logo_size'] = max( 20, min( 140, (float) $d['logo_size'] ) );
 		}
-		// בס״ד marker size (px) and page-edge margin (mm); blank = defaults.
+		// בס״ד marker font/size (px) and page-edge margin (mm); blank = defaults.
+		if ( isset( $d['bsd_font'] ) && in_array( $d['bsd_font'], self::FONT_KEYS, true ) ) {
+			$out['bsd_font'] = $d['bsd_font'];
+		}
+		if ( ! empty( $d['bsd_custom'] ) ) {
+			$name = trim( preg_replace( '/[^A-Za-z0-9 \-]/', '', (string) $d['bsd_custom'] ) );
+			if ( '' !== $name ) {
+				$out['bsd_custom'] = substr( $name, 0, 50 );
+			}
+		}
 		if ( isset( $d['bsd_size'] ) && is_numeric( $d['bsd_size'] ) && $d['bsd_size'] > 0 ) {
 			$out['bsd_size'] = max( 6, min( 36, (float) $d['bsd_size'] ) );
 		}
