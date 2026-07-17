@@ -105,6 +105,25 @@ class TTCC_Zmanim_REST {
 			'callback'            => array( $this, 'set_default_preset' ),
 			'permission_callback' => $perm,
 		) );
+
+		register_rest_route( self::NS, '/custom-fonts', array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_custom_fonts' ),
+				'permission_callback' => $perm,
+			),
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_custom_font' ),
+				'permission_callback' => $perm,
+			),
+		) );
+
+		register_rest_route( self::NS, '/custom-fonts/delete', array(
+			'methods'             => 'POST',
+			'callback'            => array( $this, 'delete_custom_font' ),
+			'permission_callback' => $perm,
+		) );
 	}
 
 	public function can_manage() {
@@ -275,6 +294,26 @@ class TTCC_Zmanim_REST {
 	public function set_default_preset( WP_REST_Request $req ) {
 		TTCC_Zmanim_Storage::set_default_preset( (string) $req->get_param( 'name' ) );
 		return rest_ensure_response( TTCC_Zmanim_Storage::get_presets() );
+	}
+
+	// --- saved custom fonts --------------------------------------------------
+
+	public function get_custom_fonts() {
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_custom_fonts() );
+	}
+
+	public function save_custom_font( WP_REST_Request $req ) {
+		$name = (string) $req->get_param( 'name' );
+		if ( '' === trim( $name ) ) {
+			return new WP_Error( 'ttcc_bad_request', __( 'A font name is required.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
+		}
+		TTCC_Zmanim_Storage::save_custom_font( $name, (string) $req->get_param( 'family' ), (string) $req->get_param( 'source' ) );
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_custom_fonts() );
+	}
+
+	public function delete_custom_font( WP_REST_Request $req ) {
+		TTCC_Zmanim_Storage::delete_custom_font( (string) $req->get_param( 'name' ) );
+		return rest_ensure_response( TTCC_Zmanim_Storage::get_custom_fonts() );
 	}
 
 	// --- helpers ------------------------------------------------------------

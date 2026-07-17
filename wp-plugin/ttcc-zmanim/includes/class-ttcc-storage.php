@@ -241,6 +241,49 @@ class TTCC_Zmanim_Storage {
 		return true;
 	}
 
+	// --- saved custom fonts --------------------------------------------------
+	// A small site-wide library of named custom font families (a Google Fonts
+	// name or an Adobe Fonts/Typekit kebab-case slug) so a family typed once
+	// can be picked again like a built-in font instead of retyped every time.
+	// Stored as: { items: { <name>: { family, source } } }.
+
+	const CUSTOM_FONTS_OPTION = 'ttcc_zmanim_custom_fonts';
+
+	public static function get_custom_fonts() {
+		$opt = get_option( self::CUSTOM_FONTS_OPTION, array() );
+		if ( ! is_array( $opt ) ) {
+			$opt = array();
+		}
+		return array(
+			'items' => ( isset( $opt['items'] ) && is_array( $opt['items'] ) ) ? $opt['items'] : array(),
+		);
+	}
+
+	/** Upsert a saved custom font by name. Same charset as sanitize_design's
+	 * custom_heading/custom_body: letters/digits/spaces/hyphens, so Adobe's
+	 * kebab-case slugs (e.g. "forma-djr-deck") survive intact. */
+	public static function save_custom_font( $name, $family, $source ) {
+		$name   = trim( sanitize_text_field( (string) $name ) );
+		$family = trim( preg_replace( '/[^A-Za-z0-9 \-]/', '', (string) $family ) );
+		if ( '' === $name || '' === $family ) {
+			return false;
+		}
+		$opt = self::get_custom_fonts();
+		$opt['items'][ $name ] = array(
+			'family' => substr( $family, 0, 50 ),
+			'source' => ( 'adobe' === $source ) ? 'adobe' : 'google',
+		);
+		update_option( self::CUSTOM_FONTS_OPTION, $opt, false );
+		return true;
+	}
+
+	public static function delete_custom_font( $name ) {
+		$opt = self::get_custom_fonts();
+		unset( $opt['items'][ (string) $name ] );
+		update_option( self::CUSTOM_FONTS_OPTION, $opt, false );
+		return true;
+	}
+
 	// --- helpers ------------------------------------------------------------
 
 	private static function decode_json( $raw, $default ) {

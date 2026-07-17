@@ -753,12 +753,11 @@
 		var d = state.overrides.design;
 		$( 'ttcc-layout' ).value = state.overrides.template || 'classic';
 		syncModernOnly();
-		$( 'ttcc-heading-font' ).value = d.heading_font;
-		$( 'ttcc-body-font' ).value = d.body_font;
 		$( 'ttcc-font-source' ).value = d.font_source || 'google';
 		$( 'ttcc-custom-heading' ).value = d.custom_heading || '';
 		$( 'ttcc-custom-body' ).value = d.custom_body || '';
 		syncFontSource();
+		syncCustomFontSelects();
 		$( 'ttcc-base' ).value = d.base;
 		if ( $( 'ttcc-fit-mode' ) ) {
 			$( 'ttcc-fit-mode' ).value = d.fit_mode || 'fill';
@@ -802,8 +801,9 @@
 			syncModernOnly();
 			if ( state.doc ) { refresh( false ); }
 		} );
-		[ [ 'ttcc-heading-font', 'heading_font' ], [ 'ttcc-body-font', 'body_font' ],
-		  [ 'ttcc-font-source', 'font_source' ], [ 'ttcc-custom-heading', 'custom_heading' ], [ 'ttcc-custom-body', 'custom_body' ],
+		// ttcc-heading-font / ttcc-body-font are wired separately (wireCustomFontSelect)
+		// since they also carry the merged "Custom" optgroup of saved fonts.
+		[ [ 'ttcc-font-source', 'font_source' ], [ 'ttcc-custom-heading', 'custom_heading' ], [ 'ttcc-custom-body', 'custom_body' ],
 		  [ 'ttcc-base', 'base' ], [ 'ttcc-fit-mode', 'fit_mode' ],
 		  [ 'ttcc-header-font', 'header_font' ], [ 'ttcc-header-size', 'header_size' ], [ 'ttcc-header-align', 'header_align' ],
 		  [ 'ttcc-subheader-font', 'subheader_font' ], [ 'ttcc-subheader-size', 'subheader_size' ], [ 'ttcc-subheader-align', 'subheader_align' ],
@@ -911,6 +911,114 @@
 		} );
 	}
 
+	// --- saved custom fonts -------------------------------------------------
+	// A small site-wide library of named custom font families (Google or Adobe
+	// Fonts/Typekit slugs). Saving one injects it as a "Custom" option into the
+	// Week headings and Content font selects, so it applies exactly like a
+	// built-in font from then on instead of retyping the family/slug each time.
+	var customFonts = { items: {} };
+	var CUSTOM_FONT_FIELDS = [
+		[ 'ttcc-heading-font', 'heading_font', 'custom_heading' ],
+		[ 'ttcc-body-font', 'body_font', 'custom_body' ]
+	];
+	function populateCustomFontGroups() {
+		var names = Object.keys( customFonts.items ).sort();
+		CUSTOM_FONT_FIELDS.forEach( function ( f ) {
+			var sel = $( f[ 0 ] );
+			if ( ! sel ) { return; }
+			var old = sel.querySelector( '.ttcc-custom-optgroup' );
+			if ( old ) { sel.removeChild( old ); }
+			if ( ! names.length ) { return; }
+			var grp = document.createElement( 'optgroup' );
+			grp.label = 'Custom';
+			grp.className = 'ttcc-custom-optgroup';
+			names.forEach( function ( name ) {
+				var o = el( 'option', '', name );
+				o.value = 'custom:' + name;
+				grp.appendChild( o );
+			} );
+			sel.appendChild( grp );
+		} );
+		syncCustomFontSelects();
+	}
+	// Reflect the design's current custom_heading/custom_body into the merged
+	// dropdowns: show the matching saved font if its family matches, else fall
+	// back to the built-in heading_font/body_font key.
+	function syncCustomFontSelects() {
+		var d = state.overrides.design;
+		CUSTOM_FONT_FIELDS.forEach( function ( f ) {
+			var sel = $( f[ 0 ] );
+			if ( ! sel ) { return; }
+			var custom = d[ f[ 2 ] ];
+			var match = custom && Object.keys( customFonts.items ).filter( function ( n ) {
+				return customFonts.items[ n ].family === custom;
+			} )[ 0 ];
+			sel.value = match ? ( 'custom:' + match ) : ( d[ f[ 1 ] ] || '' );
+		} );
+	}
+	function loadCustomFonts() {
+		api( '/custom-fonts', 'GET' ).then( function ( d ) {
+			customFonts = { items: d.items || {} };
+			populateCustomFontGroups();
+		} ).catch( function () { /* saved fonts are optional; ignore load errors */ } );
+	}
+	function wireCustomFontSelects() {
+		CUSTOM_FONT_FIELDS.forEach( function ( f ) {
+			var sel = $( f[ 0 ] );
+			if ( ! sel ) { return; }
+			sel.addEventListener( 'change', function () {
+				var v = sel.value;
+				if ( 0 === v.indexOf( 'custom:' ) ) {
+					var entry = customFonts.items[ v.slice( 7 ) ];
+					if ( ! entry ) { return; }
+					state.overrides.design[ f[ 2 ] ] = entry.family;
+					state.overrides.design.font_source = entry.source;
+					$( 'ttcc-font-source' ).value = entry.source;
+					syncFontSource();
+				} else {
+					// A built-in font was chosen — clear the custom family so it
+					// actually takes effect (custom_heading/custom_body, if set,
+					// otherwise still wins over the built-in choice).
+					state.overrides.design[ f[ 1 ] ] = v;
+					state.overrides.design[ f[ 2 ] ] = '';
+					if ( 'custom_heading' === f[ 2 ] ) { $( 'ttcc-custom-heading' ).value = ''; }
+					else { $( 'ttcc-custom-body' ).value = ''; }
+				}
+				schedulePreview();
+			} );
+		} );
+		function saveCustomFontFrom( customKey ) {
+			var family = state.overrides.design[ customKey ];
+			if ( ! family ) { window.alert( 'Type a custom font family first.' ); return; }
+			var name = ( window.prompt( 'Save this font for reuse, named:', family ) || '' ).trim();
+			if ( ! name ) { return; }
+			api( '/custom-fonts', 'POST', { name: name, family: family, source: state.overrides.design.font_source || 'google' } )
+				.then( function ( d ) {
+					customFonts = { items: d.items || {} };
+					populateCustomFontGroups();
+				} ).catch( function ( e ) { window.alert( 'Save failed: ' + e.message ); } );
+		}
+		if ( $( 'ttcc-save-heading-font' ) ) {
+			$( 'ttcc-save-heading-font' ).addEventListener( 'click', function () { saveCustomFontFrom( 'custom_heading' ); } );
+		}
+		if ( $( 'ttcc-save-body-font' ) ) {
+			$( 'ttcc-save-body-font' ).addEventListener( 'click', function () { saveCustomFontFrom( 'custom_body' ); } );
+		}
+		if ( $( 'ttcc-delete-saved-font' ) ) {
+			$( 'ttcc-delete-saved-font' ).addEventListener( 'click', function () {
+				var pick = ( 0 === $( 'ttcc-heading-font' ).value.indexOf( 'custom:' ) ) ? $( 'ttcc-heading-font' )
+					: ( 0 === $( 'ttcc-body-font' ).value.indexOf( 'custom:' ) ) ? $( 'ttcc-body-font' ) : null;
+				if ( ! pick ) { window.alert( 'Select a saved custom font under Week headings or Content first.' ); return; }
+				var name = pick.value.slice( 7 );
+				if ( ! window.confirm( 'Delete saved font "' + name + '"?' ) ) { return; }
+				api( '/custom-fonts/delete', 'POST', { name: name } ).then( function ( d ) {
+					customFonts = { items: d.items || {} };
+					populateCustomFontGroups();
+				} ).catch( function ( e ) { window.alert( 'Delete failed: ' + e.message ); } );
+			} );
+		}
+	}
+
 	// --- wire up ----------------------------------------------------------
 	$( 'ttcc-generate' ).addEventListener( 'click', doGenerate );
 	$( 'ttcc-save' ).addEventListener( 'click', doSave );
@@ -965,8 +1073,10 @@
 	updateRangeLabel( null );
 	wireDesign();
 	wirePresets();
+	wireCustomFontSelects();
 	syncDesignUI();
 	loadPresets();
+	loadCustomFonts();
 
 	pollHealth();
 	setInterval( pollHealth, 30000 );
