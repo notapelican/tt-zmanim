@@ -43,6 +43,8 @@
 			subheader_size:  DESIGN_DEFAULTS.subheader_size || '',
 			subheader_align: DESIGN_DEFAULTS.subheader_align || '',
 			subheader_custom: DESIGN_DEFAULTS.subheader_custom || '',
+			bsd_font:        DESIGN_DEFAULTS.bsd_font || '',
+			bsd_custom:      DESIGN_DEFAULTS.bsd_custom || '',
 			logo_size:       DESIGN_DEFAULTS.logo_size || '',
 			bsd_size:        DESIGN_DEFAULTS.bsd_size || '',
 			page_margin:     DESIGN_DEFAULTS.page_margin || '',
@@ -924,7 +926,8 @@
 		[ 'ttcc-heading-font', 'heading_font', 'custom_heading', 'ttcc-custom-heading' ],
 		[ 'ttcc-body-font', 'body_font', 'custom_body', 'ttcc-custom-body' ],
 		[ 'ttcc-header-font', 'header_font', 'header_custom', null ],
-		[ 'ttcc-subheader-font', 'subheader_font', 'subheader_custom', null ]
+		[ 'ttcc-subheader-font', 'subheader_font', 'subheader_custom', null ],
+		[ 'ttcc-bsd-font', 'bsd_font', 'bsd_custom', null ]
 	];
 	function populateCustomFontGroups() {
 		var names = Object.keys( customFonts.items ).sort();
