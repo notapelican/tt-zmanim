@@ -149,8 +149,12 @@ defined( 'ABSPATH' ) || exit;
 					<option value="google"><?php esc_html_e( 'Google Fonts', 'ttcc-zmanim' ); ?></option>
 					<option value="adobe"><?php esc_html_e( 'Adobe Fonts', 'ttcc-zmanim' ); ?></option>
 				</select>
-				<input type="text" id="ttcc-custom-heading" class="ttcc-gfont" placeholder="<?php esc_attr_e( 'Heading family, e.g. Playfair Display', 'ttcc-zmanim' ); ?>" />
-				<input type="text" id="ttcc-custom-body" class="ttcc-gfont" placeholder="<?php esc_attr_e( 'Body family, e.g. Inter', 'ttcc-zmanim' ); ?>" />
+				<input type="text" id="ttcc-custom-heading" class="ttcc-gfont"
+					placeholder="<?php esc_attr_e( 'Heading family, e.g. Playfair Display', 'ttcc-zmanim' ); ?>"
+					data-google-placeholder="<?php esc_attr_e( 'Heading family, e.g. Playfair Display', 'ttcc-zmanim' ); ?>" />
+				<input type="text" id="ttcc-custom-body" class="ttcc-gfont"
+					placeholder="<?php esc_attr_e( 'Body family, e.g. Inter', 'ttcc-zmanim' ); ?>"
+					data-google-placeholder="<?php esc_attr_e( 'Body family, e.g. Inter', 'ttcc-zmanim' ); ?>" />
 			</span>
 			<span class="ttcc-design-group ttcc-modern-only">
 				<span class="ttcc-mini-label"><?php esc_html_e( 'Colors', 'ttcc-zmanim' ); ?></span>

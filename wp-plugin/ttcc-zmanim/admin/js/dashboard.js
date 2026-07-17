@@ -731,6 +731,24 @@
 				: 'Fill page mode auto-sizes text — set a size here to switch to Fixed and use it.';
 		}
 	}
+	// Adobe Fonts (Typekit) kits declare families as kebab-case slugs (e.g.
+	// "forma-djr-deck") — not the display name shown in the Adobe UI — while
+	// Google Fonts wants the display name (e.g. "Playfair Display"). Swap the
+	// placeholders/hint so the right format is obvious for the selected source.
+	function syncFontSource() {
+		var adobe = ( 'adobe' === state.overrides.design.font_source );
+		var hint = adobe
+			? 'The kebab-case slug from your Adobe Fonts kit, e.g. forma-djr-deck (not the display name)'
+			: 'The Google Fonts family name, e.g. Playfair Display';
+		[ [ 'ttcc-custom-heading', 'Heading family, e.g. forma-djr-deck' ],
+		  [ 'ttcc-custom-body', 'Body family, e.g. source-sans-pro' ] ]
+			.forEach( function ( pair ) {
+				var el = $( pair[ 0 ] );
+				if ( ! el ) { return; }
+				el.placeholder = adobe ? pair[ 1 ] : el.getAttribute( 'data-google-placeholder' );
+				el.title = hint;
+			} );
+	}
 	function syncDesignUI() {
 		var d = state.overrides.design;
 		$( 'ttcc-layout' ).value = state.overrides.template || 'classic';
@@ -740,6 +758,7 @@
 		$( 'ttcc-font-source' ).value = d.font_source || 'google';
 		$( 'ttcc-custom-heading' ).value = d.custom_heading || '';
 		$( 'ttcc-custom-body' ).value = d.custom_body || '';
+		syncFontSource();
 		$( 'ttcc-base' ).value = d.base;
 		if ( $( 'ttcc-fit-mode' ) ) {
 			$( 'ttcc-fit-mode' ).value = d.fit_mode || 'fill';
@@ -806,6 +825,7 @@
 				}
 				state.overrides.design[ pair[ 1 ] ] = v;
 				if ( 'fit_mode' === pair[ 1 ] ) { syncFitMode(); }
+				if ( 'font_source' === pair[ 1 ] ) { syncFontSource(); }
 				schedulePreview();
 			} );
 		} );

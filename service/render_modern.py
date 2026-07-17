@@ -134,12 +134,14 @@ def _color(v) -> str | None:
     return None
 
 
-_GF_RE = re.compile(r"[^A-Za-z0-9 ]")
+_GF_RE = re.compile(r"[^A-Za-z0-9 \-]")
 
 
 def _gfamily(v) -> str | None:
-    """Sanitize a Google-Fonts family name to letters/digits/spaces so it can be
-    safely dropped into a stylesheet URL and a font-family value."""
+    """Sanitize a custom font-family name to letters/digits/spaces/hyphens so it
+    can be safely dropped into a stylesheet URL and a font-family value. Hyphens
+    matter: Adobe Fonts (Typekit) kits declare their families as kebab-case
+    slugs (e.g. "forma-djr-deck"), not the display name shown in the UI."""
     if not isinstance(v, str):
         return None
     name = _GF_RE.sub("", v).strip()
