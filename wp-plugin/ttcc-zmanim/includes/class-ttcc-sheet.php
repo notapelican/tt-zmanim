@@ -79,9 +79,12 @@ class TTCC_Zmanim_Sheet {
 				$out[ $k ] = $d[ $k ];
 			}
 		}
+		// Letters/digits/spaces/hyphens: Adobe Fonts (Typekit) kits declare their
+		// families as kebab-case slugs (e.g. "forma-djr-deck"), not the display
+		// name shown in the UI, so hyphens must survive sanitizing.
 		foreach ( array( 'custom_heading', 'custom_body' ) as $k ) {
 			if ( ! empty( $d[ $k ] ) ) {
-				$name = trim( preg_replace( '/[^A-Za-z0-9 ]/', '', (string) $d[ $k ] ) );
+				$name = trim( preg_replace( '/[^A-Za-z0-9 \-]/', '', (string) $d[ $k ] ) );
 				if ( '' !== $name ) {
 					$out[ $k ] = substr( $name, 0, 50 );
 				}
