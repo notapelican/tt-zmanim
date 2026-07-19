@@ -118,8 +118,9 @@ def week_notes(sunday: date, shabbos: date, engine: ZmanimEngine,
     for i in range(7):
         d = sunday + timedelta(days=i)
         if d in hols and d.weekday() < 5:  # Mon-Fri public holiday
-            out.append(f"{_WD_ABBR[d.weekday()]} {d.day} {d:%b} is a public holiday "
-                       f"({hols[d]}): Shacharis follows the Sunday schedule.")
+            # Deliberately unnamed (just "a public holiday") per shul preference.
+            out.append(f"{_WD_ABBR[d.weekday()]} {d.day} {d:%b} is a public holiday: "
+                       "Shacharis follows the Sunday schedule.")
     return out
 
 
