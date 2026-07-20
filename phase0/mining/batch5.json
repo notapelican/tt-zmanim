@@ -1,0 +1,375 @@
+{
+  "items": [
+    {
+      "sheet": "5786 times -wk 04.txt",
+      "week_context": "The week of Parshas Bereishis: 20–26 Tishrei 5786 (12–18 Oct. '25)",
+      "occasion": "Chol HaMoed Sukkos / Simchas Torah (Sun.-Wed.) - deferred to separate Tishrei schedule",
+      "civil_date": null,
+      "day": "Sun.-Wed.",
+      "label": "NOTE",
+      "time": null,
+      "verbatim": "For Chol ha'Moed 20 Tishrei (Sunda)y to Simchas Torah (Wednesday) incl., see the Tishrei schedule.",
+      "section": "Davening times during the week",
+      "suspected_error": "Printed text has apparent typo/OCR artifact 'Sunda)y' for 'Sunday)'"
+    },
+    {
+      "sheet": "5786 times -wk 04.txt",
+      "week_context": "The week of Parshas Bereishis: 20–26 Tishrei 5786 (12–18 Oct. '25)",
+      "occasion": "Post-Yom Tov resumption of early minyan (irregular one-off suspension)",
+      "civil_date": null,
+      "day": null,
+      "label": "NOTE",
+      "time": null,
+      "verbatim": "Note: The Erev Shabbos early minyan for Mincha, Kabbolas Shabbos and Maariv will resume next week, for Shabbos Noach.",
+      "section": "Shabbos Day and Motzaei Shabbos (footer note)",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Vayishlach: 10–16 Kislev 5786 (30 Nov. – 6 Dec. '25)",
+      "occasion": "Start of v'sein tal u'matar in Shemoneh Esrei (annual Diaspora date, 4/5 December)",
+      "civil_date": "2025-12-04",
+      "day": "Thurs.",
+      "label": "Maariv addition",
+      "time": null,
+      "verbatim": "Starting on Thurs. 4/12 in Maariv, change to \"v'sein tal u'matar…\"",
+      "section": "Davening times during the week",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah - first night",
+      "civil_date": "2025-12-14",
+      "day": "Sun.",
+      "label": "NOTE",
+      "time": "8:04pm",
+      "verbatim": "Chanukah starts on Sun. evening. Light at home from 8:04pm, except on Friday (see below).",
+      "section": "Zmanim header",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah - candle lighting in shul before weekday Mincha",
+      "civil_date": null,
+      "day": "Sun.–Thurs.",
+      "label": "Mincha and Chanukah candles in shule",
+      "time": "6:25pm",
+      "verbatim": "Mincha and Chanukah candles in shule ............ Sun.–Thurs. 6:25pm",
+      "section": "Davening times during the week",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah - additional 9:15am Shacharis added (likely Hallel-related)",
+      "civil_date": null,
+      "day": "Mon.–Fri.",
+      "label": "Shacharis",
+      "time": "6:15am, 7:30am, 9:15am",
+      "verbatim": "Shacharis ...... Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am, 7:30am, 9:15am",
+      "section": "Davening times during the week",
+      "suspected_error": "Chanukah connection inferred; sheet does not explicitly state reason for the extra 9:15am minyan"
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah - Maariv delayed to follow candle lighting order",
+      "civil_date": null,
+      "day": "Sun.–Thurs.",
+      "label": "Maariv",
+      "time": "9:00pm",
+      "verbatim": "Maariv ............................................... Sun.–Thurs. 9:00pm",
+      "section": "Davening times during the week",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah + Rosh Chodesh convergence: single combined Erev Shabbos Mincha instead of separate early/regular minyan Minchas",
+      "civil_date": "2025-12-19",
+      "day": "Fri.",
+      "label": "Erev Shabbos Mincha",
+      "time": "6:28pm",
+      "verbatim": "Erev Shabbos Mincha (This is the only Mincha) ............ 6:28pm",
+      "section": "Shabbos kodesh: Mikeitz, Rosh Chodesh",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah/Erev Shabbos candle lighting order - early minyan",
+      "civil_date": "2025-12-19",
+      "day": "Fri.",
+      "label": "NOTE (candle lighting order)",
+      "time": "not before 6:38pm; Shabbos lighting completed by approx 7:40pm",
+      "verbatim": "Chanukah candle lighting at home: not before 6:38pm, followed by Shabbos lighting which is to be completed by approx 7:40pm.",
+      "section": "Erev Shabbos early minyan (and essential halachic details)",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah - early minyan Kabbolas Shabbos time delayed to accommodate Chanukah+Shabbos candle lighting sequence",
+      "civil_date": "2025-12-19",
+      "day": "Fri.",
+      "label": "Kabbolas Shabbos (L'chu Ne'ranena)",
+      "time": "7:30pm",
+      "verbatim": "Kabbolas Shabbos (L'chu Ne'ranena   )  ............................   7:30pm",
+      "section": "Erev Shabbos early minyan (and essential halachic details)",
+      "suspected_error": "Notably later than other weeks' early-minyan Kabbolas Shabbos time (usually equal to candle-lighting time, ~6:3xpm); driven by Chanukah lighting order"
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah/Shabbos candle lighting order - regular minyan",
+      "civil_date": "2025-12-19",
+      "day": "Fri.",
+      "label": "NOTE (candle lighting order)",
+      "time": "not before 6:38pm; before 7:46pm",
+      "verbatim": "Chanukah candle lighting at home: not before 6:38pm, but before regular Shabbos candle lighting which is at 7:46pm.",
+      "section": "Erev Shabbos regular minyan",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week_context": "The week of Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "occasion": "Chanukah candle lighting on Motzaei Shabbos",
+      "civil_date": "2025-12-20",
+      "day": "Motzaei Shabbos",
+      "label": "NOTE",
+      "time": null,
+      "verbatim": "Chanukah candles on Motzaei Shabbos – light at home after Havdalah",
+      "section": "Shabbos Day and Motzaei Shabbos",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayigash: 1–7 Tevet 5786 (21–27 Dec. '25)",
+      "occasion": "Chanukah - 8th/last night",
+      "civil_date": "2025-12-21",
+      "day": "Sun.",
+      "label": "NOTE",
+      "time": null,
+      "verbatim": "Sun. night is the last night of lighting Chanukah candles.",
+      "section": "Zmanim header",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayigash: 1–7 Tevet 5786 (21–27 Dec. '25)",
+      "occasion": "Nittel Nacht (Chabad custom of not learning Torah on Christmas Eve night)",
+      "civil_date": "2025-12-24",
+      "day": "Wed.",
+      "label": "NOTE",
+      "time": "8:07pm to Thurs 12:55am",
+      "verbatim": "Wed. 24 Dec.: Nittel from 8:07pm to Thurs 12:55am.",
+      "section": "Zmanim header",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayigash: 1–7 Tevet 5786 (21–27 Dec. '25)",
+      "occasion": "Likely Christmas Day (Thurs 25 Dec) / Boxing Day (Fri 26 Dec) public holiday schedule, possibly also related to Nittel the prior night",
+      "civil_date": null,
+      "day": "Thurs. & Fri.",
+      "label": "Shacharis",
+      "time": "8:00am & 9:15am",
+      "verbatim": "Shacharis ...... Sun. 8:00am & 9:15am; Mon.–Wed. 6:15am, 7:30am, 9:15am; Thurs. & Fri. 8:00am & 9:15am",
+      "section": "Davening times during the week",
+      "suspected_error": "No explicit holiday label printed; inferred from calendar (25/26 Dec are Christmas/Boxing Day public holidays in Australia)"
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayigash: 1–7 Tevet 5786 (21–27 Dec. '25)",
+      "occasion": "Chanukah - last night, candle lighting before Mincha",
+      "civil_date": "2025-12-21",
+      "day": "Sun.",
+      "label": "Mincha",
+      "time": "6:25pm",
+      "verbatim": "Mincha ....... Sun. 6:25pm; Mon.–Thurs. 7:56pm",
+      "section": "Davening times during the week",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayigash: 1–7 Tevet 5786 (21–27 Dec. '25)",
+      "occasion": "Chanukah - last night, Maariv scheduled after candle lighting",
+      "civil_date": "2025-12-21",
+      "day": "Sun.",
+      "label": "Maariv",
+      "time": "9:00pm",
+      "verbatim": "Maariv ........................  Sun. 9:00pm; Mon–Thurs. 8:37pm",
+      "section": "Davening times during the week",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayechi: 8–14 Tevet 5786 (28 Dec. '25 – 3 Jan. '26)",
+      "occasion": "Fast of 10 Teves",
+      "civil_date": "2025-12-30",
+      "day": "Tues.",
+      "label": "NOTE",
+      "time": "Starts at 4:09am, ends at 8:38pm",
+      "verbatim": "Fast of 10 Tevet is on Tues. Starts at 4:09am, ends at 8:38pm.",
+      "section": "Zmanim header",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayechi: 8–14 Tevet 5786 (28 Dec. '25 – 3 Jan. '26)",
+      "occasion": "Fast of 10 Teves - earlier fast-day Mincha (with Torah reading/Aneinu) ahead of the regular weekday Mincha time",
+      "civil_date": "2025-12-30",
+      "day": "Tues.",
+      "label": "Mincha",
+      "time": "7:45pm",
+      "verbatim": "Mincha ........................  Sun., Mon., Wed., Thurs. 7:58pm; Tues. 7:45pm",
+      "section": "Davening times during the week",
+      "suspected_error": null
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayechi: 8–14 Tevet 5786 (28 Dec. '25 – 3 Jan. '26)",
+      "occasion": "Likely New Year's Day (public holiday, Thurs 1 Jan 2026) schedule",
+      "civil_date": "2026-01-01",
+      "day": "Thurs.",
+      "label": "Shacharis",
+      "time": "8:00am & 9:15am",
+      "verbatim": "Shacharis ...... Sun. 8:00am & 9:15am; Mon.–Wed. & Fri. 7:30am, 9:15am; Thurs. 8:00am & 9:15am",
+      "section": "Davening times during the week",
+      "suspected_error": "No explicit holiday label printed; inferred from calendar (1 Jan is New Year's Day public holiday). Also note: unlike prior weeks, Mon-Wed & Fri drop the 6:15am early Shacharis entirely with no stated reason, and Tues (the 10 Teves fast day) is not called out separately in this Shacharis line despite the fast note above."
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week_context": "The week of Parshas Vayechi: 8–14 Tevet 5786 (28 Dec. '25 – 3 Jan. '26)",
+      "occasion": "Siyum Sefer Bereishis - 'Chazak' announcement upon completing the book",
+      "civil_date": "2026-01-03",
+      "day": "Shabbos",
+      "label": "NOTE (Shabbos kodesh subtitle)",
+      "time": null,
+      "verbatim": "Shabbos kodesh: Vayechi, Chazak",
+      "section": "Shabbos kodesh header",
+      "suspected_error": null
+    }
+  ],
+  "baselines": [
+    {
+      "sheet": "5786 times -wk 04.txt",
+      "week": "Parshas Bereishis: 20–26 Tishrei 5786 (12–18 Oct. '25)",
+      "shkia": "Sun.-Thurs. 7:06pm (weekday); Erev Shabbos 7:10pm",
+      "tzeis": "Sun.-Thurs. 7:35pm (weekday); Erev Shabbos 7:36pm",
+      "weekday_mincha": "Thurs. 6:56pm only (Sun.-Wed. covered by Tishrei/Chol HaMoed schedule)",
+      "weekday_maariv": "Thurs. 7:35pm",
+      "weekday_shacharis": "Thurs. & Fri. 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 05 to 07.txt",
+      "week": "Parshas Noach: 27 Tishrei – 3 Marcheshvan 5786 (19–25 Oct. '25)",
+      "shkia": "Sun-Thurs 7:12pm",
+      "tzeis": "Sun–Thurs 7:41pm",
+      "weekday_mincha": "Sun–Thurs 7:02pm",
+      "weekday_maariv": "Sun–Thurs 7:41pm",
+      "weekday_shacharis": "Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 05 to 07.txt",
+      "week": "Parshas Lech L'cha: 4–10 Marcheshvan 5786 (26 Oct. – 1 Nov. '25)",
+      "shkia": "Sun-Thurs 7:18pm",
+      "tzeis": "Sun–Thurs 7:48pm",
+      "weekday_mincha": "Sun–Thurs 7:08pm",
+      "weekday_maariv": "Sun–Thurs 7:48pm",
+      "weekday_shacharis": "Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 05 to 07.txt",
+      "week": "Parshas Vayeira: 11–17 Marcheshvan 5786 (2–8 Nov. '25)",
+      "shkia": "Sun-Thurs 7:24pm",
+      "tzeis": "Sun–Thurs 7:55pm",
+      "weekday_mincha": "Sun–Thurs 7:14pm",
+      "weekday_maariv": "Sun–Thurs 7:55pm",
+      "weekday_shacharis": "Sun 8:00am & 9:15am; Mon–Fri 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 08 to 10.txt",
+      "week": "Parshas Chayei Sarah: 18–24 Marcheshvan 5786 (9–15 Nov. '25)",
+      "shkia": "Sun.-Thurs. 7:30pm",
+      "tzeis": "Sun.–Thurs. 8:02pm",
+      "weekday_mincha": "Sun.–Thurs. 2:00pm & 7:20pm",
+      "weekday_maariv": "Sun.–Thurs. 8:02pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 08 to 10.txt",
+      "week": "Parshas Toldot: 25 Marcheshvan – 2 Kislev 5786 (16–22 Nov. '25)",
+      "shkia": "Sun.-Thurs. 7:37pm",
+      "tzeis": "Sun.–Thurs. 8:09pm",
+      "weekday_mincha": "Sun.–Thurs. 2:00pm & 7:27pm",
+      "weekday_maariv": "Sun.–Thurs. 8:09pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 08 to 10.txt",
+      "week": "Parshas Vayeitzei: 3–9 Kislev 5786 (23–29 Nov. '25)",
+      "shkia": "Sun.-Thurs. 7:44pm",
+      "tzeis": "Sun.–Thurs. 8:16pm",
+      "weekday_mincha": "Sun.–Thurs. 2:00pm & 7:34pm",
+      "weekday_maariv": "Sun.–Thurs. 8:16pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week": "Parshas Vayishlach: 10–16 Kislev 5786 (30 Nov. – 6 Dec. '25)",
+      "shkia": "Sun.-Thurs. 7:50pm",
+      "tzeis": "Sun.–Thurs. 8:23pm",
+      "weekday_mincha": "Sun.–Thurs. 2:00pm & 7:40pm",
+      "weekday_maariv": "Sun.–Thurs. 8:23pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week": "Parshas Vayeishev: 17–23 Kislev 5786 (7–13 Dec. '25)",
+      "shkia": "Sun.-Thurs. 7:56pm",
+      "tzeis": "Sun.–Thurs. 8:29pm",
+      "weekday_mincha": "Sun.–Thurs. 2:00pm & 7:46pm",
+      "weekday_maariv": "Sun.–Thurs. 8:29pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am & 7:30am"
+    },
+    {
+      "sheet": "5786 times -wk 11 to 13.txt",
+      "week": "Parshas Mikeitz: 24–30 Kislev 5786 (14–20 Dec. '25)",
+      "shkia": "Sun.-Thurs. 8:01pm",
+      "tzeis": "Sun.–Thurs. 8:34pm",
+      "weekday_mincha": "Sun.–Thurs. 6:25pm (Chanukah-adjusted; combined with candle lighting in shul)",
+      "weekday_maariv": "Sun.–Thurs. 9:00pm (Chanukah-adjusted)",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am, 7:30am, 9:15am"
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week": "Parshas Vayigash: 1–7 Tevet 5786 (21–27 Dec. '25)",
+      "shkia": "Sun.-Thurs. 8:06pm",
+      "tzeis": "Sun.–Thurs. 8:37pm",
+      "weekday_mincha": "Sun. 6:25pm (Chanukah carryover); Mon.–Thurs. 7:56pm",
+      "weekday_maariv": "Sun. 9:00pm (Chanukah carryover); Mon–Thurs. 8:37pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Wed. 6:15am, 7:30am, 9:15am; Thurs. & Fri. 8:00am & 9:15am (holiday-adjusted)"
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week": "Parshas Vayechi: 8–14 Tevet 5786 (28 Dec. '25 – 3 Jan. '26)",
+      "shkia": "Sun.-Thurs. 8:08pm",
+      "tzeis": "Sun.–Thurs. 8:39pm",
+      "weekday_mincha": "Sun., Mon., Wed., Thurs. 7:58pm; Tues. 7:45pm (10 Teves fast-adjusted)",
+      "weekday_maariv": "Sun.–Thurs. 8:39pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Wed. & Fri. 7:30am, 9:15am; Thurs. 8:00am & 9:15am (holiday-adjusted)"
+    },
+    {
+      "sheet": "5786 times -wk 14 to 16.txt",
+      "week": "Parshas Shemot: 15–21 Tevet 5786 (4–10 Jan. '26)",
+      "shkia": "Sun.-Thurs. 8:10pm",
+      "tzeis": "Sun.–Thurs. 8:39pm",
+      "weekday_mincha": "Sun.–Thurs. 8:00pm",
+      "weekday_maariv": "Sun.–Thurs. 8:39pm",
+      "weekday_shacharis": "Sun. 8:00am & 9:15am; Mon.–Fri. 6:15am, 7:30am, 9:15am"
+    }
+  ]
+}
