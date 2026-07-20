@@ -1,0 +1,898 @@
+{
+ "rules": [
+  {
+   "id": "1a",
+   "section": "Fast days",
+   "when": "On any minor fast day (Tzom Gedalia, 10 Teves, Taanis Esther, 17 Tammuz).",
+   "shows": "Prints the time the fast begins, worked out from Alos Hashachar (dawn), printed to the minute.",
+   "example": "Tzom Gedaliah 5786: fast started 4:22am (that day's alos hashachar).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "1b",
+   "section": "Fast days",
+   "when": "On any minor fast day.",
+   "shows": "Prints the time the fast ends, worked out from tzeis (nightfall), printed to the minute.",
+   "example": "Taanis Esther 5786: fast ended 7:56pm (tzeis).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "1c",
+   "section": "Fast days",
+   "when": "On a minor fast day that falls on a weekday.",
+   "shows": "Prints an earlier Mincha than the rest of the week, about 25 minutes before that week's shkia, so there is time for the fast-day Torah reading and Aneinu.",
+   "example": "10 Teves 5786: Mincha at 7:45pm, about 24 minutes before that week's shkia of 8:09pm.",
+   "question": "Should the fast-day Mincha always be a fixed number of minutes before shkia (about 25), or is it really the regular weekday Mincha just moved about 15 minutes earlier? One Taanis Esther matched -31 minutes instead of -25.",
+   "attention": true
+  },
+  {
+   "id": "1d",
+   "section": "Fast days",
+   "when": "When a fast's date falls on Shabbos, so it is kept the next day (Sunday) instead.",
+   "shows": "Prints a \"Postponed Fast of...\" heading, and gives Sunday its own earlier Mincha and Maariv times while Monday-Thursday keep the normal week's times.",
+   "example": "17 Tammuz 5782 (postponed to Sunday): Mincha 4:40pm Sunday vs 4:55pm Monday-Thursday; Maariv 5:33pm Sunday with refreshments after, 5:35pm Monday-Thursday.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "1e",
+   "section": "Fast days",
+   "when": "When 10 Teves falls on Erev Shabbos (Friday).",
+   "shows": "Prints a note that there is no early minyan that Friday (since the fast runs until nightfall anyway), and that Mincha that day is earlier than usual, includes Kerias HaTorah, and skips Tachanun and Avinu Malkeinu.",
+   "example": "10 Teves 5785 (Friday): Mincha 7:45pm with Kerias HaTorah, no Tachanun - about 25 minutes before that week's shkia of 8:10pm.",
+   "question": "10 Teves is the only fast that stays on its own day even when it falls on Friday. Should the sheet always print the 'no early minyan' note whenever this happens?",
+   "attention": true
+  },
+  {
+   "id": "1f",
+   "section": "Fast days",
+   "when": "On any minor fast day.",
+   "shows": "Prints standing lines: that the Shliach Tzibur says Aneinu, that Tachanun, Selichos and Avinu Malkeinu are said, and (on Taanis Esther) that Tachanun and Avinu Malkeinu are skipped at Mincha because it is Erev Purim.",
+   "example": "Recurring text seen in 5784 and 5785: \"Shliach Tzibur says Aneinu... Tachanun, Selichos and Avinu Malkeinu are recited.\"",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2a",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On Rosh Chodesh Av.",
+   "shows": "Prints a note that as Av begins we reduce our joy, along with the standing Nine Days restrictions: no laundry, no meat or wine except on Shabbos or a seudas mitzvah, and a nightly siyum from Rosh Chodesh through 15 Av.",
+   "example": "Rosh Chodesh Av: sheet prints \"When Av enters, we reduce our joy...\" with the Nine Days restrictions listed below it.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2b",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On Erev Tisha B'Av (or on Shabbos Chazon, when 9 Av itself falls on Shabbos).",
+   "shows": "Prints chatzos (halachic midday) and a note that from then, only Eichah, Iyov, the harsh sections of Yirmiyahu, Midrash Eichah and Gittin 55b may be studied.",
+   "example": "Erev Tisha B'Av 5786: chatzos printed as 12:01pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2c",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On Erev Tisha B'Av.",
+   "shows": "Prints the seudah hamafsekes note (egg dipped in ashes, no two cooked dishes, no wine) and states that eating and drinking must stop by shkia.",
+   "example": "Erev Tisha B'Av 5786: eating and drinking must stop by shkia, 5:09pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2d",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "As Tisha B'Av begins.",
+   "shows": "On a weekday, prints that leather shoes come off at shkia. When 9 Av begins after Shabbos, prints \"Motzaei Shabbos 9 Av, say Baruch Hamavdil...\" at that week's later, motzaei-Shabbos nightfall time.",
+   "example": "Tisha B'Av 5786 (weekday start): shoes come off at shkia, 5:09pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2e",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the night Tisha B'Av begins.",
+   "shows": "Prints \"Maariv, Megillas Eicha, Kinos\" with notes to sit on low chairs or cushions (bring your own), say the blessing over a flame, and skip Havdalah. On a weekday it follows the regular nightfall time; when 9 Av begins after Shabbos it is delayed about 45 minutes later, and the line adds \"Siyum\".",
+   "example": "Tisha B'Av 5786 (weekday): Maariv, Megillas Eicha, Kinos at 5:37pm (tzeis).",
+   "question": "When 9 Av begins right after Shabbos, Kinos is delayed about 45 minutes past the usual end of Shabbos - this has only been seen once. Please confirm that delay is correct.",
+   "attention": true
+  },
+  {
+   "id": "2f",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the morning of Tisha B'Av.",
+   "shows": "Prints \"Shacharis, then Kinos\" with no tallis or tefillin and no Tachanun, plus notes about low chairs, everyone reading Eichah individually, and Kinos after the Haftorah. The time is a fixed later-than-usual morning slot, not tied to any zman.",
+   "example": "Tisha B'Av 5786: two Shacharis minyanim, 8:00am and 9:30am, the second followed by Kinos.",
+   "question": "Tisha B'Av morning Shacharis was one minyan at 9:00am one year and two minyanim (8:00am & 9:30am) another year. Which pattern should the sheet use going forward?",
+   "attention": true
+  },
+  {
+   "id": "2g",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the afternoon of Tisha B'Av.",
+   "shows": "Prints chatzos (the earliest time to put on tallis and tefillin that day) and a midday Mincha starting with korbanos, timed to Mincha Gedola; also notes that after chatzos and Kinos one may sit on regular chairs again.",
+   "example": "Tisha B'Av 5782: chatzos 12:01pm; Mincha (starting with korbanos) 12:29pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2h",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the afternoon of Tisha B'Av, for the main Mincha before the fast ends.",
+   "shows": "Prints the afternoon Mincha time, about 25 minutes before that day's shkia - the same family of timing as the other fast-day Minchas.",
+   "example": "Tisha B'Av 5782: afternoon Mincha 4:55pm, with that week's shkia at 5:20pm.",
+   "question": "This Mincha is timed about 25 minutes before shkia, matching the fast-day Mincha elsewhere in the catalog. Please confirm that's intentional, since it is based on only two examples.",
+   "attention": true
+  },
+  {
+   "id": "2i",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "When the Tisha B'Av fast ends.",
+   "shows": "Prints \"End of Fast, Maariv, refreshments\" at tzeis; after Maariv it notes Rabbeinu Tam tefillin, Havdalah on wine only (no candle or spices), and Kiddush Levana.",
+   "example": "Tisha B'Av 5786: fast ends with Maariv at 5:37pm (tzeis).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2j",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the night the Tisha B'Av fast ends, after Maariv.",
+   "shows": "Prints \"Breaking the fast of Tisha b'Av: Refreshments at Tzemach Tzedek after Maariv\" together with the Gunsberger family dedication, which has printed unchanged for years.",
+   "example": "The 5782 and 5786 sheets both print the identical Gunsberger family dedication after the Tisha B'Av fast.",
+   "question": "The same Gunsberger family dedication has printed for two years running - should the shul reconfirm this sponsorship each year before it's added again automatically?",
+   "attention": true
+  },
+  {
+   "id": "2k",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "Every night during the Nine Days, through 15 Av.",
+   "shows": "Prints \"Nightly Siyum: Until 15 Menachem Av, a siyum each night after Maariv.\"",
+   "example": "Recurring standing text: \"Nightly Siyum: Until 15 Menachem Av, a siyum each night after Maariv.\"",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2l",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the morning after the fast ends (10 Av in a normal year, 11 Av when the fast was postponed to Sunday).",
+   "shows": "Prints that meat and wine are restricted until after chatzos that morning, or \"until the morning of 11 Av\" in a postponed year.",
+   "example": "Tisha B'Av 5786: no meat or wine until after chatzos on 10 Av.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "2m",
+   "section": "Tisha B'Av & the Nine Days",
+   "when": "On the Shabbos right before or right after Tisha B'Av.",
+   "shows": "Prints \"Shabbos kodesh: Devarim, Chazon\" or \"...Va'eschanan, Nachamu\". For Chazon it also notes the Alter Rebbe's custom of wearing full Shabbos clothing, Pirkei Avos chapter 2 after Mincha, and that meat and wine are allowed at seudah shlishis but without a festive gathering.",
+   "example": "Standing header text: \"Shabbos kodesh: Devarim, Chazon\" the week before Tisha B'Av.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "3a",
+   "section": "Purim",
+   "when": "On the four special Shabbosos of the Purim/Pesach season and on Shabbos Mevorchim.",
+   "shows": "Prints the matching header - \"Shekalim\", \"Zachor\", \"Parah\", \"HaChodesh\" - plus Purim Katan/Shushan Purim Katan labels in a leap year.",
+   "example": "Header text recurs every year, e.g. \"Shabbos kodesh: ...Zachor\" the Shabbos before Purim.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "3b",
+   "section": "Purim",
+   "when": "On Shabbos Zachor (the Shabbos before Purim).",
+   "shows": "Prints a note that everyone - men, women and children - should be in shul to hear Parshas Zachor, around 11:30am, followed by Kiddush and a farbrengen after Musaf. If Purim night follows immediately, Mincha that Shabbos is moved earlier, with a short Kiddush or farbrengen first.",
+   "example": "Shabbos Zachor 5784 (Erev Purim that year): early Mincha at 1:30pm.",
+   "question": "Is the 11:30am time for hearing Zachor a fixed clock time, or does it shift with how long davening runs? Only 1-2 examples exist.",
+   "attention": true
+  },
+  {
+   "id": "3c",
+   "section": "Purim",
+   "when": "On Taanis Esther.",
+   "shows": "Prints the fast start (alos) and end (tzeis) as with other fasts, a note to give Machatzis Hashekel (three 50-cent coins) before Mincha, and that one may eat less than a kezayis before the Megillah reading if too weak to keep fasting.",
+   "example": "Taanis Esther 5786: fast start at alos, fast end at tzeis, Machatzis Hashekel available before Mincha.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "3d",
+   "section": "Purim",
+   "when": "On Taanis Esther, before Mincha.",
+   "shows": "Prints a note explaining the three coins (in Australia, three 50-cent pieces) and that Tzemach Tzedek will have suitable coins available before Mincha, at the same time as that day's fast-day Mincha.",
+   "example": "Taanis Esther (5784/5785/5786): coins available before Mincha, timed with the fast-day Mincha.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "3e",
+   "section": "Purim",
+   "when": "On Purim night, after Maariv.",
+   "shows": "Prints the Maariv time (tzeis) and the Megillah reading shortly after - roughly 12 to 19 minutes later, marked \"SHARP\" - followed by refreshments.",
+   "example": "Purim night 5786: Maariv 7:56pm (tzeis), Megillah reading 8:15pm.",
+   "question": "Megillah at night starts somewhere between 12 and 19 minutes after Maariv depending on the year. Is there a fixed gap the shul wants (for example, always 15 minutes), or does it just depend on how quickly Maariv finishes?",
+   "attention": true
+  },
+  {
+   "id": "3f",
+   "section": "Purim",
+   "when": "On Purim day.",
+   "shows": "Prints two Shacharis times with the Megillah reading about 30-40 minutes after each - typically 6:05am or 6:15am and 7:00am for Shacharis, with the Megillah at 6:35/6:45am and 7:30am.",
+   "example": "Purim day 5786 (Tuesday): Shacharis 6:05am & 7:00am; Megillah 6:35am & 7:30am.",
+   "question": "The early Purim-day minyan starts at 6:05am when Purim falls on a weekday but 6:15am when it falls on Friday. Please confirm that's the intended pattern.",
+   "attention": true
+  },
+  {
+   "id": "3g",
+   "section": "Purim",
+   "when": "On Purim day.",
+   "shows": "Prints the standing notes on mishloach manos (two foods, to one person, of the same gender; Purim Donation Cards available), matanos l'evyonim (money to two poor people, at least about 20 cents each, via Dovid Krinsky at Krinsky's Kosher Grocery), and that the main part of the Purim seudah should be eaten before shkia.",
+   "example": "Purim 5784: main part of the seudah to be eaten before shkia, 7:01pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "3h",
+   "section": "Purim",
+   "when": "When Purim day falls on a Friday.",
+   "shows": "Prints that the seudah must be held much earlier - before chatzos if possible, or by the end of the 10th halachic hour at the latest - for the sake of Shabbos, and that the early-minyan Mincha is moved earlier than usual too.",
+   "example": "Purim 5785 (Friday): seudah before chatzos (1:04pm) or by the 10th hour (4:09pm); early Mincha at 3:00pm.",
+   "question": "This is based on only one Purim-on-Friday sheet. Please confirm these times (seudah before chatzos or by the 10th hour, early Mincha at 3:00pm) should repeat exactly this way whenever Purim falls on Friday.",
+   "attention": true
+  },
+  {
+   "id": "3i",
+   "section": "Purim",
+   "when": "On Shushan Purim, 15 Adar.",
+   "shows": "Prints \"No Tachanun\" and a note to add a little extra joy at the meals. When Shushan Purim falls on Shabbos, it also notes that Av Harachamim and Tzidkascha Tzedek are skipped, plus guidance about \"making up\" the joy of Purim within Shabbos, and computes that month's Kiddush Levana deadline.",
+   "example": "Standing text: \"No tachanun; add slightly to joy at the meals\" on 15 Adar.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "3j",
+   "section": "Purim",
+   "when": "In the week that includes Purim.",
+   "shows": "Prints a different Mincha and Maariv time for Purim day itself than the rest of that week: Purim-day Mincha is a fixed 4:30pm (much earlier, to leave the afternoon free for the seudah), while Maariv that night is later than the rest of the week.",
+   "example": "Purim week 5786: Mincha most days 7:17pm, Tuesday (Purim) 4:30pm; Maariv most days 7:58pm, Tuesday 8:30pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "4a",
+   "section": "Pesach",
+   "when": "On Shabbos HaGadol, the Shabbos before Pesach.",
+   "shows": "Prints the header \"Shabbos HaGadol\", a note about the Shabbos HaGadol derasha before the Torah reading, Kiddush/farbrengen, and a Mincha line that adds the Haggadah's \"Avadim Hayinu\" passage and Seder Nigunim. When Erev Pesach itself falls on Shabbos, the chometz deadlines also move onto that Shabbos.",
+   "example": "Shabbos HaGadol 5786: Mincha plus Haggadah and Seder Nigunim at 6:30pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "4b",
+   "section": "Pesach",
+   "when": "On the night before Erev Pesach.",
+   "shows": "Prints \"Bedikas Chometz, not before [time], then first Kol Chamira\" - the time is tzeis, nightfall.",
+   "example": "Erev Pesach 5786: Bedikas Chometz not before 7:17pm (tzeis).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "4c",
+   "section": "Pesach",
+   "when": "On the morning of Erev Pesach (or Thursday, when Erev Pesach falls on Shabbos).",
+   "shows": "Prints the fast start time for firstborns, which is alos, and a note that each Shacharis is followed by a siyum so firstborns are exempt from fasting.",
+   "example": "Erev Pesach 5786: Taanis Bechorim starts 5:49am (alos).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "4d",
+   "section": "Pesach",
+   "when": "On the morning of Erev Pesach.",
+   "shows": "Prints \"Finish eating chometz by [time]\" and \"Finish burning and nullifying chometz by [time]\" - the burning deadline is about an hour after the eating deadline.",
+   "example": "Erev Pesach 5786: finish eating chometz by 11:00am; finish burning and nullifying by 11:59am.",
+   "question": "Please confirm the zmanim system can calculate the 'finish eating chometz' and 'finish burning chometz' times as two genuinely separate halachic times, rather than one time with an hour added to it.",
+   "attention": true
+  },
+  {
+   "id": "4e",
+   "section": "Pesach",
+   "when": "On the afternoon of Erev Pesach.",
+   "shows": "Prints \"Sha'a asiris (do not over-eat before the Seder) [time]\" - meant to be the end of the 10th of the twelve halachic daytime hours, but this isn't being calculated directly yet.",
+   "example": "Erev Pesach 5786: Sha'a Asiris printed as 3:55pm.",
+   "question": "Sha'a asiris (the 10th halachic hour) isn't calculated directly by the zmanim system yet. Can it be added as its own calculated time rather than estimated from a nearby zman?",
+   "attention": true
+  },
+  {
+   "id": "4f",
+   "section": "Pesach",
+   "when": "On the first night of Pesach.",
+   "shows": "Prints candle lighting (18 minutes before shkia); \"Mincha & Seder Korban Pesach\" shortly after candles; \"Maariv (with Hallel on the first two nights)\" just before tzeis; and \"Finish eating Afikomen by [time],\" which is halachic midnight.",
+   "example": "Pesach 1st night 5786: candles 6:33pm; finish Afikomen by chatzos halayla, 12:59am.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "4g",
+   "section": "Pesach",
+   "when": "On the second night of any Yom Tov (Pesach, Succos, Shavuos, Rosh Hashana).",
+   "shows": "Prints \"Candle lighting (Yom Tov), not before [time]\" using the later nightfall time that is normally used to mark the true end of the first day, so the new candles are never lit too early.",
+   "example": "Pesach 2nd night 5786: candles not before 7:26pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "4h",
+   "section": "Pesach",
+   "when": "On Chol Hamoed Pesach.",
+   "shows": "Prints Shacharis at 8:00am and 9:15am on public-holiday days, or the regular weekday three-times pattern (6:15, 7:30, 9:15) otherwise; Mincha around 5:30pm; Maariv around 6:10pm; and an Omer-count note on each Maariv line.",
+   "example": "Chol Hamoed Pesach 5786: Mincha about 5:30pm, Maariv about 6:10pm, with 'Days 3 & 4 of Omer' notes.",
+   "question": "Chol Hamoed Pesach Shacharis times shift depending on which days are Australian public holidays that year. Please confirm the public-holiday Shacharis pattern (8:00 & 9:15) and on which days it should apply.",
+   "attention": true
+  },
+  {
+   "id": "4i",
+   "section": "Pesach",
+   "when": "On the night of the seventh day of Pesach.",
+   "shows": "Prints \"All night learning after Seudas Yom Tov,\" and the next morning prints the Alos Hashachar time for those who learned all night.",
+   "example": "Seventh day of Pesach 5786: Alos Hashachar printed as 4:54am for the all-night learners.",
+   "question": "Only one year's example of the seventh-day-Pesach all-night learning note exists. Please confirm it should print every year.",
+   "attention": true
+  },
+  {
+   "id": "4j",
+   "section": "Pesach",
+   "when": "On the eighth (last) day of Pesach.",
+   "shows": "Prints Shacharis at 10:00am with Yizkor around 11:30am, and \"Mincha followed by Seudas Moshiach\" moved earlier than the normal Mincha time to make room for the meal, then Maariv and the end of Yom Tov at tzeis.",
+   "example": "Acharon shel Pesach 5786: Mincha followed by Seudas Moshiach at 4:55pm.",
+   "question": "Only one year's example exists for how much earlier the Mincha before Seudas Moshiach should be moved. Please confirm the intended timing.",
+   "attention": true
+  },
+  {
+   "id": "4k",
+   "section": "Pesach",
+   "when": "On the last days of Pesach (also at Succos).",
+   "shows": "Prints \"Mincha followed by Kinus Torah pt 1\" on the eve of the seventh day, and \"pt 2\" the next day, timed with that day's regular Mincha.",
+   "example": "Pesach 5786: Kinus Torah part 1 Friday 6:35pm, part 2 Saturday 6:30pm.",
+   "question": "Kinus Torah's two parts appear at the end of Pesach and also at Succos, but this pattern has only been seen a couple of times. Please confirm it should always split this way, and whether it should appear at Shavuos too.",
+   "attention": true
+  },
+  {
+   "id": "4l",
+   "section": "Pesach",
+   "when": "The day after Pesach ends.",
+   "shows": "Prints an \"Isru Chag\" header, a note that Maariv on the second night of Pesach begins the counting of the Omer, a running Sefirah-day count on later Maariv lines, and (seen once) a note that a daily Maseches Sotah class starts after Maariv.",
+   "example": "\"Isru Chag\" note with \"Maariv followed by the first counting of the Omer\"; later nights show \"(Sefirah 9)\" etc.",
+   "question": "The Maseches Sotah class after Maariv has only been seen once. Is this a standing yearly custom that should always print, or a one-off?",
+   "attention": true
+  },
+  {
+   "id": "5a",
+   "section": "Sefirah, Lag B'Omer & Pesach Sheni",
+   "when": "Every night during the counting of the Omer (16 Nisan through 5 Sivan).",
+   "shows": "Prints \"(Sefirah N)\" after the Maariv or Kabbolas Shabbos line, simply counting that day of the Omer.",
+   "example": "10 Apr, the day after Pesach 5786: '(Sefirah 9)' printed on the Maariv line.",
+   "question": "One older sheet showed Sefirah counts before Pesach had even begun, which is impossible. Please confirm the sheet should only ever print Sefirah counts between 16 Nisan and 5 Sivan.",
+   "attention": true
+  },
+  {
+   "id": "5b",
+   "section": "Sefirah, Lag B'Omer & Pesach Sheni",
+   "when": "On 14 Iyar (Pesach Sheni).",
+   "shows": "Prints \"Pesach Sheni: 14 Iyar (Thursday night & Friday daytime). No Tachanun.\"",
+   "example": "Standing text: \"Pesach Sheni: 14 Iyar (Thursday night & Friday daytime). No Tachanun.\"",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "5c",
+   "section": "Sefirah, Lag B'Omer & Pesach Sheni",
+   "when": "On 18 Iyar (Lag B'Omer).",
+   "shows": "Prints \"Lag b'Omer: 18 Iyar (Monday night & Tuesday). Special events TBA. No Tachanun.\"",
+   "example": "Standing text: \"Lag b'Omer: 18 Iyar (Monday night & Tuesday). Special events TBA. No Tachanun.\"",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "6a",
+   "section": "Shavuos",
+   "when": "On Erev Shavuos.",
+   "shows": "Prints a reminder to make an Eruv Tavshilin, the Sha'a Asiris time (not to over-eat before the Yom Tov meal - same calculation gap as at Pesach), candle lighting, and Mincha shortly after.",
+   "example": "Erev Shavuos 5786: candles 4:41pm; Sha'a Asiris printed as 2:25pm.",
+   "question": "Same issue as the Pesach Sha'a Asiris question - this time isn't calculated directly yet. Can it be added as its own zman?",
+   "attention": true
+  },
+  {
+   "id": "6b",
+   "section": "Shavuos",
+   "when": "On the first night of Shavuos.",
+   "shows": "Prints a promotional note about all-night learning with refreshments during the night (details to be announced), plus a note that Tachanun is skipped for the first twelve days of Sivan.",
+   "example": "Standing text: \"Tikkun Leil Shavuos: All-night learning, 1st night... refreshments during the night... details TBA.\"",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "6c",
+   "section": "Shavuos",
+   "when": "On the first day of Shavuos.",
+   "shows": "Prints Shacharis at 10:00am with the Ten Commandments reading around 11:15am, a note to bring children to hear the reading followed by an ice-cream party, and the Alos Hashachar time for the all-night learners.",
+   "example": "Shavuos 1st day: Shacharis 10:00am, Aseres Hadibros about 11:15am, Alos 5:23am.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "6d",
+   "section": "Shavuos",
+   "when": "On the second day of Shavuos.",
+   "shows": "Prints \"Shacharis 10:00am (Yizkor approx 11:30am)\".",
+   "example": "Shavuos 2nd day: Shacharis 10:00am, Yizkor about 11:30am.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "6e",
+   "section": "Shavuos",
+   "when": "On the afternoon of the second day of Shavuos.",
+   "shows": "Prints Mincha moved earlier than usual, followed by a farbrengen with a light meal to see out the Yom Tov properly; then Motzaei-Yom-Tov Maariv at the later nightfall time.",
+   "example": "Shavuos 2nd day 5786: Mincha (followed by farbrengen) 4:20pm; Motzaei Yom Tov Maariv 5:38pm.",
+   "question": "The early Mincha time before the second-day-Shavuos farbrengen is based on only one year. Please confirm how much earlier than usual it should be moved.",
+   "attention": true
+  },
+  {
+   "id": "6f",
+   "section": "Shavuos",
+   "when": "The day after Shavuos ends (8 Sivan).",
+   "shows": "Prints an Isru Chag note on the following week's grid. Kinus Torah does not currently appear at Shavuos the way it does at Pesach and Succos.",
+   "example": "\"(8 Sivan: Isru Chag)\" note on the following week's grid.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "7a",
+   "section": "Chassidic dates",
+   "when": "On 3 Tammuz (the Rebbe's yahrzeit) and the Shabbos before it.",
+   "shows": "Prints a note about the extra Torah-reading practice for the Shabbos before, mention of a special farbrengen (sometimes naming a guest speaker) and a special Chassidus class, and, when 3 Tammuz falls on or near Shabbos, an early Mincha with Pirkei Avos chapter 4 followed by a Gimmel Tammuz farbrengen.",
+   "example": "Gimmel Tammuz 5784 (near Shabbos): early Mincha 12:25pm with Pirkei Avos ch. 4, then farbrengen.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "7b",
+   "section": "Chassidic dates",
+   "when": "On 12-13 Tammuz (Chag HaGeulah of the Frierdiker Rebbe).",
+   "shows": "Prints \"12 & 13 Tammuz: Sun night to Tues evening. Chag HaGeulah of the Frierdiker Rebbe. Special events TBA.\"",
+   "example": "5782: only example seen of the 12-13 Tammuz note.",
+   "question": "This note has only been seen once. Please confirm it should print every year on 12-13 Tammuz.",
+   "attention": true
+  },
+  {
+   "id": "7c",
+   "section": "Chassidic dates",
+   "when": "On 10 Shevat (Yud Shevat) and the Shabbos before it.",
+   "shows": "Prints a header naming the Shabbos before Yud Shevat, and \"Yud Shevat: special events TBA\" on the day itself.",
+   "example": "5786: header naming the Shabbos before Yud Shevat, and a Yud Shevat events note.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "7d",
+   "section": "Chassidic dates",
+   "when": "On 11 Nisan (the Rebbe's birthday).",
+   "shows": "Prints \"Yud-alef Nisan: the Rebbe's birthday. Farbrengen Wed evening. Details TBA,\" and it is also mentioned as an honoree note on the preceding Shabbos HaGadol farbrengen line.",
+   "example": "5785: 'Yud-alef Nisan: the Rebbe's birthday. Farbrengen Wed evening. Details TBA.'",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "7e",
+   "section": "Chassidic dates",
+   "when": "On 18 Elul (birthday of the Baal Shem Tov and the Alter Rebbe).",
+   "shows": "Prints \"18 Elul: birthday of the Baal Shem Tov & Alter Rebbe. Special events TBA.\"",
+   "example": "Standing text seen once, treated as deterministic each year.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "7f",
+   "section": "Chassidic dates",
+   "when": "On Rosh Chodesh Kislev.",
+   "shows": "Nothing found in past sheets - see the Questions list. Rosh Chodesh Kislev, Yud-Tes Kislev and the Alter Rebbe's Chag HaGeulah do not currently appear on any sheet we have.",
+   "example": "No example available - this date has never appeared in the sheets reviewed.",
+   "question": "Rosh Chodesh Kislev, Yud-Tes Kislev and the Alter Rebbe's Chag HaGeulah never appear in the sheets we have. What should print for these dates?",
+   "attention": true
+  },
+  {
+   "id": "8a",
+   "section": "Elul, Selichos & Rosh Hashana",
+   "when": "On Rosh Chodesh Elul.",
+   "shows": "Prints a note about starting L'David Hashem Ori at Shacharis and Mincha, practicing shofar blowing, and from 2 Elul, blowing shofar daily plus three extra chapters of Tehillim (for example, Monday = Tehillim 1-3, and so on).",
+   "example": "Standing Rosh Chodesh Elul custom note, seen once.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "8b",
+   "section": "Elul, Selichos & Rosh Hashana",
+   "when": "On weekdays from the first Selichos through Erev Rosh Hashana.",
+   "shows": "Prints paired Selichos and Shacharis times, with Selichos about 25 minutes before each Shacharis (for example, Selichos 5:50am then Shacharis 6:15am; Selichos 7:00am then Shacharis 7:30am). The last Sunday before Erev Rosh Hashana shifts these later (7:30/8:00 and 8:45/9:15).",
+   "example": "Weekday Selichos period: Selichos 5:50am -> Shacharis 6:15am; Selichos 7:00am -> Shacharis 7:30am.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "8c",
+   "section": "Elul, Selichos & Rosh Hashana",
+   "when": "On the Motzaei Shabbos of the first Selichos.",
+   "shows": "Prints a farbrengen leading up to Selichos at 11:00pm, then \"Selichos followed by Goral to the Rebbe\" at 11:50pm (just before halachic midnight), plus a contact name and number for entering the Goral.",
+   "example": "First Selichos night: farbrengen 11:00pm, Selichos & Goral 11:50pm, contact Yitzchok Barber 0411 422 770.",
+   "question": "The first-Selichos farbrengen and Goral times are based on only one year. Please confirm they should repeat exactly this way every year.",
+   "attention": true
+  },
+  {
+   "id": "8d",
+   "section": "Elul, Selichos & Rosh Hashana",
+   "when": "On Erev Rosh Hashana.",
+   "shows": "Prints Selichos and Shacharis times with Hataras Nedarim after each Shacharis, the morning's last Shema time, an Eruv Tavshilin reminder (when Rosh Hashana runs into Shabbos), the year's last regular Mincha with Tehillim, a pre-Maariv derasha note, candle lighting, and Maariv at tzeis.",
+   "example": "Erev Rosh Hashana 5786: candles 5:33pm; Mincha 5:35pm; Maariv 6:20-6:25pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "8e",
+   "section": "Elul, Selichos & Rosh Hashana",
+   "when": "On both days of Rosh Hashana.",
+   "shows": "Prints the morning's last Shema time, Shacharis at 9:00am, shofar blowing around 11:10am, Mincha then Tashlich after Musaf and again at 5:00pm, second-night candle lighting using the later nightfall time, and on day 2, Maariv marking the end of Rosh Hashana at tzeis.",
+   "example": "Rosh Hashana: Shacharis 9:00am, shofar about 11:10am, Tashlich after Musaf and at 5:00pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "8f",
+   "section": "Elul, Selichos & Rosh Hashana",
+   "when": "On Rosh Hashana day 1 afternoon (day 2 if day 1 is Shabbos).",
+   "shows": "Prints \"Tashlich\" added onto the afternoon Mincha line, done after Musaf and again at 5:00pm.",
+   "example": "\"Tashlich\" appended to the Rosh Hashana afternoon Mincha line.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "9a",
+   "section": "Yom Kippur",
+   "when": "On Erev Yom Kippur.",
+   "shows": "Prints Shacharis times including an extra late minyan, an early Mincha followed by lekach (cake) for the pre-fast meal, candle lighting, the moment the fast begins for men at shkia (with tallis already worn), a note to say Ashamnu and Al Cheit standing before Kol Nidrei, then Kol Nidrei and the derasha, and Maariv afterward.",
+   "example": "Erev Yom Kippur 5786: candles 5:40pm; fast begins for men at shkia, 5:58pm; Kol Nidrei & derasha 6:10pm.",
+   "question": "The early 'Mincha & lekach' time moved from 4:30pm one year to 3:15pm another. Is this a fixed clock time, tied to a proportional halachic hour, or set fresh by the Rov each year?",
+   "attention": true
+  },
+  {
+   "id": "9b",
+   "section": "Yom Kippur",
+   "when": "On Yom Kippur day.",
+   "shows": "Prints the last Shema time, Shacharis at 9:30 or 10:00am, Yizkor around 12:15-12:45pm, Mincha with a derasha, Neilah about 40 minutes before shkia, \"Maariv & end of Fast\" at the later nightfall time (the same one used after Shabbos), and Kiddush Levana with refreshments afterward.",
+   "example": "Yom Kippur 5786: Neilah 5:20pm; Maariv & end of Fast 6:36pm.",
+   "question": "Neilah has started 38 minutes before shkia one year and 46 minutes before shkia another year. Is there a fixed number of minutes the shul wants, or does it depend on how davening runs that year?",
+   "attention": true
+  },
+  {
+   "id": "10a",
+   "section": "Succos & Simchas Torah",
+   "when": "On Erev Succos.",
+   "shows": "Prints an Eruv Tavshilin reminder, candle lighting, a note that there is a nightly farbrengen during Succos (venue and time to be announced), and, on a weekday right before Yom Tov, the Sunday-style two-late-Shacharis-times pattern even though it isn't actually Sunday.",
+   "example": "Erev Succos 5786 (Monday): Shacharis 8:00am & 9:15am, Sunday-style pattern.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "10b",
+   "section": "Succos & Simchas Torah",
+   "when": "On the first two days of Succos.",
+   "shows": "Prints Shacharis at 10:00am with Kiddush in the sukkah after Musaf; day 1 prints \"Mincha followed by Kinus Torah part 1\"; day 1's second-night candle lighting uses the later nightfall time; day 2 prints \"Maariv & end of Yom Tov\" at tzeis.",
+   "example": "Succos days 1 & 2: Shacharis 10:00am with Kiddush in the sukkah; day 1 Mincha followed by Kinus Torah part 1.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "10c",
+   "section": "Succos & Simchas Torah",
+   "when": "On Chol Hamoed Succos.",
+   "shows": "Prints an extra 9:15am Shacharis alongside the usual 6:15am and 7:30am; on the Shabbos of Chol Hamoed, \"Mincha followed by Kinus Torah part 2\"; public-holiday days shift Shacharis to the two-late-times pattern.",
+   "example": "Chol Hamoed Succos: extra 9:15am Shacharis both years on record.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "10d",
+   "section": "Succos & Simchas Torah",
+   "when": "During Chol Hamoed Succos.",
+   "shows": "Prints \"Shule Simchas Beis Ha'shoevah: children's rally. Details TBA.\"",
+   "example": "Standing text, seen both years on record.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "10e",
+   "section": "Succos & Simchas Torah",
+   "when": "On Hoshana Rabba.",
+   "shows": "Prints a Tehillim and apple-and-honey gathering starting at halachic midnight, Shacharis with Hoshanos (including the extra 9:15am minyan), an Eruv Tavshilin reminder, Kiddush in the sukkah followed by Hakofos after Maariv, and a farbrengen after Hakofos.",
+   "example": "Hoshana Rabba 5786: Tehillim & apple and honey from 12:42am (chatzos halayla).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "10f",
+   "section": "Succos & Simchas Torah",
+   "when": "On Shmini Atzeres.",
+   "shows": "Prints candle lighting the evening before, Kiddush in the sukkah with Hakofos after Maariv and a farbrengen after that; the next day, Shacharis at 10:00am (with the Musaf change to \"Mashiv HaRuach\", the prayer for rain), Yizkor around 11:45am, a children's program including Hakofos from 6:30 to 8:00pm, Mincha with the Tahalucha (a Chabad custom of visiting other shuls), and that night's candle lighting for Simchas Torah using the later nightfall time; Maariv is followed by Hakofos, Kiddush and a farbrengen.",
+   "example": "Shmini Atzeres 5785: children's program with Hakofos 6:30-8:00pm; Mincha & Tahalucha 7:05pm.",
+   "question": "Is 'Under the Stars' the name the shul wants used for the Shmini Atzeres evening children's program, currently just called 'Children's program including Hakofos'?",
+   "attention": true
+  },
+  {
+   "id": "10g",
+   "section": "Succos & Simchas Torah",
+   "when": "On Simchas Torah day.",
+   "shows": "Prints Shacharis at 10:00am including Birchas Kohanim, then Kiddush, Hakafos, the Torah reading and Musaf around 11:00am, and Maariv marking the end of Yom Tov at the later nightfall time.",
+   "example": "Simchas Torah: Shacharis including Birchas Kohanim 10:00am; Kiddush, Hakafos, leining, Musaf about 11:00am.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "10h",
+   "section": "Succos & Simchas Torah",
+   "when": "During the last days of Succos.",
+   "shows": "Prints Kinus Torah part 1 at the Mincha on Succos day 1, part 2 at the Mincha on the Shabbos of Chol Hamoed, and Tahalucha after the Shmini Atzeres Mincha.",
+   "example": "Tahalucha noted after Shmini Atzeres Mincha 5785, 7:05pm.",
+   "question": "The Tahalucha note after Shmini Atzeres Mincha has only been seen once. Please confirm it should print every year.",
+   "attention": true
+  },
+  {
+   "id": "10i",
+   "section": "Succos & Simchas Torah",
+   "when": "On Shabbos Bereishis, the first Shabbos after the Yom Tov season ends.",
+   "shows": "Prints a \"Shabbos Bereishis / Mevorchim\" header, a farbrengen with a light meal and Seder Nigunim, and a note that the Erev-Shabbos early minyan resumes the following week.",
+   "example": "Standing header and resumption note, seen both years on record.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "11a",
+   "section": "Chanukah",
+   "when": "Each night of Chanukah, Sunday through Thursday.",
+   "shows": "Prints \"Light at home from [time]\", which is shkia, sometimes a couple of minutes after.",
+   "example": "Chanukah 5786: light at home from 8:04pm (shkia).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "11b",
+   "section": "Chanukah",
+   "when": "On Chanukah weekdays.",
+   "shows": "Prints \"Mincha and Chanukah candles in shule\" at a fixed early-evening time around 6:25pm - well before the very late summer shkia - with Maariv pushed later, to about 9:00pm, so it follows the home-lighting time.",
+   "example": "Chanukah 5786: Mincha & shul candles 6:25pm; Maariv 9:00pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "11c",
+   "section": "Chanukah",
+   "when": "On Chanukah weekdays.",
+   "shows": "Prints an extra late Shacharis (9:00am or 9:15am) in addition to the usual weekday times, though the sheets never state why.",
+   "example": "Chanukah 5786: extra Shacharis Monday-Friday 9:15am.",
+   "question": "There's a recurring extra 9:00/9:15am Shacharis every Chanukah with no reason given. Is this for Hallel, school groups, or something else, and should it run the whole week or weekdays only?",
+   "attention": true
+  },
+  {
+   "id": "11d",
+   "section": "Chanukah",
+   "when": "On a Friday during Chanukah.",
+   "shows": "For the early minyan, prints that Chanukah candles at home may be lit no earlier than plag, with Shabbos candles to follow by about 7:40pm, and Kabbolas Shabbos delayed to about 7:30pm. For the regular minyan, prints that Chanukah candles may be lit no earlier than plag but must be lit before Shabbos candle lighting.",
+   "example": "Chanukah Friday 5786: Chanukah candles not before 6:38pm (plag); Shabbos candles 7:46pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "11e",
+   "section": "Chanukah",
+   "when": "On a Friday during Chanukah, especially when it coincides with Rosh Chodesh.",
+   "shows": "Prints one combined \"Erev Shabbos Mincha (This is the only Mincha)\" instead of the usual early/regular split.",
+   "example": "Chanukah Friday 5786: single combined Mincha at 6:28pm.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "11f",
+   "section": "Chanukah",
+   "when": "On Motzaei Shabbos during Chanukah.",
+   "shows": "Prints \"Chanukah candles on Motzaei Shabbos - light at home after Havdalah,\" with no clock time given.",
+   "example": "Standing text with no clock time, tied to Havdalah.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "11g",
+   "section": "Chanukah",
+   "when": "On the last night of Chanukah.",
+   "shows": "Prints \"Sun night is the last night of lighting Chanukah candles. Light at home from [shkia].\"",
+   "example": "5786 Chanukah: last-night note printed with that night's shkia.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12a",
+   "section": "Calendar labels & other notes",
+   "when": "On the Shabbos a Chumash (book of the Torah) is completed.",
+   "shows": "Prints \"Shabbos kodesh: <parsha name>, Chazak\" - purely calendar-driven, no zman involved.",
+   "example": "Seen at Bamidbar 5782, Bereishis 5785/5786, Shemos 5785.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12b",
+   "section": "Calendar labels & other notes",
+   "when": "On the relevant Shabbos each year.",
+   "shows": "Appends the correct label - Mevorchim, Shekalim, Zachor, Parah, HaChodesh, Nachamu, Chazon, Shushan Purim, and so on - to that Shabbos's header, based purely on the calendar.",
+   "example": "Recurring header labels seen across multiple years.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12c",
+   "section": "Calendar labels & other notes",
+   "when": "Starting the night of 4-5 December each civil year (the date used outside Israel).",
+   "shows": "Prints \"Starting on Thurs 4/12 in Maariv, change to 'v'sein tal u'matar...'\"",
+   "example": "Fixed civil-calendar date, seen as deterministic each year.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12d",
+   "section": "Calendar labels & other notes",
+   "when": "On the night of 24 December (a Chabad custom).",
+   "shows": "Prints a \"Nittel\" period running from that night's shkia until halachic midnight.",
+   "example": "Nittel 5786: 8:07pm to 12:55am (shkia to chatzos halayla).",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12e",
+   "section": "Calendar labels & other notes",
+   "when": "On the relevant Rosh Chodesh.",
+   "shows": "Prints seasonal notes: \"When Adar enters, we increase our joy,\" \"When Av enters, we reduce our joy,\" a Nisan note about Nasi/Y'hi Ratzon readings for the first 13 days, and the Elul shofar note.",
+   "example": "Standing Rosh Chodesh notes recurring across years.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12f",
+   "section": "Calendar labels & other notes",
+   "when": "On days when Tachanun is skipped.",
+   "shows": "\"No Tachanun\" notes for the twelve days of Sivan, Shushan Purim, Pesach Sheni, Lag B'Omer, all of Nisan, Chanukah, and similar days.",
+   "example": "Recurring 'No Tachanun' flags across the year.",
+   "question": "",
+   "attention": false
+  },
+  {
+   "id": "12g",
+   "section": "Calendar labels & other notes",
+   "when": "On the last Erev Shabbos early minyan and last Shabbos halacha class before the season changes, and again when they resume.",
+   "shows": "Prints a note like \"(The last one until after Tishrei 5786.)\" or \"This is the last Shabbos halacha shiur until after Sukkos 5787,\" with matching resumption notes later.",
+   "example": "5785 and 5786 both print a 'last one until after Tishrei/Sukkos' note.",
+   "question": "What exactly decides the last week of the early Erev-Shabbos minyan and the Shabbos halacha class before the break - clock change, candle-lighting time getting too early, or the shul's own call each year?",
+   "attention": true
+  },
+  {
+   "id": "12h",
+   "section": "Calendar labels & other notes",
+   "when": "On weeks that include an Australian public holiday.",
+   "shows": "Shifts Shacharis to the two-late-times \"Sunday pattern\" (for example 8:00am & 9:00am, or 8:00am & 9:15am) on the holiday days, with Mincha and Maariv adjusted accordingly. The holiday itself is often not printed as a label, just reflected in the times.",
+   "example": "5783 & 5786: Christmas/Boxing Day/New Year's weeks show the Sunday-style Shacharis pattern with no holiday label printed.",
+   "question": "Does the shul want public holidays automatically detected from an Australian (NSW) public-holiday calendar, with a 'Public holidays' note printed - or should this keep being set by hand each week?",
+   "attention": true
+  }
+ ],
+ "questions": [
+  {
+   "topic": "Extra 2:00pm weekday Mincha",
+   "question": "In many winter weeks the sheets show an extra 2:00pm weekday Mincha with no occasion stated. Is this a standing minyan for a certain season, or tied to something specific each time?"
+  },
+  {
+   "topic": "Extra 9:00/9:15am Chanukah Shacharis",
+   "question": "Every Chanukah the sheets add an extra 9:00 or 9:15am Shacharis with no reason given. Why is it there, and should it run the whole week or weekdays only?"
+  },
+  {
+   "topic": "Extra 9:15am Friday Shacharis during Aseret Yemei Teshuva",
+   "question": "One plain Friday during the Ten Days of Teshuva had an extra 9:15am Shacharis with no reason recorded. When should this extra minyan be added?"
+  },
+  {
+   "topic": "Erev Yom Kippur early Mincha & lekach time",
+   "question": "The early 'Mincha + lekach' time before the fast moved from 4:30pm one year to 3:15pm another. Is this a fixed clock time, a proportional halachic-hour time, or the Rov's call each year?"
+  },
+  {
+   "topic": "Erev Rosh Hashana double Maariv (5:40pm & 6:20pm)",
+   "question": "One Erev Rosh Hashana sheet shows two separate Maariv times, 5:40pm and 6:20pm, on the same day. Is the later one a genuine second option, or a leftover that should be removed?"
+  },
+  {
+   "topic": "'Under the Stars' naming for Shmini Atzeres",
+   "question": "Is 'Under the Stars' the name the shul wants used for the Shmini Atzeres evening children's program? The sheets only ever call it 'Children's program including Hakofos'."
+  },
+  {
+   "topic": "First Purim-day minyan time (6:05am vs 6:15am)",
+   "question": "The first Purim-day minyan starts at 6:05am when Purim falls on a weekday but 6:15am when it falls on Friday. Please confirm that is the intended pattern."
+  },
+  {
+   "topic": "Season cutoff for the early minyan and halacha class",
+   "question": "What decides the last week of the early Erev-Shabbos minyan and the Shabbos halacha class before the winter break - and the week they resume?"
+  },
+  {
+   "topic": "Public holidays: detecting them and printing a label",
+   "question": "Does the shul want Australian public holidays detected automatically (with a 'Public holidays' note printed), or should the schedule keep being adjusted by hand each time one comes up? Several sheets already shift the Shacharis times for a holiday without ever printing that it's a holiday."
+  },
+  {
+   "topic": "Purim-day Mincha to Maariv gap (4:30pm to 8:30pm)",
+   "question": "On Purim day, Mincha is set for 4:30pm but Maariv doesn't follow until 8:30pm - an unusually long gap. Is that intentional, or should Maariv be earlier?"
+  },
+  {
+   "topic": "Seder Nigunim missing from the Shabbos Tetzaveh Mincha line",
+   "question": "Two different years' Shabbos Tetzaveh sheets list Mincha but leave out 'followed by Seder Nigunim,' which usually appears. Was that left off on purpose, or should it always be there?"
+  },
+  {
+   "topic": "6:15am weekday Shacharis sometimes skipped with no reason",
+   "question": "In some weeks (for example around New Year's and 10 Teves) the regular 6:15am weekday Shacharis is dropped without any stated reason. What decides when it should be dropped?"
+  },
+  {
+   "topic": "Yud Shevat week's three-way Shacharis split",
+   "question": "In one Yud Shevat week the Shacharis times split into three different day-groupings (instead of the usual single pattern), tied to a public holiday plus Yud Shevat. What is the rule for this?"
+  },
+  {
+   "topic": "Shabbos Tetzaveh header naming Purim a week early",
+   "question": "One sheet's Shabbos Tetzaveh header named Purim (with no Megillah time), even though Purim was actually the following week. Should the header only mention Purim on the correct week?"
+  },
+  {
+   "topic": "Tu B'Shvat (15 Shevat)",
+   "question": "What should the sheet show for Tu B'Shvat? It has never appeared, even though Yud Shevat (10 Shevat) does."
+  },
+  {
+   "topic": "Rosh Chodesh Kislev",
+   "question": "What should the sheet show for Rosh Chodesh Kislev? It has never appeared in the sheets reviewed."
+  },
+  {
+   "topic": "Yud-Tes & Chof Kislev (Chag HaGeulah of the Alter Rebbe)",
+   "question": "What should the sheet show for Yud-Tes and Chof Kislev, the Alter Rebbe's Chag HaGeulah ('Rosh Hashana of Chassidus')? This important date has never appeared, possibly just because it fell outside the weeks that were sampled."
+  },
+  {
+   "topic": "Pesach Sheni farbrengen details",
+   "question": "Right now Pesach Sheni only prints as a one-line label. Should there be farbrengen details for 28 Nisan / 22 Nisan as well?"
+  },
+  {
+   "topic": "Gimmel Tammuz full program & 12-13 Tammuz in other years",
+   "question": "The full Gimmel Tammuz program and the 12-13 Tammuz note only have one year's worth of detail; other years just say 'Details TBA.' What should print in years without a full write-up?"
+  },
+  {
+   "topic": "Chamisha-Asar B'Av (15 Av)",
+   "question": "Should Chamisha-Asar B'Av (15 Av) get its own celebratory line? Right now it only appears as the end-date of the Nine Days restrictions."
+  },
+  {
+   "topic": "Yud-Beis & Yud-Gimmel Tammuz",
+   "question": "What should the sheet show for Yud-Beis and Yud-Gimmel Tammuz beyond the single year's example on record?"
+  },
+  {
+   "topic": "Kinus Torah at Shavuos",
+   "question": "Kinus Torah appears at Pesach and Succos but not at Shavuos. Should Shavuos also carry Kinus Torah parts?"
+  },
+  {
+   "topic": "Sotah class & other Yom Tov night-learning cycles",
+   "question": "Only the post-Pesach Maseches Sotah class is on record, and only once. What other night-learning cycles, if any, should the sheet carry, and when?"
+  },
+  {
+   "topic": "First-Selichos farbrengen and Goral recurrence",
+   "question": "The first-Selichos farbrengen and the Goral to the Rebbe are on record for one year only. Does this happen every year, and should it always print the same way?"
+  },
+  {
+   "topic": "Calculating sha'a asiris and the chometz deadlines directly",
+   "question": "Can the zmanim system calculate sha'a asiris (the 10th halachic hour) and the separate 'finish eating chometz' / 'finish burning chometz' times directly, instead of reusing or estimating from other zmanim?"
+  }
+ ]
+}
