@@ -384,8 +384,10 @@ Full instance: "5786 times -wk 34 to 36 incl Shavuos.txt".
 ## 8. Elul/Selichos + Rosh Hashana
 
 ### Rule 8a — Rosh Chodesh Elul customs
-- **Emits**: "First day of L'David Hashem Ori in Shacharis & Mincha; practise blowing shofar; from 2 Elul blow shofar daily + 3 extra Tehillim (Mon Tehillim 1–3, etc.)".
-- **Confidence**: **HIGH** (1 instance; standing custom).
+- **Trigger**: the week containing Rosh Chodesh Elul, phrased relative to the weekdays RC falls on.
+- **Emits**: (1) from 1 Elul: "add 'L'David Adn.. Ori' in Shacharis and Mincha"; (2) from 2 Elul: "sound the shofar at the end of Shacharis (excl. Shabbos) and say three extra Tehillim" with the daily progression "(On [day] say Tehillim 1–3; on [next day] say Tehillim 4–6 and so on.)" — the chapter numbers track the day of Elul.
+- **Evidence**: 5785 Elul sheet ("First day of L'David Hashem Ori…; from 2 Elul blow shofar daily + 3 extra Tehillim (Mon Tehillim 1–3, etc.)"); 5786 Shoftim (26 Av–2 Elul): "From Thurs. add 'L'David Adn.. Ori' in Shacharis and Mincha. From Fri. sound the shofar at the end of Shacharis (excl. Shabbos) and say three extra Tehillim. (On Fri. say Tehillim 1–3; on Shabbos say Tehillim 4–6 and so on.)" — supplied by the shul post-mining.
+- **Confidence**: **HIGH** (2 instances across years; standing custom).
 
 ### Rule 8b — Weekday Selichos (Elul)
 - **Trigger**: from the first Selichos through Erev RH.
@@ -550,6 +552,13 @@ very late shkia (~8:00pm), which drives the unusual evening ordering.
 - **Trigger**: AU public holidays overlapping a week.
 - **Emits**: Shacharis shifts to the two-late-times "Sunday pattern" on the holiday days (e.g. 5783 "Public holidays: Sun, Mon & Tues" → Sun–Tues 8:00 & 9:00; 5786 Christmas/Boxing/New-Year Thurs & Fri 8:00 & 9:15); Mincha/Maariv splits accordingly.
 - **Confidence**: **HIGH** that a rule exists; **the holiday label is often NOT printed** — inferred from the calendar (see Open questions). Generator needs an AU-public-holiday calendar feed.
+
+### Rule 12i — Mid-week Rosh Chodesh span note
+- **Trigger**: Rosh Chodesh (one or two days) falling on a weekday within the week — distinct from the Mevorchim molad note, which belongs to the *previous* week's sheet.
+- **Emits**: a note in the zmanim block spelling out when Rosh Chodesh runs, from the preceding evening: "Rosh Chodesh: from [day] night to [day] afternoon." (e.g. 5786 Shoftim: "Rosh Chodesh: from Wed. night to Fri. afternoon." for the two days of RC Elul). Wording covers the Yaaleh V'Yavo/Hallel span rather than listing davening additions.
+- **Evidence**: 15 instances across the archive (initially skipped by the miners as "template"; recovered by direct search) plus 5786 Shoftim supplied by the shul. Both one-day ("Rosh Chodesh: from Tues. night to Wed. afternoon") and two-day forms ("…from Mon night to Wed evening"), sometimes month-named ("Rosh Chodesh Kislev: from Thurs. evening to Erev Shabbos"), sometimes not; end word varies between "evening", "night", "afternoon" and "the end of Shabbos".
+- **Confidence**: **HIGH** that the note is always printed for a mid-week RC; **MEDIUM** on wording — the archive is inconsistent.
+- **Open question**: pick the canonical wording (suggest: "Rosh Chodesh[ month]: from [day] night to [day] afternoon.", with "motzaei Shabbos"/"the end of Shabbos" variants when RC touches Shabbos) — the generator will then apply it uniformly.
 
 ---
 
