@@ -29,6 +29,11 @@ computes or re-rounds a time. See the plan record and `../../WARPLAN.md` §4.
 - **Public surfaces**:
   - `[ttcc_week]` — current-week widget (auto-rolls), embeddable on any Elementor page.
   - `[ttcc_browse]` — browse any week (read-only; editing stays in wp-admin).
+  - `[ttcc_week]`, `[ttcc_browse]` and the weekly signage page apply the
+    dashboard edits (line overrides + note edits) of the most-recently-updated
+    saved sheet overlapping the displayed week, so the public pages match the
+    edited sheet; re-saving a sheet takes effect on the next page load. The
+    Shabbos highlights surfaces below stay rule-generated.
   - `[ttcc_shabbos]` — Shabbos & Yom Tov times banner (candle lighting,
     Shabbos/Yom Tov ends, fast begin/end) with Prev / This Week / Next /
     jump-to-date navigation. Attributes: `location="Bondi · Sydney NSW"`,

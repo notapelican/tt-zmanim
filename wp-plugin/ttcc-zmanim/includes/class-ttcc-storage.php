@@ -124,6 +124,28 @@ class TTCC_Zmanim_Storage {
 		return (int) $wpdb->insert_id;
 	}
 
+	/**
+	 * Most-recently-updated saved timesheet whose range overlaps [$start, $end]
+	 * (ISO dates), or null. Used by the public surfaces so the current-week
+	 * page/signage reflects the dashboard-edited sheet, not a bare regeneration.
+	 * Overrides are block-scoped, so a partially overlapping sheet is safe —
+	 * only the displayed week's edits apply.
+	 */
+	public static function find_overlapping( $start, $end ) {
+		global $wpdb;
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM ' . self::timesheets_table() . '
+				 WHERE start_date <= %s AND end_date >= %s
+				 ORDER BY updated_at DESC, id DESC LIMIT 1',
+				$end,
+				$start
+			),
+			ARRAY_A
+		);
+		return $row ? self::decode_timesheet( $row ) : null;
+	}
+
 	public static function delete_timesheet( $id ) {
 		global $wpdb;
 		return (bool) $wpdb->delete( self::timesheets_table(), array( 'id' => (int) $id ) );
