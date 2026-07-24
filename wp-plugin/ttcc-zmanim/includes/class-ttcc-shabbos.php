@@ -203,7 +203,8 @@ JS;
 		$done = true;
 		?>
 <style id="ttcc-stw-css">
-.ttcc-stw{--stw-night:#141d33;--stw-night-2:#1c2947;--stw-flame:#e3a83b;--stw-rose:#c96a5a;--stw-paper:#f6f2e9;--stw-muted:#9aa5c0;--stw-line:rgba(246,242,233,.12);font-family:'Assistant',system-ui,-apple-system,sans-serif;max-width:1250px;margin:0 auto}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Assistant:wght@400;600;700&display=swap');
+.ttcc-stw{--stw-night:#141d33;--stw-night-2:#1c2947;--stw-flame:#e3a83b;--stw-rose:#c96a5a;--stw-paper:#f6f2e9;--stw-muted:#9aa5c0;--stw-line:rgba(246,242,233,.12);font-family:'Assistant',system-ui,-apple-system,sans-serif;width:100%;max-width:1250px;margin:0 auto}
 .ttcc-stw .stw-card{background:linear-gradient(105deg,var(--stw-night-2) 0%,var(--stw-night) 60%);color:var(--stw-paper);border-radius:16px;padding:28px 36px 18px;box-shadow:0 10px 32px rgba(10,16,34,.35)}
 .ttcc-stw .stw-topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .ttcc-stw .stw-eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--stw-flame)}
@@ -216,8 +217,8 @@ JS;
 .ttcc-stw .stw-jump input{font:600 12px 'Assistant',sans-serif;color:var(--stw-paper);background:transparent;border:1px solid var(--stw-line);border-radius:8px;padding:5px 8px;color-scheme:dark;max-width:145px}
 .ttcc-stw .stw-horizon{height:3px;border-radius:2px;margin:16px 0 22px;background:linear-gradient(90deg,var(--stw-flame) 0%,var(--stw-rose) 35%,transparent 90%)}
 .ttcc-stw .stw-main{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:20px 44px;align-items:start}
-.ttcc-stw .stw-title{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:32px;line-height:1.15;margin:0 0 4px;color:var(--stw-paper)}
-.ttcc-stw .stw-hebrew{font-family:Georgia,'Times New Roman',serif;font-size:19px;color:var(--stw-flame);min-height:1em}
+.ttcc-stw .stw-title{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-weight:700;font-size:32px;line-height:1.15;margin:0 0 4px;color:var(--stw-paper)}
+.ttcc-stw .stw-hebrew{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:19px;color:var(--stw-flame);min-height:1em}
 .ttcc-stw .stw-range{font-size:13.5px;color:var(--stw-muted);margin-top:8px}
 .ttcc-stw .stw-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .ttcc-stw .stw-chip{font-size:12px;font-weight:600;padding:3px 10px;border:1px solid var(--stw-line);border-radius:999px;color:var(--stw-muted)}
@@ -228,7 +229,7 @@ JS;
 .ttcc-stw .stw-memo{font-size:12px;color:var(--stw-flame);font-weight:600;margin-top:1px}
 .ttcc-stw .stw-row.fast .stw-memo{color:var(--stw-rose)}
 .ttcc-stw .stw-day{font-size:12.5px;color:var(--stw-muted);margin-top:3px}
-.ttcc-stw .stw-time{font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:700;color:var(--stw-flame);white-space:nowrap;margin-top:8px}
+.ttcc-stw .stw-time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:30px;font-weight:700;color:var(--stw-flame);white-space:nowrap;margin-top:8px}
 .ttcc-stw .stw-row.fast .stw-time{color:var(--stw-rose)}
 .ttcc-stw .stw-qual{display:block;font-family:'Assistant',sans-serif;font-size:12px;font-weight:600;color:var(--stw-muted);text-transform:lowercase}
 .ttcc-stw .stw-status{font-size:13px;color:var(--stw-muted);padding:8px 0}
@@ -379,6 +380,9 @@ JS;
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?php echo esc_html( $title ); ?> — <?php esc_html_e( 'Shabbos Times', 'ttcc-zmanim' ); ?></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 	:root{--night:#141d33;--night-2:#1c2947;--flame:#e3a83b;--rose:#c96a5a;--paper:#f6f2e9;--muted:#9aa5c0;--line:rgba(246,242,233,.14)}
 	*{margin:0;padding:0;box-sizing:border-box}
@@ -387,11 +391,11 @@ JS;
 	.topbar{display:flex;justify-content:space-between;align-items:baseline}
 	.eyebrow{font-size:1.9vh;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--flame)}
 	.clock{text-align:right}
-	.clock-time{font-family:Georgia,'Times New Roman',serif;font-size:3vh;font-weight:500}
+	.clock-time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:3vh;font-weight:500}
 	.clock-date{font-size:1.6vh;color:var(--muted)}
 	.horizon{height:.4vh;border-radius:1vh;margin:2.2vh 0 3vh;background:linear-gradient(90deg,var(--flame) 0%,var(--rose) 45%,transparent 95%)}
-	.title{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:6.2vh;line-height:1.12}
-	.hebrew{font-family:Georgia,'Times New Roman',serif;font-size:3.4vh;color:var(--flame);min-height:1em}
+	.title{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-weight:700;font-size:6.2vh;line-height:1.12}
+	.hebrew{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:3.4vh;color:var(--flame);min-height:1em}
 	.range{font-size:2vh;color:var(--muted);margin-top:.8vh}
 	.chips{display:flex;flex-wrap:wrap;gap:1vh;margin-top:1.4vh;list-style:none}
 	.chip{font-size:1.8vh;font-weight:600;padding:.5vh 1.8vh;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
@@ -404,13 +408,13 @@ JS;
 	.memo{font-size:.67em;color:var(--flame);font-weight:600;margin-top:.1em}
 	.row.fast .memo{color:var(--rose)}
 	.day{font-size:.67em;color:var(--muted);margin-top:.17em}
-	.time{font-family:Georgia,'Times New Roman',serif;font-size:2.13em;font-weight:700;color:var(--flame);white-space:nowrap;text-align:right}
+	.time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:2.13em;font-weight:700;color:var(--flame);white-space:nowrap;text-align:right}
 	.row.fast .time{color:var(--rose)}
 	.qual{display:block;font-family:'Assistant',sans-serif;font-size:.63em;font-weight:600;color:var(--muted);text-transform:lowercase}
 	.status{font-size:2.2vh;color:var(--muted)}
 	.status:empty{display:none}
 	.cta{text-align:center;font-size:2.2vh;font-weight:600;color:var(--paper);padding:1.8vh 0;margin-top:1.5vh;border-top:1px solid var(--line)}
-	.cta .site{font-family:Georgia,'Times New Roman',serif;font-size:2.8vh;font-weight:700;color:var(--flame);letter-spacing:.03em}
+	.cta .site{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:2.8vh;font-weight:700;color:var(--flame);letter-spacing:.03em}
 	.foot{font-size:1.5vh;color:var(--muted);padding-top:1.4vh;border-top:1px solid var(--line);text-align:center}
 </style>
 </head>
