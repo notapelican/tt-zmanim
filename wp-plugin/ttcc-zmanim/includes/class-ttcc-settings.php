@@ -166,6 +166,12 @@ class TTCC_Zmanim_Settings {
 							<p class="description"><?php esc_html_e( 'Public current-week signage page (unguessable slug). Point the piSignage screen here.', 'ttcc-zmanim' ); ?></p>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'piSignage URL — Shabbos screen', 'ttcc-zmanim' ); ?></th>
+						<td><code><?php echo esc_html( $sig_url . 'shabbos/' ); ?></code>
+							<p class="description"><?php esc_html_e( 'Large-type Shabbos & Yom Tov screen (candle lighting, ends, fasts) for a portrait 1080×1920 display. Self-refreshing; keeps the last-good times if the connection drops.', 'ttcc-zmanim' ); ?></p>
+						</td>
+					</tr>
 					<?php endif; ?>
 				</table>
 
