@@ -13,6 +13,7 @@ from datetime import date, datetime, timedelta
 from typing import Any
 
 from . import luach
+from . import special_days
 from .hebcal import to_hebrew
 from .rules import (DEFAULT_NOTES, DEFAULT_PROFILES, EREV_SHABBOS,
                     EREV_SHABBOS_EARLY, SHABBOS_DAY, WEEKDAY, WeekContext,
@@ -286,6 +287,11 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     # --- fasts in the week ---
     entries.extend(_fast_entries(sunday, shabbos, engine))
 
+    # --- special-day rules (mined catalog, phase 1): fast-day Mincha splits,
+    # 9 Av schedule, Elul customs, Rosh Chodesh span, seasonal notes. Mutates
+    # davening entries in place and returns extra notes.
+    sd_notes = special_days.apply_special_days(entries, sunday, shabbos, engine)
+
     # Map rule-section keys to printed headings; regular ES section is renamed
     # when the early minyan runs.
     es_title = ("Erev Shabbos regular times: candle lighting and davening"
@@ -313,7 +319,7 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
         "active_profiles": [p.id for p in active_profiles(ctx, profiles)],
         "entries": entries,
         "molad": molad_text(shabbos),
-        "notes": week_notes(sunday, shabbos, engine, notes),
+        "notes": week_notes(sunday, shabbos, engine, notes) + sd_notes,
     }
     return block
 

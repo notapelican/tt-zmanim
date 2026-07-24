@@ -239,7 +239,10 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .row .lbl { white-space:pre; }
 .row.bullet .lbl::before { content:"\\2022  "; }
 .row .dots { flex:1 1 auto; border-bottom:1px dotted #000; margin:0 3px; transform:translateY(-3px); }
-.row .val { white-space:nowrap; }
+/* Long merged values (e.g. a fast week's three-way Shacharis split) wrap onto
+   right-aligned continuation lines instead of clipping, as on the printed
+   sheets. min-width keeps flex from forcing a single overflowing line. */
+.row .val { white-space:normal; text-align:right; min-width:0; flex:0 1 auto; }
 .barwrap { margin:5px 0 2px; }
 .bar { display:inline-block; color:#fff; font-weight:bold; padding:0 5px; }
 .bar.blue { background:var(--blue); }
