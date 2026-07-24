@@ -65,23 +65,35 @@ class TTCC_Zmanim_Public {
 	/**
 	 * Rendered full HTML for a range, cached with last-good fallback.
 	 * $context distinguishes cache buckets (e.g. 'week', 'signage').
+	 *
+	 * When a saved timesheet overlaps the range, its dashboard edits (line
+	 * overrides + note edits) are applied, so the public pages and signage
+	 * match the edited sheet. The sheet's id + updated_at are part of the
+	 * cache key: re-saving a sheet in the dashboard takes effect on the next
+	 * page load instead of waiting out the cache TTL.
+	 *
 	 * Returns HTML string, or '' if nothing (not even last-good) is available.
 	 */
 	public static function cached_html( $start, $end, $context = 'week', $inject_css = '' ) {
-		$key    = self::LASTGOOD_KEY . md5( $context . '|' . $start . '|' . $end . '|' . $inject_css );
+		$sheet     = TTCC_Zmanim_Storage::find_overlapping( $start, $end );
+		$overrides = ( $sheet && is_array( $sheet['overrides'] ) ) ? $sheet['overrides'] : array();
+		$stamp     = $sheet ? $sheet['id'] . '|' . $sheet['updated_at'] : 'none';
+
+		$stable = self::LASTGOOD_KEY . md5( $context . '|' . $start . '|' . $end . '|' . $inject_css );
+		$key    = $stable . '_' . md5( $stamp );
 		$cached = get_transient( $key );
 		if ( false !== $cached ) {
 			return $cached;
 		}
 
-		$built = TTCC_Zmanim_Sheet::build( $start, $end, array() );
+		$built = TTCC_Zmanim_Sheet::build( $start, $end, $overrides );
 		if ( is_wp_error( $built ) ) {
-			$lastgood = get_option( $key, '' );
+			$lastgood = get_option( $stable, '' );
 			return $lastgood ? $lastgood : '';
 		}
 		$res = TTCC_Zmanim_Service_Client::render_html_doc( $built['doc'] );
 		if ( is_wp_error( $res ) ) {
-			$lastgood = get_option( $key, '' );
+			$lastgood = get_option( $stable, '' );
 			return $lastgood ? $lastgood : '';
 		}
 		$html = $res['html'];
@@ -89,7 +101,7 @@ class TTCC_Zmanim_Public {
 			$html = self::inject_head( $html, $inject_css );
 		}
 		set_transient( $key, $html, self::CACHE_TTL );
-		update_option( $key, $html, false ); // persistent last-good.
+		update_option( $stable, $html, false ); // persistent last-good (stable key).
 		return $html;
 	}
 
