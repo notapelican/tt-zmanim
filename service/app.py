@@ -117,8 +117,7 @@ def _deserialize_notes(data: list[dict] | None):
     return notes_from_json(data)
 
 
-def _generate_doc(req: GenerateRequest) -> dict:
-    s, e = _parse_range(req.start, req.end)
+def _engine_kwargs(req: GenerateRequest) -> dict:
     kwargs: dict = {}
     profiles = _deserialize_profiles(req.profiles)
     if profiles is not None:
@@ -128,7 +127,12 @@ def _generate_doc(req: GenerateRequest) -> dict:
         kwargs["notes"] = notes
     if req.overrides is not None:
         kwargs["overrides"] = req.overrides
-    return generate(s, e, **kwargs)
+    return kwargs
+
+
+def _generate_doc(req: GenerateRequest) -> dict:
+    s, e = _parse_range(req.start, req.end)
+    return generate(s, e, **_engine_kwargs(req))
 
 
 def _resolve_doc(req: RenderHtmlRequest) -> dict:
@@ -186,6 +190,19 @@ def health() -> dict:
 @app.post("/generate", dependencies=[Depends(require_auth)])
 def post_generate(req: GenerateRequest) -> dict:
     doc = _generate_doc(req)
+    return {**doc, "engine_version": engine_version()}
+
+
+@app.post("/highlights", dependencies=[Depends(require_auth)])
+def post_highlights(req: GenerateRequest) -> dict:
+    """Shabbos & Yom Tov highlights (candle lighting / ends / fasts) per week
+    in range — the data behind the public banner widget and the Shabbos
+    signage screen. Same pass-through contract as /generate: the engine
+    computes everything (see engine/highlights.py)."""
+    from engine.highlights import highlights
+
+    s, e = _parse_range(req.start, req.end)
+    doc = highlights(s, e, **_engine_kwargs(req))
     return {**doc, "engine_version": engine_version()}
 
 

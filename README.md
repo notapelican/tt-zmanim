@@ -53,6 +53,10 @@ See `WARPLAN.md` for the full plan and phase gates.
     always win), `NoteTemplate`, `Timesheet`.
   - `assemble.py` — `generate(start, end)`: combines zmanim + luach + rules into
     plain-data week/day blocks (no layout/styling; see RENDERER-CONTRACT.md).
+  - `highlights.py` — per-week Shabbos/Yom Tov headline times (candle lighting,
+    Shabbos/YT ends, fast begin/end) extracted from the assembled blocks for the
+    public banner widget and the piSignage Shabbos screen; served by the
+    service's `/highlights` endpoint.
   - `validate.py` / `validate_luach.py` / `validate_rules.py` — golden regressions
     against all 27 fixtures (Phase 1 zmanim: 782/895 exact with every residual
     triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 777/861 with every

@@ -182,6 +182,22 @@ class TTCC_Zmanim_Service_Client {
 		return $payload;
 	}
 
+	/**
+	 * POST /highlights — Shabbos & Yom Tov headline times (candle lighting /
+	 * ends / fasts) per week in range. Same engine pass-through contract as
+	 * /generate. Returns array{weeks:[...], engine_version} or WP_Error.
+	 */
+	public static function highlights( $start, $end, $profiles = null, $notes = null ) {
+		$payload = array( 'start' => $start, 'end' => $end );
+		if ( null !== $profiles ) {
+			$payload['profiles'] = $profiles;
+		}
+		if ( null !== $notes ) {
+			$payload['notes'] = $notes;
+		}
+		return self::post_json( '/highlights', $payload );
+	}
+
 	/** POST /render/html with a pre-generated doc. Returns array{html, engine_version} or WP_Error. */
 	public static function render_html_doc( $doc, $variant = 'print', $design = null ) {
 		return self::post_json( '/render/html', self::render_payload( $doc, $variant, $design ) );

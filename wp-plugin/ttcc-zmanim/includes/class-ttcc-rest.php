@@ -24,6 +24,21 @@ class TTCC_Zmanim_REST {
 			'permission_callback' => $perm,
 		) );
 
+		// Public (read-only, server-cached): the Shabbos & Yom Tov highlights
+		// consumed by the [ttcc_shabbos] widget and the Shabbos signage screen.
+		register_rest_route( self::NS, '/shabbos-times', array(
+			'methods'             => 'GET',
+			'callback'            => array( 'TTCC_Zmanim_Shabbos', 'rest_week' ),
+			'permission_callback' => '__return_true',
+			'args'                => array(
+				'week' => array(
+					'description' => __( 'Any date (YYYY-MM-DD) inside the wanted week; defaults to the current week.', 'ttcc-zmanim' ),
+					'type'        => 'string',
+					'required'    => false,
+				),
+			),
+		) );
+
 		register_rest_route( self::NS, '/preview', array(
 			'methods'             => 'POST',
 			'callback'            => array( $this, 'preview' ),

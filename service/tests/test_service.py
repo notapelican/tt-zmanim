@@ -156,8 +156,57 @@ def test_render_whatsapp():
         assert dropped not in text, dropped
 
 
+def test_highlights_parity():
+    """/highlights == direct highlights() (pass-through), and the headline
+    times agree with the assembled sheet for the same week: candle lighting
+    is the sheet's z_candles_fri line, Shabbos-ends is the motzaei zman the
+    motzaei_maariv rule anchors on."""
+    from engine.highlights import highlights
+    from engine.zmanim import ZmanimEngine
+
+    direct = _norm(highlights(date.fromisoformat(START), date.fromisoformat(END)))
+    r = client.post("/highlights", json={"start": START, "end": END}, headers=AUTH)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body.pop("engine_version")
+    assert body == direct
+
+    week = body["weeks"][0]
+    doc = generate(date.fromisoformat(START), date.fromisoformat(END))
+    sheet = doc["blocks"][0]
+    sheet_candles = next(e for e in sheet["entries"] if e["rule_id"] == "z_candles_fri")
+    wid_candles = next(i for i in week["items"] if i["kind"] == "candles")
+    assert wid_candles["time"] == sheet_candles["time"]
+    assert wid_candles["date"] == sheet_candles["date"]
+
+    ends = next(i for i in week["items"] if i["kind"] == "ends")
+    engine = ZmanimEngine()
+    tz = engine.tzeis_shabbos(date.fromisoformat(sheet["shabbos"]), "nearest")
+    assert ends["time"] == f"{tz.hour:02d}:{tz.minute:02d}"
+    # ... which is exactly the motzaei_maariv rule's time on the sheet.
+    motzaei = next(e for e in sheet["entries"] if e["rule_id"] == "motzaei_maariv")
+    assert ends["time"] == motzaei["time"]
+
+    assert week["parsha"] == sheet["parsha"]
+    assert week["hebrew_dates"] == sheet["hebrew_dates"]
+
+
+def test_highlights_override_flows_through():
+    """A dashboard override on the candle-lighting line reaches /highlights
+    (the widget can never disagree with an edited sheet)."""
+    ov = {"z_candles_fri": {"time": "19:15"}}
+    r = client.post(
+        "/highlights", json={"start": START, "end": END, "overrides": ov}, headers=AUTH
+    )
+    assert r.status_code == 200, r.text
+    week = r.json()["weeks"][0]
+    candles = next(i for i in week["items"] if i["kind"] == "candles")
+    assert candles["time"] == "19:15"
+
+
 def test_auth_required():
     assert client.post("/generate", json={"start": START, "end": END}).status_code == 401
+    assert client.post("/highlights", json={"start": START, "end": END}).status_code == 401
     bad = {"Authorization": "Bearer wrong"}
     assert client.post("/generate", json={"start": START, "end": END}, headers=bad).status_code == 401
 

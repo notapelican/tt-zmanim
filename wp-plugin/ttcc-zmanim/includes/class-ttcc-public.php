@@ -21,6 +21,7 @@ class TTCC_Zmanim_Public {
 		add_action( 'template_redirect', array( $this, 'maybe_render_signage' ) );
 		add_shortcode( 'ttcc_week', array( $this, 'shortcode_week' ) );
 		add_shortcode( 'ttcc_browse', array( $this, 'shortcode_browse' ) );
+		add_shortcode( 'ttcc_shabbos', array( 'TTCC_Zmanim_Shabbos', 'shortcode_widget' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
@@ -30,12 +31,15 @@ class TTCC_Zmanim_Public {
 	}
 
 	public static function add_rewrite_rules() {
+		// The /shabbos variant must register before the generic slug rule.
+		add_rewrite_rule( '^ttcc-signage/([^/]+)/shabbos/?$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=shabbos', 'top' );
 		add_rewrite_rule( '^ttcc-signage/([^/]+)/?$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]', 'top' );
 	}
 
 	public function query_vars( $vars ) {
 		$vars[] = 'ttcc_signage';
 		$vars[] = 'ttcc_slug';
+		$vars[] = 'ttcc_view';
 		return $vars;
 	}
 
@@ -148,6 +152,15 @@ class TTCC_Zmanim_Public {
 		if ( ! $want || ! hash_equals( $want, $slug ) ) {
 			status_header( 404 );
 			nocache_headers();
+			exit;
+		}
+
+		// /ttcc-signage/<slug>/shabbos/ — the Shabbos & Yom Tov screen
+		// (portrait, large-type, self-refreshing; see TTCC_Zmanim_Shabbos).
+		if ( 'shabbos' === (string) get_query_var( 'ttcc_view' ) ) {
+			nocache_headers();
+			header( 'Content-Type: text/html; charset=utf-8' );
+			TTCC_Zmanim_Shabbos::render_signage_screen();
 			exit;
 		}
 
