@@ -29,7 +29,20 @@ computes or re-rounds a time. See the plan record and `../../WARPLAN.md` §4.
 - **Public surfaces**:
   - `[ttcc_week]` — current-week widget (auto-rolls), embeddable on any Elementor page.
   - `[ttcc_browse]` — browse any week (read-only; editing stays in wp-admin).
+  - `[ttcc_shabbos]` — Shabbos & Yom Tov times banner (candle lighting,
+    Shabbos/Yom Tov ends, fast begin/end) with Prev / This Week / Next /
+    jump-to-date navigation. Attributes: `location="Bondi · Sydney NSW"`,
+    `footer="..."`, `nav="no"` (hide the navigation). Data comes from the
+    engine's `/highlights` endpoint — the identical assembled times as the
+    printed sheet, never Hebcal or a client-side calculation.
   - piSignage page at `/ttcc-signage/<slug>/` — current week, large-type, auto-refresh.
+  - piSignage Shabbos screen at `/ttcc-signage/<slug>/shabbos/` — portrait
+    (1080×1920-first) large-type screen with the same highlights data plus a
+    live clock (site timezone). Non-interactive; re-fetches every 3 hours,
+    retries every 5 minutes after a failure, and keeps the last-good times on
+    screen through an outage. Both URLs show on the Settings page.
+  - `GET /wp-json/ttcc/v1/shabbos-times[?week=YYYY-MM-DD]` — the public
+    read-only JSON behind both (server-cached per week, ±2-year window).
 - **Exports**: PDF, PNG (3:4 portrait social), optional .docx — streamed from the service.
 
 ## Install

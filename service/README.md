@@ -16,6 +16,7 @@ All require `Authorization: Bearer <TTCC_SERVICE_TOKEN>` except `/health`.
 |---|---|---|---|
 | GET | `/health` | — | `{status, engine_version, chromium}` |
 | POST | `/generate` | `{start, end, profiles?, notes?, overrides?}` | block dict + `engine_version` |
+| POST | `/highlights` | same as `/generate` | `{weeks:[…], engine_version}` — per-week Shabbos/YT headline times (candles, ends, fasts) for the public widget & Shabbos signage screen |
 | POST | `/render/html` | `{start,end,…}` **or** `{doc}` (+`variant?`) | `{html, engine_version}` |
 | POST | `/render/pdf` | same as render/html | `application/pdf` |
 | POST | `/render/png` | same (+`variant:"portrait"`) | `image/png` (3:4 social) |

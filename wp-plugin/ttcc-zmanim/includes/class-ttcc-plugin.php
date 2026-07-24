@@ -30,6 +30,17 @@ class TTCC_Zmanim_Plugin {
 
 		$rest = new TTCC_Zmanim_REST();
 		add_action( 'rest_api_init', array( $rest, 'register_routes' ) );
+
+		// Flush rewrites once per plugin version so rules added in an update
+		// (e.g. the /shabbos signage variant) work without a re-activation.
+		add_action( 'init', array( __CLASS__, 'maybe_flush_rewrites' ), 20 );
+	}
+
+	public static function maybe_flush_rewrites() {
+		if ( get_option( 'ttcc_zmanim_rewrites' ) !== TTCC_ZMANIM_VERSION ) {
+			flush_rewrite_rules();
+			update_option( 'ttcc_zmanim_rewrites', TTCC_ZMANIM_VERSION, false );
+		}
 	}
 
 	public static function activate() {
