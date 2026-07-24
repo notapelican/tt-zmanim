@@ -81,10 +81,12 @@ _SHABBOS_DAY_RULE_PRIORITY = {
 
 
 def _fmt_ampm(hhmm: str) -> str:
+    """'17:37' -> '5:37pm'. Any text after the HH:MM (e.g. a special-day
+    decoration like ' (Eicha & Kinos on Wed. after Maariv)') is preserved."""
     h, m = int(hhmm[:2]), int(hhmm[3:5])
     ampm = "am" if h < 12 else "pm"
     h12 = h % 12 or 12
-    return f"{h12}:{m:02d}{ampm}"
+    return f"{h12}:{m:02d}{ampm}{hhmm[5:]}"
 
 
 # House month style: short names in full (May, June, July), the rest
