@@ -331,7 +331,11 @@
 	 * sheets) still apply sheet-wide; the first edit migrates them to the block.
 	 */
 	function lineRow( entry, bkey ) {
-		var rid = entry.rule_id;
+		// Defensive: the contract says rule_id is never null, but if a line
+		// arrives without one (older service), render it read-only rather
+		// than letting an exception blank the whole editor.
+		var rid = entry.rule_id || '';
+		var editable = '' !== rid;
 		var okey = bkey + '|' + rid;
 		function readOv() { return state.overrides.lines[ okey ] || state.overrides.lines[ rid ] || {}; }
 		function writeOv( v ) {
@@ -355,7 +359,7 @@
 		var timeInput = el( 'input', 'time' );
 		timeInput.type = 'time';
 		timeInput.value = entry.time || '';
-		timeInput.disabled = ( 'zman' === entry.kind ); // astronomical times are not editable
+		timeInput.disabled = ( 'zman' === entry.kind ) || ! editable; // astronomical times are not editable
 		row.appendChild( timeInput );
 
 		var acts = el( 'div', 'acts' );
@@ -378,7 +382,7 @@
 		} );
 
 		var isAdded = ( 0 === rid.indexOf( 'add:' ) );
-		if ( 'zman' !== entry.kind ) {
+		if ( 'zman' !== entry.kind && editable ) {
 			// Rule lines toggle suppress/restore; manually added lines are simply
 			// deleted (there is no calculated line to restore behind them).
 			var supBtn = el( 'button', 'button button-small', isAdded ? 'Delete' : ( ov.suppress ? 'Restore' : 'Remove' ) );

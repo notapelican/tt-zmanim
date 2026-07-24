@@ -19,8 +19,8 @@ import html as _html
 from datetime import date as _date
 
 from .render_docx import (EARLY_ES, KEY_TIMES, SHABBOS_DAY,
-                          _SHABBOS_DAY_RULE_PRIORITY, WEEKDAY, _fmt_ampm,
-                          _fmt_civil_date, _fmt_civil_range,
+                          _SHABBOS_DAY_RULE_PRIORITY, WEEKDAY, _fast_box_text,
+                          _fmt_ampm, _fmt_civil_date, _fmt_civil_range,
                           _join_dayspec_group, _partition_week_entries)
 
 # --- merge logic: block entries -> (label, value, bullet) lines -------------
@@ -103,15 +103,7 @@ def week_items(block: dict, *, notes_inline: bool) -> list[tuple]:
     zmanim, fast_runs, named, named_order = _partition_week_entries(block["entries"])
     _emit_lines(items, zmanim, kind="zman", dayspec_before_leader=True)
     for run in fast_runs:
-        s, e = run[0], run[1]
-        title = run[0]["section"]
-        if s["day_spec"] == e["day_spec"]:
-            txt = (f"{title} ({s['day_spec']}): starts at {_fmt_ampm(s['time'])}; "
-                   f"ends at {_fmt_ampm(e['time'])}.")
-        else:
-            txt = (f"{title}: starts {s['day_spec']} at {_fmt_ampm(s['time'])}; "
-                   f"ends {e['day_spec']} at {_fmt_ampm(e['time'])}.")
-        items.append(("fastbox", txt))
+        items.append(("fastbox", _fast_box_text(run)))
     if notes_inline:
         for n in block.get("notes", []):
             items.append(("note", n))

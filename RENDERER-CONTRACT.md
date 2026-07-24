@@ -55,7 +55,9 @@ weeks in a two-column layout; day blocks render as boxed day-by-day schedules
   "rule_id": "es_kabbolas_shabbos",  // stable id; the dashboard keys manual
                                      // overrides on it. null never occurs;
                                      // zman lines use "z_*" ids, manual
-                                     // additions "add:*"
+                                     // additions "add:*", fast lines
+                                     // "fast_start_<date>"/"fast_end_<date>"
+                                     // (keyed by the fast's civil date)
   "section": "Erev Shabbos regular times: candle lighting and davening",
                                      // printed section heading; null = the
                                      // week-top zmanim table (no heading)
