@@ -331,6 +331,25 @@ def _fast_section_title(entries) -> str:
     return entries[0]["section"]
 
 
+def _fast_box_text(run) -> str:
+    """Fast-box sentence for a start/end run. Handles a single surviving line
+    (the other half suppressed via a dashboard override) without assuming a
+    pair. Shared by the docx and HTML renderers."""
+    title = _fast_section_title(run)
+    if len(run) == 1:
+        e = run[0]
+        verb = "starts" if e["label"].lower().startswith("fast start") else "ends"
+        return f"{title}: {verb} {e['day_spec']} at {_fmt_ampm(e['time'])}."
+    start, end = run[0], run[1]
+    # Same-day fast prints "(Thurs.) starts at ...; ends at ..." per the
+    # sheets; a fast spanning days names each day.
+    if start["day_spec"] == end["day_spec"]:
+        return (f"{title} ({start['day_spec']}): starts at "
+                f"{_fmt_ampm(start['time'])}; ends at {_fmt_ampm(end['time'])}.")
+    return (f"{title}: starts {start['day_spec']} at {_fmt_ampm(start['time'])}; "
+            f"ends {end['day_spec']} at {_fmt_ampm(end['time'])}.")
+
+
 def _partition_week_entries(entries):
     """Group entries by section, in the canonical print order (see
     _SECTION_PRIORITY), splitting out kind=='fast' runs as their own boxes."""
@@ -385,17 +404,7 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
         _render_label_run(container, [e], width, dayspec_before_leader=True, size=size)
 
     for run in fast_runs:
-        start, end = run[0], run[1]
-        title = _fast_section_title(run)
-        # Same-day fast prints "(Thurs.) starts at ...; ends at ..." per the
-        # sheets; a fast spanning days names each day.
-        if start["day_spec"] == end["day_spec"]:
-            text = (f"{title} ({start['day_spec']}): starts at "
-                    f"{_fmt_ampm(start['time'])}; ends at {_fmt_ampm(end['time'])}.")
-        else:
-            text = (f"{title}: starts {start['day_spec']} at {_fmt_ampm(start['time'])}; "
-                    f"ends {end['day_spec']} at {_fmt_ampm(end['time'])}.")
-        _fast_box(container, text, width, size=size)
+        _fast_box(container, _fast_box_text(run), width, size=size)
 
     if notes_inline and block.get("notes"):
         for n in block["notes"]:

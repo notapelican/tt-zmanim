@@ -147,12 +147,17 @@ def _fast_entries(sunday: date, shabbos: date, engine: ZmanimEngine) -> list[dic
                 start_d = d
                 start = engine.alos(d, "floor")
             end = engine.tzeis(d, "ceil")
+            # Stable ids (keyed by the fast's date) so the dashboard can
+            # override/suppress fast lines like any other line — the renderer
+            # contract guarantees rule_id is never null.
             out.append(_zman_line("Fast start", _fmt(start), sec, kind="fast",
                                   date_iso=start_d.isoformat(),
-                                  day_spec=_WD_ABBR[start_d.weekday()]))
+                                  day_spec=_WD_ABBR[start_d.weekday()],
+                                  rule_id=f"fast_start_{d.isoformat()}"))
             out.append(_zman_line("Fast end", _fmt(end), sec, kind="fast",
                                   date_iso=d.isoformat(),
-                                  day_spec=_WD_ABBR[d.weekday()]))
+                                  day_spec=_WD_ABBR[d.weekday()],
+                                  rule_id=f"fast_end_{d.isoformat()}"))
     return out
 
 
