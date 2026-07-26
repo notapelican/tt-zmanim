@@ -70,12 +70,26 @@ sheet themselves — no wp-admin login, no styling decisions:
    change a minyan time, hide a line (it moves to "Hidden lines" so it can come
    back), add a line — with or without a time — and add or hide notes.
    Astronomical times stay read-only.
-4. **Download PDF**, **WhatsApp image** (the printed sheet on a square 1:1
+4. Above the preview, **Sheet / Square 1:1 / Tall 3:4** switches what is on
+   screen. The two image views show the *actual rendered PNG* the download
+   gives, so a sheet can be checked in its share shape before it goes out.
+5. **Download PDF**, **WhatsApp image** (the printed sheet on a square 1:1
    canvas, ready to send), **WhatsApp
    text** (with Copy and "Open in WhatsApp"), or **Tall image** (3:4 for social).
    When a range fills more than one printed sheet — a yom-tov fortnight, say —
    the page says so: the square image covers the first sheet, the PDF has all
    of them.
+
+A block that cannot fill its page — a light week, or `Fixed size` sizing — is
+centred on it, so the leftover paper is shared between head and foot instead of
+sitting under the sheet. Sheets on this page always **fill their page**: the design comes from the house
+preset, but content sizing is forced to Fill, so the block is scaled up
+uniformly — same fonts, same proportions — until it reaches the page. A preset
+saved in `Fixed size` mode would otherwise print at its base font size and end
+halfway down, which reads as dead paper on the PDF and a half-empty WhatsApp
+image. (The dashboard keeps its Fixed option for an operator who wants it.)
+The preview box also trims whatever paper is left, so it hugs the sheet and its
+border.
 
 The page never writes to the archive: edits made there are for that one sheet
 and vanish on reload. Any corrections **you** saved in the dashboard for those

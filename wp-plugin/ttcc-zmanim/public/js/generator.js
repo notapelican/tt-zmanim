@@ -21,6 +21,12 @@
 	var FIT_MIN = 260, FIT_MAX = 900;
 	var DEBOUNCE_MS = 400;
 
+	// Share-image canvases, in the service's own units (see service/raster.py —
+	// _SQUARE and _PORTRAIT_W/H). Only used to reserve the right aspect box while
+	// the picture loads; the picture itself is the service's real render.
+	var CANVAS = { square: [ 1080, 1080 ], portrait: [ 1080, 1440 ] };
+	var PAGE_GAP = 10;             // gap decorate() puts between stacked pages
+
 	function el( tag, cls, text ) {
 		var n = document.createElement( tag );
 		if ( cls ) { n.className = cls; }
@@ -67,6 +73,8 @@
 			doc: null,
 			busy: 0,
 			editing: false,
+			view: 'sheet',       // 'sheet' | 'square' | 'portrait'
+			images: {},          // cache key -> object URL of a rendered share image
 			zoom: { mode: 'fit', scale: 1 }
 		};
 
@@ -83,6 +91,7 @@
 			reset: q( '[data-role="reset"]' ),
 			frame: q( '[data-role="frame"]' ),
 			preview: q( '[data-role="preview"]' ),
+			image: q( '[data-role="image"]' ),
 			zoomVal: q( '[data-role="zoom-val"]' ),
 			engine: q( '[data-role="engine"]' ),
 			pagesNote: q( '[data-role="pages-note"]' ),
@@ -229,13 +238,50 @@
 			}
 		}
 
-		function contentHeight() {
+		/**
+		 * Sheet-view geometry: the stacked pages' full height, the height to show
+		 * once the last page's unused paper is trimmed, and how far to lift the
+		 * document so the box hugs the sheet at the head too.
+		 *
+		 * The page centres a block that cannot fill it, so the leftover paper is
+		 * split above and below. Cropping only the foot would leave a lopsided gap
+		 * at the head, so with a single page (the usual case) the document rides up
+		 * by the top half. A multi-page stack cannot ride up — the crop would land
+		 * mid-document — so there the head keeps its share.
+		 */
+		function sheetMetrics() {
 			var doc = frameDoc();
-			if ( ! doc ) { return Math.round( PAGE_W * 297 / 210 ); }
-			return Math.max(
-				doc.documentElement ? doc.documentElement.scrollHeight : 0,
-				doc.body ? doc.body.scrollHeight : 0
-			) + 2;
+			var a4 = Math.round( PAGE_W * 297 / 210 );
+			if ( ! doc ) { return { full: a4, height: a4, shift: 0 }; }
+			var pages = doc.querySelectorAll( '.page' );
+			// Sum the page boxes rather than reading scrollHeight: the iframe's own
+			// height is set from this number, and the document is at least as tall
+			// as its viewport — measuring it back would ratchet upwards on every fit.
+			var full = 0, i;
+			for ( i = 0; i < pages.length; i++ ) { full += pages[ i ].offsetHeight; }
+			full += PAGE_GAP * Math.max( 0, pages.length - 1 );   // decorate()'s separation
+			if ( ! full ) {
+				full = Math.max(
+					doc.documentElement ? doc.documentElement.scrollHeight : 0,
+					doc.body ? doc.body.scrollHeight : 0
+				);
+			}
+			var last = pages.length ? pages[ pages.length - 1 ] : null;
+			var margin = last ? last.querySelector( '.page-margin' ) : null;
+			var content = last ? last.querySelector( '.page-content' ) : null;
+			if ( ! last || ! margin || ! content ) { return { full: full, height: full, shift: 0 }; }
+
+			// .page-margin is inset equally on all four sides, so its offsetTop is
+			// the print border. .page-content carries the fit transform, hence its
+			// client rect: the gap between the two tops is the centring slack.
+			var mRect = margin.getBoundingClientRect();
+			var cRect = content.getBoundingClientRect();
+			var border = margin.offsetTop;
+			var offset = Math.max( 0, Math.round( cRect.top - mRect.top ) );
+			var used = border + offset + Math.round( cRect.height ) + border;
+			var trim = Math.max( 0, last.offsetHeight - used );
+			var shift = ( 1 === pages.length ) ? offset : 0;
+			return { full: full, height: Math.max( 240, full - trim - shift ), shift: shift };
 		}
 
 		/** Stack the A4 pages with a little separation; no inner scrollbars. */
@@ -249,28 +295,44 @@
 				doc.head.appendChild( st );
 			}
 			st.textContent = 'html,body{overflow:hidden!important;background:#fff;}' +
-				'.page{margin:0 auto 10px;box-shadow:0 0 0 1px rgba(20,29,51,.10);}' +
+				'.page{margin:0 auto ' + PAGE_GAP + 'px;box-shadow:0 0 0 1px rgba(20,29,51,.10);}' +
 				'.page:last-child{margin-bottom:0;}';
 		}
 
-		function scale() {
+		/** Natural pixel size of whatever the pane is showing. */
+		function naturalSize( metrics ) {
+			if ( 'square' === state.view ) { return { w: CANVAS.square[0], h: CANVAS.square[1] }; }
+			if ( 'portrait' === state.view ) { return { w: CANVAS.portrait[0], h: CANVAS.portrait[1] }; }
+			return { w: PAGE_W, h: ( metrics || sheetMetrics() ).height };
+		}
+
+		function scale( nat ) {
+			nat = nat || naturalSize();
 			if ( 'fit' !== state.zoom.mode ) { return state.zoom.scale; }
 			var pane = ui.frame.parentNode;
-			var avail = ( ( pane && ( pane.clientWidth || pane.offsetWidth ) ) || PAGE_W ) - 4;
+			var avail = ( ( pane && ( pane.clientWidth || pane.offsetWidth ) ) || nat.w ) - 4;
 			// Never wider than the pane: on a phone the pane is narrower than
-			// FIT_MIN, and a floor there would clip the sheet's right edge.
+			// FIT_MIN, and a floor there would clip the right edge.
 			var target = Math.min( avail, Math.max( FIT_MIN, Math.min( FIT_MAX, avail ) ) );
-			return Math.max( 0.2, target / PAGE_W );
+			return Math.max( 0.15, target / nat.w );
 		}
 
 		function fit() {
-			var s = scale(), h = contentHeight();
-			ui.preview.style.width = PAGE_W + 'px';
-			ui.preview.style.height = h + 'px';
-			ui.preview.style.transformOrigin = 'top left';
-			ui.preview.style.transform = 'scale(' + s + ')';
-			ui.frame.style.width = Math.ceil( PAGE_W * s ) + 'px';
-			ui.frame.style.height = Math.ceil( h * s ) + 'px';
+			var metrics = ( 'sheet' === state.view ) ? sheetMetrics() : null;
+			var nat = naturalSize( metrics ), s = scale( nat );
+			if ( metrics ) {
+				// The iframe holds the whole document (so nothing scrolls inside it)
+				// and is lifted under the frame's crop.
+				ui.preview.style.width = nat.w + 'px';
+				ui.preview.style.height = metrics.full + 'px';
+				ui.preview.style.transformOrigin = 'top left';
+				ui.preview.style.transform = 'scale(' + s + ')';
+				ui.preview.style.marginTop = ( -metrics.shift * s ) + 'px';
+			}
+			// floor, not ceil: a sub-pixel overshoot would put a scrollbar under a
+			// preview that is meant to be exactly fitted.
+			ui.frame.style.width = Math.floor( nat.w * s ) + 'px';
+			ui.frame.style.height = Math.floor( nat.h * s ) + 'px';
 			ui.zoomVal.textContent = Math.round( s * 100 ) + '%';
 		}
 
@@ -296,6 +358,94 @@
 			ui.preview.srcdoc = html;
 		}
 
+		// --- share-image views -----------------------------------------------
+		// "Sheet" previews the printed page in an iframe; the other two show the
+		// ACTUAL rendered PNG the download would give, fetched through the same
+		// export handler — so what is on screen is what gets sent. Renders are
+		// cached per sheet+shape for the session, and dropped whenever the sheet
+		// changes, so switching back and forth costs nothing.
+
+		function imageKey( variant ) { return variant + '|' + JSON.stringify( payload() ); }
+
+		function dropImages() {
+			Object.keys( state.images ).forEach( function ( key ) {
+				try { URL.revokeObjectURL( state.images[ key ] ); } catch ( e ) { /* already gone */ }
+			} );
+			state.images = {};
+		}
+
+		/** wp_die() answers with an HTML page; show its words, not its markup. */
+		function plainError( html ) {
+			var text = String( html || '' ).replace( /<[^>]*>/g, ' ' ).replace( /\s+/g, ' ' ).trim();
+			return text.slice( 0, 160 );
+		}
+
+		function exportFields( kind, variant, inline ) {
+			var fields = {
+				action: cfg.exportAction,
+				kind: kind,
+				variant: variant || '',
+				start: state.start,
+				weeks: String( state.weeks ),
+				template: state.template,
+				overrides: JSON.stringify( payload().overrides )
+			};
+			if ( inline ) { fields.inline = '1'; }
+			if ( cfg.exportNonce ) { fields._wpnonce = cfg.exportNonce; }
+			return fields;
+		}
+
+		function showImage( variant ) {
+			var key = imageKey( variant );
+			if ( state.images[ key ] ) {
+				ui.image.src = state.images[ key ];
+				fit();
+				return;
+			}
+			var form = new FormData();
+			var fields = exportFields( 'png', variant, true );
+			Object.keys( fields ).forEach( function ( name ) { form.append( name, fields[ name ] ); } );
+
+			setBusy( true, cfg.i18n.buildingImage );
+			fetch( cfg.ajaxUrl, { method: 'POST', body: form, credentials: 'same-origin' } )
+				.then( function ( res ) {
+					var type = res.headers.get( 'Content-Type' ) || '';
+					if ( ! res.ok || 0 !== type.indexOf( 'image/' ) ) {
+						return res.text().then( function ( body ) {
+							var err = new Error( plainError( body ) || ( 'HTTP ' + res.status ) );
+							err.status = res.status;
+							throw err;
+						} );
+					}
+					return res.blob();
+				} )
+				.then( function ( blob ) {
+					setBusy( false );
+					if ( state.view !== variant ) { return; }   // switched away meanwhile
+					state.images[ key ] = URL.createObjectURL( blob );
+					ui.image.src = state.images[ key ];
+					clearFail();
+					fit();
+				} )
+				.catch( function ( e ) {
+					setBusy( false );
+					fail( ( 429 === e.status ? cfg.i18n.throttled : cfg.i18n.imageFailed ) + ' ' + e.message );
+					setView( 'sheet' );
+				} );
+		}
+
+		function setView( view ) {
+			state.view = view;
+			qa( '[data-view]' ).forEach( function ( b ) {
+				b.setAttribute( 'aria-pressed', String( b.dataset.view === view ) );
+			} );
+			var sheet = ( 'sheet' === view );
+			ui.preview.hidden = ! sheet;
+			ui.image.hidden = sheet;
+			if ( ! sheet ) { showImage( view ); } else { ui.image.removeAttribute( 'src' ); }
+			fit();
+		}
+
 		var refreshTimer = null;
 		function scheduleRefresh( rebuild ) {
 			clearTimeout( refreshTimer );
@@ -313,7 +463,10 @@
 				clearFail();
 				state.doc = data.doc;
 				rememberOriginalNotes( data.doc );
+				// The sheet moved, so every cached share image is stale.
+				dropImages();
 				showHtml( data.html );
+				if ( 'sheet' !== state.view ) { showImage( state.view ); }
 				if ( rebuildEditor ) { buildEditor(); }
 				ui.engine.textContent = data.engine_version ? ( 'engine ' + data.engine_version ) : '';
 				setBusy( false );
@@ -782,16 +935,7 @@
 			// a successful download closes the tab on its own.
 			form.target = '_blank';
 			form.style.display = 'none';
-			var fields = {
-				action: cfg.exportAction,
-				kind: kind,
-				variant: variant || '',
-				start: state.start,
-				weeks: String( state.weeks ),
-				template: state.template,
-				overrides: JSON.stringify( state.overrides )
-			};
-			if ( cfg.exportNonce ) { fields._wpnonce = cfg.exportNonce; }
+			var fields = exportFields( kind, variant, false );
 			Object.keys( fields ).forEach( function ( name ) {
 				var input = document.createElement( 'input' );
 				input.type = 'hidden';
@@ -909,6 +1053,14 @@
 		q( '[data-role="wa-show"]' ).addEventListener( 'click', showWhatsApp );
 		q( '[data-role="wa-copy"]' ).addEventListener( 'click', copyWhatsApp );
 		q( '[data-role="wa-close"]' ).addEventListener( 'click', function () { ui.wa.hidden = true; } );
+
+		qa( '[data-view]' ).forEach( function ( b ) {
+			b.addEventListener( 'click', function () {
+				if ( b.dataset.view === state.view ) { return; }
+				state.zoom.mode = 'fit';       // a new shape starts fitted
+				setView( b.dataset.view );
+			} );
+		} );
 
 		qa( '[data-zoom]' ).forEach( function ( b ) {
 			b.addEventListener( 'click', function () {
