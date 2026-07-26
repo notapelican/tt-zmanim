@@ -258,6 +258,10 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .single { font-size:11pt; }
 .single .hdr-title { font-size:18pt; }
 .single .hdr-sub { font-size:12pt; }
+/* On a single-week sheet the marker sat at full body size, which read as loud
+   next to the 18pt masthead; half size matches the printed sheets. A Settings
+   בס״ד size still wins — the service injects it after this stylesheet. */
+.single .bsd { font-size:0.5em; }
 .multi { font-size:8.5pt; }
 .multi .hdr-title { font-size:17pt; }
 .multi .hdr-sub { font-size:11.5pt; text-align:left; }
