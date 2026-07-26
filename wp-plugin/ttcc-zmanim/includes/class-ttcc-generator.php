@@ -565,6 +565,13 @@ class TTCC_Zmanim_Generator {
 	 * The house design: the default style preset if one is set, else the Settings
 	 * defaults. The visitor only chooses the template (classic/modern) — no
 	 * design field ever comes from the request.
+	 *
+	 * Content sizing is always "fill", whatever the preset says. In "fixed" mode
+	 * the sheet prints at its base font size and only shrinks, so a light week
+	 * ends halfway down the page — dead paper on the PDF and a mostly-empty
+	 * WhatsApp image. Filling scales the whole block uniformly, so the design's
+	 * proportions are untouched; it just grows to the page. The dashboard keeps
+	 * its Fixed option for an operator who wants it.
 	 */
 	private static function house_design( $template ) {
 		$presets = TTCC_Zmanim_Storage::get_presets();
@@ -573,7 +580,10 @@ class TTCC_Zmanim_Generator {
 			? $presets['items'][ $name ]['design']
 			: TTCC_Zmanim_Settings::design_defaults();
 
-		return array( 'template' => $template ) + TTCC_Zmanim_Sheet::sanitize_design( is_array( $design ) ? $design : array() );
+		$design = TTCC_Zmanim_Sheet::sanitize_design( is_array( $design ) ? $design : array() );
+		$design['fit_mode'] = 'fill';
+
+		return array( 'template' => $template ) + $design;
 	}
 
 	// --- request validation ---------------------------------------------------

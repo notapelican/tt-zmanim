@@ -80,12 +80,14 @@ sheet themselves — no wp-admin login, no styling decisions:
    the page says so: the square image covers the first sheet, the PDF has all
    of them.
 
-The sheet preview trims the page's unused paper so the box hugs the sheet and
-its border — if a lot of white shows up inside the *share images*, the house
-design is in `Fixed size` mode: the sheet is drawn at its base font size instead
-of growing to fill the page. Switch the Content sizing to **Fill page** in the
-dashboard (and re-save the default preset) and both the sheet and the images
-fill out.
+Sheets on this page always **fill their page**: the design comes from the house
+preset, but content sizing is forced to Fill, so the block is scaled up
+uniformly — same fonts, same proportions — until it reaches the page. A preset
+saved in `Fixed size` mode would otherwise print at its base font size and end
+halfway down, which reads as dead paper on the PDF and a half-empty WhatsApp
+image. (The dashboard keeps its Fixed option for an operator who wants it.)
+The preview box also trims whatever paper is left, so it hugs the sheet and its
+border.
 
 The page never writes to the archive: edits made there are for that one sheet
 and vanish on reload. Any corrections **you** saved in the dashboard for those
