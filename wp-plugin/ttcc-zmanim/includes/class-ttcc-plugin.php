@@ -28,8 +28,13 @@ class TTCC_Zmanim_Plugin {
 		$public = new TTCC_Zmanim_Public();
 		$public->hooks();
 
+		// Front-end clergy generator ([ttcc_generator]) — its own public routes.
+		$generator = new TTCC_Zmanim_Generator();
+		$generator->hooks();
+
 		$rest = new TTCC_Zmanim_REST();
 		add_action( 'rest_api_init', array( $rest, 'register_routes' ) );
+		add_action( 'rest_api_init', array( $generator, 'register_routes' ) );
 
 		// Flush rewrites once per plugin version so rules added in an update
 		// (e.g. the /shabbos signage variant) work without a re-activation.

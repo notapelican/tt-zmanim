@@ -146,6 +146,31 @@ class TTCC_Zmanim_Storage {
 		return $row ? self::decode_timesheet( $row ) : null;
 	}
 
+	/**
+	 * Every saved timesheet whose range overlaps [$start, $end], oldest edit
+	 * first, so a caller merging their overrides lets the most recently saved
+	 * sheet win. Used by the front-end generator, which spans several weeks and
+	 * therefore several saved sheets (find_overlapping returns only one).
+	 */
+	public static function find_all_overlapping( $start, $end, $limit = 12 ) {
+		global $wpdb;
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM ' . self::timesheets_table() . '
+				 WHERE start_date <= %s AND end_date >= %s
+				 ORDER BY updated_at ASC, id ASC LIMIT %d',
+				$end,
+				$start,
+				$limit
+			),
+			ARRAY_A
+		);
+		if ( ! $rows ) {
+			return array();
+		}
+		return array_map( array( __CLASS__, 'decode_timesheet' ), $rows );
+	}
+
 	public static function delete_timesheet( $id ) {
 		global $wpdb;
 		return (bool) $wpdb->delete( self::timesheets_table(), array( 'id' => (int) $id ) );

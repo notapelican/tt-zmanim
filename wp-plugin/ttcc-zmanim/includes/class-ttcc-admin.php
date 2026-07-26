@@ -103,7 +103,9 @@ class TTCC_Zmanim_Admin {
 		if ( ! in_array( $kind, array( 'pdf', 'png', 'docx' ), true ) ) {
 			wp_die( esc_html__( 'Unknown export type.', 'ttcc-zmanim' ) );
 		}
-		$variant = ( isset( $_GET['variant'] ) && 'portrait' === $_GET['variant'] ) ? 'portrait' : 'print';
+		// Image share shapes: 'portrait' (3:4 social) and 'square' (1:1 WhatsApp).
+		$asked   = isset( $_GET['variant'] ) ? sanitize_key( wp_unslash( $_GET['variant'] ) ) : '';
+		$variant = in_array( $asked, array( 'portrait', 'square' ), true ) ? $asked : 'print';
 
 		$sheet_id = isset( $_GET['sheet'] ) ? (int) $_GET['sheet'] : 0;
 		if ( $sheet_id ) {
@@ -148,6 +150,10 @@ class TTCC_Zmanim_Admin {
 			) );
 		}
 
+		// PNGs come in two share shapes; name the file after the one exported.
+		if ( 'png' === $kind && 'print' !== $variant ) {
+			$basename .= '-' . $variant;
+		}
 		$ext  = ( 'docx' === $kind ) ? 'docx' : $kind;
 		$type = $result['content_type'] ? $result['content_type'] : 'application/octet-stream';
 

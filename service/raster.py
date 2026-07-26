@@ -71,6 +71,64 @@ _PORTRAIT_FIT_JS = """
 }
 """ % (_PORTRAIT_W, _PORTRAIT_H)
 
+# 1:1 WhatsApp canvas (emitted at 2x = 2160x2160). Square is the shape WhatsApp
+# shows whole — chat bubble, status and thumbnail alike — so the file is square
+# even though the sheet on it is not: the page keeps its A4 proportions and house
+# layout, exactly as printed, and is centred on the square with white around it.
+# (An earlier take re-shaped the page box into a square to win ~30% more type
+# size; it read as a different document, so the sheet's own shape wins.)
+#
+# The padding is the crop insurance: nothing sits within ~3% of the top/bottom
+# edge, and the letterbox bars leave ~17% clear at the sides, so a centre-ward
+# crop — or a circular avatar crop — only ever eats white.
+_SQUARE = 1080
+_SQUARE_PAD = 32
+
+# Layout only touches the page's own box model; the sheet's fit-to-page pass
+# (page_layout.FIT_JS) has already sized the content inside it by the time this
+# runs. Only the first page is rendered: two A4 pages side by side in one square
+# would each land near half size. The plugin counts the pages in the preview and
+# says so next to the button; the PDF carries all of them.
+_SQUARE_CSS = """
+<style id="ttcc-square">
+  html, body { margin:0 !important; padding:0 !important; background:#fff !important; }
+  body.sheet { width:auto !important; }
+  .page { margin:0 !important; box-shadow:none !important;
+          page-break-after:auto !important; break-after:auto !important; }
+  .page ~ .page { display:none !important; }
+</style>
+"""
+
+# Runs in-page after the sheet has settled: park the A4 page on a fixed square
+# canvas, scale it to fit the padded box (height-bound, since A4 is taller than
+# wide) and centre it. Uniform scale — the page's proportions never change.
+_SQUARE_FIT_JS = """
+() => {
+  const TW = %d, TH = %d, PAD = %d;
+  const stage = document.createElement('div');
+  stage.id = 'ttcc-stage';
+  stage.style.position = 'absolute';
+  stage.style.transformOrigin = 'top left';
+  while (document.body.firstChild) stage.appendChild(document.body.firstChild);
+  const canvas = document.createElement('div');
+  canvas.id = 'ttcc-canvas';
+  canvas.style.cssText =
+    'position:relative;width:' + TW + 'px;height:' + TH + 'px;overflow:hidden;background:#fff;';
+  canvas.appendChild(stage);
+  document.body.appendChild(canvas);
+  const page = stage.querySelector('.page');
+  const w = page ? page.offsetWidth : stage.scrollWidth;
+  const h = page ? page.offsetHeight : stage.scrollHeight;
+  const s = Math.min((TW - 2 * PAD) / w, (TH - 2 * PAD) / h);
+  stage.style.width = w + 'px';
+  stage.style.transform = 'scale(' + s + ')';
+  stage.style.left = ((TW - w * s) / 2) + 'px';
+  stage.style.top = ((TH - h * s) / 2) + 'px';
+  return { w: w, h: h, s: +s.toFixed(3) };
+}
+""" % (_SQUARE, _SQUARE, _SQUARE_PAD)
+
+
 _LAUNCH_ARGS = ["--no-sandbox", "--disable-dev-shm-usage"]
 
 
@@ -179,18 +237,41 @@ def html_to_pdf(html: str, *, timeout_ms: int = 20000, referer: str | None = Non
 def html_to_png(
     html: str, *, variant: str = "print", timeout_ms: int = 20000, referer: str | None = None
 ) -> bytes:
-    """Screenshot the HTML. ``variant="portrait"`` scales the sheet to fill a 3:4
-    social canvas (1080x1440, emitted at 2x = 2160x2880); otherwise a full-page
-    screenshot at print width."""
+    """Screenshot the HTML.
+
+    ``variant="portrait"`` scales the sheet to fill a 3:4 social canvas
+    (1080x1440, emitted at 2x = 2160x2880); ``variant="square"`` fills a padded
+    1:1 WhatsApp canvas (1080x1080 -> 2160x2160); otherwise a full-page
+    screenshot at print width.
+    """
     from playwright.sync_api import sync_playwright
 
     portrait = variant == "portrait"
+    square = variant == "square"
     if portrait:
         html = _inject_head(html, _PORTRAIT_CSS)
+    elif square:
+        html = _inject_head(html, _SQUARE_CSS)
 
     with sync_playwright() as p:
         browser = _launch(p)
         try:
+            if square:
+                page = browser.new_page(
+                    viewport={"width": _SQUARE, "height": _SQUARE},
+                    device_scale_factor=2,
+                )
+                page.set_default_timeout(timeout_ms)
+                _apply_referer(page, referer)
+                page.set_content(html, wait_until="networkidle")
+                # Wait for the sheet's own fit pass before scaling the page as a
+                # whole, so it is measured at its final size.
+                _wait_for_fit(page, html, timeout_ms)
+                page.evaluate(_SQUARE_FIT_JS)
+                return page.screenshot(
+                    clip={"x": 0, "y": 0, "width": _SQUARE, "height": _SQUARE},
+                    type="png",
+                )
             if portrait:
                 page = browser.new_page(
                     viewport={"width": _PORTRAIT_W, "height": _PORTRAIT_H},

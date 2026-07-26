@@ -1,0 +1,669 @@
+/*
+ * Front-end timesheet generator ([ttcc_generator]).
+ *
+ * Everything is scoped under .ttcc-gen and sets its own box-sizing/typography,
+ * so a host theme's form and button rules cannot bleed in. The sheet itself
+ * renders inside an isolated iframe (srcdoc) and keeps its own house-style CSS —
+ * these rules only style the chrome around it.
+ */
+
+.ttcc-gen {
+	--tg-ink: #16192a;
+	--tg-ink-soft: #5c6379;
+	--tg-ink-faint: #8b91a4;
+	--tg-line: #e2e5ec;
+	--tg-line-soft: #eef0f5;
+	--tg-surface: #fff;
+	--tg-raised: #f7f8fb;
+	--tg-canvas: #eceef4;
+	--tg-navy: #141d33;
+	--tg-navy-2: #1e2b4a;
+	--tg-flame: #e3a83b;
+	--tg-flame-ink: #8d6414;
+	--tg-rose: #b4453a;
+	--tg-wa: #128c7e;
+	--tg-radius: 16px;
+	--tg-radius-sm: 10px;
+	--tg-shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 14px 32px -18px rgba(16, 24, 40, .28);
+	--tg-focus: 0 0 0 3px rgba(227, 168, 59, .45);
+
+	font-family: 'Assistant', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+	font-size: 16px;
+	line-height: 1.45;
+	color: var(--tg-ink);
+	width: 100%;
+	max-width: 1250px;
+	margin: 0 auto;
+	-webkit-text-size-adjust: 100%;
+}
+
+.ttcc-gen *,
+.ttcc-gen *::before,
+.ttcc-gen *::after { box-sizing: border-box; }
+
+.ttcc-gen [hidden] { display: none !important; }
+
+/* --- shell ---------------------------------------------------------------- */
+
+.ttcc-gen .tg-card {
+	background: var(--tg-surface);
+	border: 1px solid var(--tg-line);
+	border-radius: var(--tg-radius);
+	box-shadow: var(--tg-shadow);
+	overflow: hidden;
+}
+
+.ttcc-gen .tg-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 22px 26px 20px;
+	background: linear-gradient(105deg, var(--tg-navy-2) 0%, var(--tg-navy) 62%);
+	color: #f6f2e9;
+}
+
+.ttcc-gen .tg-eyebrow {
+	font-size: 11.5px;
+	font-weight: 700;
+	letter-spacing: .18em;
+	text-transform: uppercase;
+	color: var(--tg-flame);
+	margin: 0 0 4px;
+}
+
+.ttcc-gen .tg-title {
+	font-family: 'Montserrat', 'Assistant', ui-sans-serif, system-ui, sans-serif;
+	font-size: 25px;
+	font-weight: 700;
+	line-height: 1.15;
+	margin: 0;
+	color: #f6f2e9;
+}
+
+.ttcc-gen .tg-summary {
+	font-size: 13.5px;
+	color: #c3cade;
+	text-align: right;
+	max-width: 44ch;
+}
+
+.ttcc-gen .tg-summary b { color: var(--tg-flame); font-weight: 600; }
+
+/* --- controls ------------------------------------------------------------- */
+
+.ttcc-gen .tg-controls {
+	display: flex;
+	align-items: flex-end;
+	gap: 22px;
+	flex-wrap: wrap;
+	padding: 18px 26px;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-field { display: flex; flex-direction: column; gap: 7px; }
+.ttcc-gen .tg-field-go { margin-left: auto; }
+
+.ttcc-gen .tg-label {
+	font-size: 11.5px;
+	font-weight: 700;
+	letter-spacing: .09em;
+	text-transform: uppercase;
+	color: var(--tg-ink-faint);
+}
+
+.ttcc-gen .tg-weekpick { display: flex; align-items: center; gap: 6px; }
+
+.ttcc-gen input[type="date"],
+.ttcc-gen input[type="text"],
+.ttcc-gen input[type="time"],
+.ttcc-gen select,
+.ttcc-gen textarea {
+	font-family: inherit;
+	font-size: 15px;
+	color: var(--tg-ink);
+	background: var(--tg-surface);
+	border: 1px solid var(--tg-line);
+	border-radius: var(--tg-radius-sm);
+	padding: 9px 11px;
+	margin: 0;
+	min-height: 42px;
+	max-width: 100%;
+}
+
+.ttcc-gen textarea { min-height: 0; line-height: 1.4; resize: vertical; }
+
+.ttcc-gen input:focus-visible,
+.ttcc-gen select:focus-visible,
+.ttcc-gen textarea:focus-visible,
+.ttcc-gen button:focus-visible {
+	outline: none;
+	border-color: var(--tg-flame);
+	box-shadow: var(--tg-focus);
+}
+
+.ttcc-gen input[type="date"] { min-width: 158px; }
+
+/* Buttons ------------------------------------------------------------------ */
+
+.ttcc-gen button {
+	font-family: inherit;
+	font-size: 14.5px;
+	font-weight: 600;
+	color: var(--tg-ink);
+	background: var(--tg-surface);
+	border: 1px solid var(--tg-line);
+	border-radius: var(--tg-radius-sm);
+	padding: 10px 15px;
+	min-height: 42px;
+	cursor: pointer;
+	transition: background .14s, border-color .14s, color .14s, transform .1s;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.ttcc-gen button:hover:not(:disabled) { border-color: #c9cede; background: var(--tg-raised); }
+.ttcc-gen button:active:not(:disabled) { transform: translateY(1px); }
+.ttcc-gen button:disabled { opacity: .5; cursor: not-allowed; }
+
+.ttcc-gen .tg-primary {
+	background: var(--tg-navy);
+	border-color: var(--tg-navy);
+	color: #fff;
+	padding: 10px 22px;
+}
+.ttcc-gen .tg-primary:hover:not(:disabled) { background: var(--tg-navy-2); border-color: var(--tg-navy-2); }
+
+.ttcc-gen .tg-wa-btn { background: var(--tg-wa); border-color: var(--tg-wa); color: #fff; }
+.ttcc-gen .tg-wa-btn:hover:not(:disabled) { background: #0f7a6d; border-color: #0f7a6d; }
+
+.ttcc-gen .tg-step {
+	min-width: 42px;
+	padding: 10px 12px;
+	font-size: 17px;
+	line-height: 1;
+	color: var(--tg-ink-soft);
+}
+
+.ttcc-gen .tg-link {
+	background: none;
+	border: none;
+	padding: 0;
+	min-height: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--tg-flame-ink);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	align-self: flex-start;
+}
+.ttcc-gen .tg-link:hover:not(:disabled) { background: none; color: var(--tg-ink); }
+
+/* Segmented control ------------------------------------------------------- */
+
+.ttcc-gen .tg-seg {
+	display: inline-flex;
+	background: var(--tg-raised);
+	border: 1px solid var(--tg-line);
+	border-radius: var(--tg-radius-sm);
+	padding: 3px;
+	gap: 3px;
+}
+
+.ttcc-gen .tg-seg button {
+	border: none;
+	background: none;
+	border-radius: 7px;
+	padding: 7px 15px;
+	min-height: 34px;
+	font-size: 14px;
+	color: var(--tg-ink-soft);
+	box-shadow: none;
+}
+.ttcc-gen .tg-seg button:hover:not([aria-pressed="true"]) { background: rgba(20, 29, 51, .06); }
+.ttcc-gen .tg-seg button[aria-pressed="true"] {
+	background: var(--tg-navy);
+	color: #fff;
+	box-shadow: 0 1px 3px rgba(16, 24, 40, .2);
+}
+.ttcc-gen .tg-seg-weeks button { min-width: 44px; }
+
+/* --- action bar ----------------------------------------------------------- */
+
+.ttcc-gen .tg-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	padding: 14px 26px;
+	background: var(--tg-raised);
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-actions .tg-spacer { flex: 1 1 12px; }
+
+.ttcc-gen .tg-status {
+	font-size: 13px;
+	color: var(--tg-ink-soft);
+	min-height: 1em;
+}
+.ttcc-gen .tg-status.is-busy::before {
+	content: "";
+	display: inline-block;
+	width: 11px;
+	height: 11px;
+	margin-right: 7px;
+	vertical-align: -1px;
+	border: 2px solid rgba(20, 29, 51, .25);
+	border-top-color: var(--tg-flame);
+	border-radius: 50%;
+	animation: tg-spin .7s linear infinite;
+}
+@keyframes tg-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+	.ttcc-gen .tg-status.is-busy::before { animation-duration: 2.4s; }
+	.ttcc-gen button { transition: none; }
+}
+
+.ttcc-gen .tg-hint-line {
+	margin: 0;
+	padding: 10px 26px;
+	font-size: 13px;
+	color: var(--tg-flame-ink);
+	background: #fdf8ee;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-alert {
+	margin: 0;
+	padding: 12px 26px;
+	font-size: 14px;
+	background: #fdf3f2;
+	color: #8f2c22;
+	border-bottom: 1px solid #f2d5d1;
+}
+.ttcc-gen .tg-alert b { font-weight: 700; }
+
+/* --- body: editor + preview ---------------------------------------------- */
+
+.ttcc-gen .tg-body {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0;
+	background: var(--tg-canvas);
+}
+
+.ttcc-gen.is-editing .tg-body { grid-template-columns: minmax(340px, 470px) 1fr; }
+
+.ttcc-gen .tg-editor {
+	background: var(--tg-surface);
+	border: 1px solid var(--tg-line);
+	border-radius: 12px;
+	margin: 14px 0 14px 14px;
+	max-height: calc(100vh - 40px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	position: sticky;
+	top: 14px;
+	align-self: start;
+}
+
+.ttcc-gen .tg-editor-head {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 14px 18px 10px;
+	background: var(--tg-surface);
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-editor-title { font-size: 14px; font-weight: 700; margin: 0; }
+.ttcc-gen .tg-editor-hint { padding: 4px 18px 0; font-size: 12.5px; color: var(--tg-ink-faint); }
+.ttcc-gen .tg-editor-body { padding: 4px 18px 22px; }
+
+.ttcc-gen .tg-block { margin-top: 18px; }
+.ttcc-gen .tg-block:first-child { margin-top: 10px; }
+
+.ttcc-gen .tg-block-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
+	margin: 0 0 2px;
+	padding-bottom: 7px;
+	border-bottom: 2px solid var(--tg-navy);
+}
+
+.ttcc-gen .tg-block-title {
+	font-family: 'Montserrat', 'Assistant', sans-serif;
+	font-size: 14.5px;
+	font-weight: 700;
+	margin: 0;
+}
+
+/* The add-line button reads as an action, not a row control. */
+.ttcc-gen .tg-add-btn {
+	flex: none;
+	color: var(--tg-flame-ink);
+	border-color: var(--tg-line);
+	background: var(--tg-surface);
+}
+.ttcc-gen .tg-add-btn:hover:not(:disabled) { border-color: var(--tg-flame); background: var(--tg-raised); }
+
+.ttcc-gen .tg-section {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--tg-flame-ink);
+	margin: 14px 0 2px;
+}
+
+.ttcc-gen .tg-line {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	grid-template-areas: "label time acts" "warn warn warn";
+	gap: 2px 10px;
+	align-items: center;
+	padding: 7px 0;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+.ttcc-gen .tg-line.is-off { opacity: .45; }
+
+.ttcc-gen .tg-line-label { grid-area: label; font-size: 14px; }
+.ttcc-gen .tg-line-days { color: var(--tg-ink-faint); font-size: 13px; }
+
+.ttcc-gen .tg-tag {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 1px 7px;
+	border-radius: 999px;
+	font-size: 10.5px;
+	font-weight: 700;
+	letter-spacing: .03em;
+	text-transform: uppercase;
+	vertical-align: 1px;
+	background: var(--tg-line-soft);
+	color: var(--tg-ink-soft);
+}
+.ttcc-gen .tg-tag.is-override { background: #fdf1d6; color: #7a5510; }
+.ttcc-gen .tg-tag.is-manual { background: #e4f4ea; color: #1a6b39; }
+
+.ttcc-gen .tg-line input[type="time"] {
+	grid-area: time;
+	width: 130px;
+	font-variant-numeric: tabular-nums;
+	padding: 7px 9px;
+	min-height: 38px;
+}
+.ttcc-gen .tg-line input[type="time"]:disabled { background: var(--tg-raised); color: var(--tg-ink-faint); }
+
+.ttcc-gen .tg-line-acts { grid-area: acts; display: flex; gap: 6px; justify-content: flex-end; min-width: 54px; }
+
+.ttcc-gen a.tg-mini {
+	display: inline-flex;
+	align-items: center;
+	text-decoration: none;
+	border: 1px solid var(--tg-line);
+	background: var(--tg-surface);
+}
+.ttcc-gen a.tg-mini:hover { border-color: #c9cede; background: var(--tg-raised); }
+
+.ttcc-gen .tg-mini {
+	font-size: 12.5px;
+	font-weight: 600;
+	padding: 5px 10px;
+	min-height: 30px;
+	border-radius: 8px;
+	color: var(--tg-ink-soft);
+}
+.ttcc-gen .tg-mini.is-danger { color: var(--tg-rose); }
+
+.ttcc-gen .tg-warn {
+	grid-area: warn;
+	font-size: 12px;
+	color: var(--tg-rose);
+}
+.ttcc-gen .tg-warn:empty { display: none; }
+
+/* lines the visitor hid — kept listed so they can come back */
+.ttcc-gen .tg-hidden { margin-top: 12px; }
+.ttcc-gen .tg-hidden .tg-line { grid-template-areas: "label acts"; }
+.ttcc-gen .tg-hidden .tg-line-label { text-decoration: line-through; }
+.ttcc-gen .tg-hidden .tg-line-acts { grid-area: acts; }
+
+/* add-line form */
+.ttcc-gen .tg-add-form {
+	display: grid;
+	gap: 8px;
+	margin: 10px 0 4px;
+	padding: 12px;
+	background: var(--tg-raised);
+	border: 1px solid var(--tg-line);
+	border-radius: var(--tg-radius-sm);
+}
+.ttcc-gen .tg-add-form .tg-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+/* The panel is narrow: text fields and selects each take a full row, so only
+   the time and its "No time" toggle ever share one. */
+.ttcc-gen .tg-add-form input[type="text"],
+.ttcc-gen .tg-add-form select { flex: 1 1 100%; min-width: 0; }
+.ttcc-gen .tg-add-form input[type="time"] { width: 138px; }
+.ttcc-gen .tg-add-form .tg-check {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--tg-ink-soft);
+	white-space: nowrap;
+}
+.ttcc-gen .tg-add-form .tg-row-end { justify-content: flex-end; }
+
+.ttcc-gen input[type="checkbox"] { width: 17px; height: 17px; margin: 0; accent-color: var(--tg-navy); flex: none; }
+
+/* notes */
+.ttcc-gen .tg-notes { margin-top: 14px; }
+.ttcc-gen .tg-note {
+	display: flex;
+	gap: 9px;
+	align-items: flex-start;
+	padding: 6px 0;
+	font-size: 13.5px;
+	color: var(--tg-ink-soft);
+	line-height: 1.4;
+}
+.ttcc-gen .tg-note label { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; }
+.ttcc-gen .tg-note textarea { flex: 1; font-size: 13.5px; }
+
+/* --- preview -------------------------------------------------------------- */
+
+.ttcc-gen .tg-preview-pane { min-width: 0; padding: 14px 18px 22px; }
+
+.ttcc-gen .tg-preview-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 10px;
+}
+
+.ttcc-gen .tg-engine {
+	font-size: 11px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	color: var(--tg-ink-faint);
+}
+
+.ttcc-gen .tg-zoom { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.ttcc-gen .tg-zoom-val {
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+	color: var(--tg-ink-soft);
+	min-width: 38px;
+	text-align: center;
+}
+
+.ttcc-gen .tg-frame-scroll { overflow-x: auto; overflow-y: hidden; }
+
+/* JS sizes this to the scaled footprint of the stacked A4 pages, so the pane
+   scrolls naturally and the page ratio is never distorted. */
+.ttcc-gen .tg-frame {
+	background: #fff;
+	border-radius: 6px;
+	box-shadow: 0 2px 10px rgba(16, 24, 40, .18);
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+.ttcc-gen .tg-preview { display: block; border: 0; background: #fff; }
+
+.ttcc-gen .tg-empty {
+	padding: 60px 20px;
+	text-align: center;
+	color: var(--tg-ink-faint);
+	font-size: 14.5px;
+}
+
+/* --- WhatsApp panel ------------------------------------------------------- */
+
+.ttcc-gen .tg-wa {
+	margin: 0;
+	padding: 18px 26px 22px;
+	border-bottom: 1px solid var(--tg-line-soft);
+	background: var(--tg-surface);
+}
+
+.ttcc-gen .tg-wa-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-bottom: 10px;
+}
+
+.ttcc-gen .tg-wa-title { font-size: 15px; font-weight: 700; margin: 0; }
+.ttcc-gen .tg-wa-head .tg-spacer { flex: 1 1 8px; }
+
+.ttcc-gen .tg-wa-text {
+	width: 100%;
+	min-height: 300px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 13px;
+	line-height: 1.55;
+	white-space: pre;
+	overflow-wrap: normal;
+	background: var(--tg-raised);
+}
+
+.ttcc-gen .tg-wa-hint { font-size: 12.5px; color: var(--tg-ink-faint); margin: 8px 0 0; }
+
+/* --- footer --------------------------------------------------------------- */
+
+.ttcc-gen .tg-foot {
+	padding: 12px 26px 14px;
+	font-size: 11.5px;
+	color: var(--tg-ink-faint);
+	background: var(--tg-surface);
+}
+
+/* --- access notice -------------------------------------------------------- */
+
+.ttcc-gen-notice {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 22px 24px;
+	border: 1px solid #e2e5ec;
+	border-radius: 14px;
+	background: #f7f8fb;
+	color: #5c6379;
+	font-size: 15px;
+	text-align: center;
+}
+
+/* --- responsive ----------------------------------------------------------- */
+
+@media (max-width: 900px) {
+	.ttcc-gen.is-editing .tg-body { grid-template-columns: 1fr; }
+	.ttcc-gen .tg-editor {
+		border-right: 0;
+		border-bottom: 1px solid var(--tg-line);
+		max-height: none;
+		order: 2;
+	}
+	.ttcc-gen .tg-preview-pane { order: 1; }
+	.ttcc-gen .tg-head { padding: 18px 18px 16px; }
+	.ttcc-gen .tg-summary { text-align: left; }
+	.ttcc-gen .tg-controls,
+	.ttcc-gen .tg-actions,
+	.ttcc-gen .tg-wa,
+	.ttcc-gen .tg-foot { padding-left: 18px; padding-right: 18px; }
+	.ttcc-gen .tg-hint-line {
+	margin: 0;
+	padding: 10px 26px;
+	font-size: 13px;
+	color: var(--tg-flame-ink);
+	background: #fdf8ee;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-alert { padding-left: 18px; padding-right: 18px; }
+}
+
+@media (max-width: 640px) {
+	.ttcc-gen { font-size: 16px; }
+	.ttcc-gen .tg-card { border-radius: 12px; }
+	.ttcc-gen .tg-title { font-size: 21px; }
+	.ttcc-gen .tg-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; }
+	.ttcc-gen .tg-field:first-child { grid-column: 1 / -1; }
+	.ttcc-gen .tg-weekpick input[type="date"] { flex: 1; min-width: 0; }
+	.ttcc-gen .tg-seg { width: 100%; }
+	.ttcc-gen .tg-seg button { flex: 1; padding: 9px 4px; min-width: 0; }
+	.ttcc-gen .tg-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+	.ttcc-gen .tg-actions button { padding: 11px 8px; }
+	.ttcc-gen .tg-actions .tg-spacer { display: none; }
+	.ttcc-gen .tg-actions .tg-status { grid-column: 1 / -1; }
+	.ttcc-gen .tg-editor { margin: 12px 10px; }
+	.ttcc-gen .tg-preview-pane { padding: 12px 10px 18px; }
+	.ttcc-gen .tg-line { grid-template-columns: 1fr auto; grid-template-areas: "label time" "acts acts" "warn warn"; }
+	.ttcc-gen .tg-line-acts { justify-content: flex-start; }
+}
+
+/* --- dark scheme (chrome only — the sheet is always paper) ---------------- */
+
+@media (prefers-color-scheme: dark) {
+	.ttcc-gen {
+		--tg-ink: #eef0f6;
+		--tg-ink-soft: #aeb5c8;
+		--tg-ink-faint: #888fa3;
+		--tg-line: rgba(255, 255, 255, .14);
+		--tg-line-soft: rgba(255, 255, 255, .08);
+		--tg-surface: #1b1f2b;
+		--tg-raised: #232837;
+		--tg-canvas: #14171f;
+		--tg-flame-ink: #e3a83b;
+		--tg-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 14px 32px -18px rgba(0, 0, 0, .6);
+	}
+	.ttcc-gen input[type="date"],
+	.ttcc-gen input[type="time"] { color-scheme: dark; }
+	.ttcc-gen button:hover:not(:disabled) { border-color: rgba(255, 255, 255, .28); }
+	.ttcc-gen .tg-primary { background: #2c3a5e; border-color: #2c3a5e; }
+	.ttcc-gen .tg-primary:hover:not(:disabled) { background: #364874; border-color: #364874; }
+	.ttcc-gen .tg-seg button[aria-pressed="true"] { background: #2c3a5e; }
+	.ttcc-gen .tg-tag.is-override { background: rgba(227, 168, 59, .18); color: #f0c877; }
+	.ttcc-gen .tg-tag.is-manual { background: rgba(45, 160, 90, .18); color: #7fd3a1; }
+	.ttcc-gen .tg-hint-line {
+	margin: 0;
+	padding: 10px 26px;
+	font-size: 13px;
+	color: var(--tg-flame-ink);
+	background: #fdf8ee;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-alert { background: rgba(180, 69, 58, .16); color: #f0b0a8; border-color: rgba(180, 69, 58, .3); }
+	.ttcc-gen-notice { background: #1b1f2b; border-color: rgba(255, 255, 255, .14); color: #aeb5c8; }
+}

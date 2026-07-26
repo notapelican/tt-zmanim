@@ -48,15 +48,49 @@ zip/upload. Cutting a release is a tag push; see `RELEASING.md`.
    (blue "zman" badge) are not. A ⚠ appears if an edit crosses a halachic bound
    — allowed, but check. **Revert** returns a line to the calculated value.
 3. Add/remove lines and notes as needed. Give it a **Title**, set status, **Save**.
-4. **Export**: PDF (print/WhatsApp), PNG (3:4 portrait for social), or Word.
+4. **Export**: PDF (print), PNG square (the sheet exactly as printed, centred on
+   a 1:1 2160×2160 canvas — the shape WhatsApp shows in full, padded so a crop
+   cannot clip a time; covers the first printed sheet), PNG portrait (3:4 for
+   social/screens), or Word.
 5. Past sheets live in **Archive** (edit/regenerate/re-export). Each records the
    engine version it was made with — regenerating after an engine update may
    change times; the stored snapshot reprints exactly as approved.
+
+## Clergy self-service page
+
+Put `[ttcc_generator]` on a normal page and any clergy member can produce a
+sheet themselves — no wp-admin login, no styling decisions:
+
+1. Pick the week beginning (Sunday) and how many weeks (1–4).
+2. **Classic** or **Modern** — that is the only styling choice. Everything else
+   (fonts, sizes, logo, colours) comes from the house design: the default style
+   preset if one is saved, otherwise `Settings → Modern layout defaults`.
+3. **Add or adjust times** opens the same kind of editor as the dashboard, with
+   "+ Add a line" at the head of each week:
+   change a minyan time, hide a line (it moves to "Hidden lines" so it can come
+   back), add a line — with or without a time — and add or hide notes.
+   Astronomical times stay read-only.
+4. **Download PDF**, **WhatsApp image** (the printed sheet on a square 1:1
+   canvas, ready to send), **WhatsApp
+   text** (with Copy and "Open in WhatsApp"), or **Tall image** (3:4 for social).
+   When a range fills more than one printed sheet — a yom-tov fortnight, say —
+   the page says so: the square image covers the first sheet, the PDF has all
+   of them.
+
+The page never writes to the archive: edits made there are for that one sheet
+and vanish on reload. Any corrections **you** saved in the dashboard for those
+weeks are applied first, so a clergy member's sheet matches what the shul
+published. Requests are capped at 4 weeks and rate-limited per visitor;
+`Settings → Clergy generator` can restrict the page to signed-in users (or turn
+it off), and unedited sheets are cached for 30 minutes so browsing weeks is
+cheap.
 
 ## Public surfaces
 
 - Current-week widget: put `[ttcc_week]` on any page/Elementor block.
 - Browse page: `[ttcc_browse]` (read-only).
+- Shabbos & Yom Tov banner: `[ttcc_shabbos]`.
+- Clergy generator: `[ttcc_generator]` (see above).
 - piSignage: the URL shown on the Settings page (`/ttcc-signage/<slug>/`).
 
 ## If the service is down
