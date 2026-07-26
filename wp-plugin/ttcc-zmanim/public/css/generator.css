@@ -487,10 +487,12 @@
 .ttcc-gen .tg-preview-bar {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 8px 10px;
 	flex-wrap: wrap;
 	margin-bottom: 10px;
 }
+
+.ttcc-gen .tg-seg-view button { padding: 6px 12px; min-height: 30px; font-size: 13px; }
 
 .ttcc-gen .tg-engine {
 	font-size: 11px;
@@ -520,6 +522,10 @@
 }
 
 .ttcc-gen .tg-preview { display: block; border: 0; background: #fff; }
+
+/* A share-image view shows the service's real PNG, so the picture fills the
+   frame exactly — its own white padding is part of the file. */
+.ttcc-gen .tg-preview-img { display: block; width: 100%; height: 100%; background: #fff; }
 
 .ttcc-gen .tg-empty {
 	padding: 60px 20px;

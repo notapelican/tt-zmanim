@@ -40,10 +40,13 @@ class TTCC_Zmanim_Generator {
 	/** Rendered-sheet cache (unedited sheets only). */
 	const CACHE_TTL = 30 * MINUTE_IN_SECONDS;
 
-	/** Per-IP throttle: builds (preview / WhatsApp) and file exports per window. */
+	/** Per-IP throttle: builds (preview / WhatsApp), file exports, and in-page
+	 * image views per window. Viewing has its own budget so browsing the share
+	 * shapes on screen can never use up the download allowance. */
 	const THROTTLE_WINDOW = 600;
 	const THROTTLE_BUILD  = 150;
 	const THROTTLE_EXPORT = 30;
+	const THROTTLE_VIEW   = 60;
 
 	/** Override-payload caps (a normal sheet uses a handful of each). */
 	const MAX_LINE_EDITS  = 200;
@@ -243,6 +246,13 @@ class TTCC_Zmanim_Generator {
 
 			<div class="tg-preview-pane">
 				<div class="tg-preview-bar">
+					<span class="tg-seg tg-seg-view" role="group" aria-label="<?php esc_attr_e( 'What to preview', 'ttcc-zmanim' ); ?>">
+						<button type="button" data-view="sheet" aria-pressed="true"><?php esc_html_e( 'Sheet', 'ttcc-zmanim' ); ?></button>
+						<button type="button" data-view="square" aria-pressed="false"
+							title="<?php esc_attr_e( 'The square 1:1 image, exactly as it will be sent', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Square 1:1', 'ttcc-zmanim' ); ?></button>
+						<button type="button" data-view="portrait" aria-pressed="false"
+							title="<?php esc_attr_e( 'The tall 3:4 image, exactly as it will be sent', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall 3:4', 'ttcc-zmanim' ); ?></button>
+					</span>
 					<span class="tg-engine" data-role="engine"></span>
 					<span class="tg-zoom">
 						<button type="button" class="tg-step" data-zoom="-" aria-label="<?php esc_attr_e( 'Zoom out', 'ttcc-zmanim' ); ?>">&minus;</button>
@@ -254,6 +264,7 @@ class TTCC_Zmanim_Generator {
 				<div class="tg-frame-scroll">
 					<div class="tg-frame" data-role="frame">
 						<iframe class="tg-preview" data-role="preview" title="<?php esc_attr_e( 'Timesheet preview', 'ttcc-zmanim' ); ?>"></iframe>
+						<img class="tg-preview-img" data-role="image" alt="<?php esc_attr_e( 'The share image as it will be sent', 'ttcc-zmanim' ); ?>" hidden />
 					</div>
 				</div>
 			</div>
@@ -279,6 +290,8 @@ class TTCC_Zmanim_Generator {
 			'working'               => __( 'Working…', 'ttcc-zmanim' ),
 			'building'              => __( 'Building the sheet…', 'ttcc-zmanim' ),
 			'buildingText'          => __( 'Building the message…', 'ttcc-zmanim' ),
+			'buildingImage'         => __( 'Rendering the image…', 'ttcc-zmanim' ),
+			'imageFailed'           => __( 'The image could not be rendered.', 'ttcc-zmanim' ),
 			'preparing'             => __( 'Preparing your download…', 'ttcc-zmanim' ),
 			'previewFailed'         => __( 'The sheet could not be built.', 'ttcc-zmanim' ),
 			'textFailed'            => __( 'The message could not be built.', 'ttcc-zmanim' ),
@@ -452,7 +465,13 @@ class TTCC_Zmanim_Generator {
 		$decoded   = isset( $_POST['overrides'] ) ? json_decode( wp_unslash( $_POST['overrides'] ), true ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- sanitized field-by-field below.
 		$overrides = self::sanitize_overrides( $decoded );
 
-		$throttled = self::throttle( 'export', self::THROTTLE_EXPORT );
+		// An inline request is the page previewing the image rather than the
+		// visitor saving it: same render, its own budget, and shown rather than
+		// offered as a file.
+		$inline    = ! empty( $_POST['inline'] );
+		$throttled = $inline
+			? self::throttle( 'view', self::THROTTLE_VIEW )
+			: self::throttle( 'export', self::THROTTLE_EXPORT );
 		if ( is_wp_error( $throttled ) ) {
 			wp_die( esc_html( $throttled->get_error_message() ), '', array( 'response' => 429 ) );
 		}
@@ -470,7 +489,7 @@ class TTCC_Zmanim_Generator {
 		$filename = 'ttcc-times-' . $range['start'] . $suffix . '.' . $kind;
 		nocache_headers();
 		header( 'Content-Type: ' . ( $result['content_type'] ? $result['content_type'] : 'application/octet-stream' ) );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'Content-Disposition: ' . ( $inline ? 'inline' : 'attachment' ) . '; filename="' . $filename . '"' );
 		header( 'Content-Length: ' . strlen( $result['body'] ) );
 		echo $result['body']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- binary file body.
 		exit;
