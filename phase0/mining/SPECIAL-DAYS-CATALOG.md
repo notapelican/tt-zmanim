@@ -625,3 +625,49 @@ The following appear in no sheet; the shul should supply the intended lines/beha
 - **Selichos "goral" and first-Selichos farbrengen** — 1 instance (5785); confirm it recurs every year.
 - **An explicit AU public-holiday table** — needed to drive §12h; not derivable from the zmanim engine.
 - **Distinct engine zmanim** for **sha'a asiris** and **sof achilas/biur chometz** — the engine returned no offset candidate for sha'a asiris (Rules 4e/6a) and re-used `sof_tfila` for the chometz-eating deadline; confirm these are computed directly.
+
+---
+
+## Shul review decisions (received via the SIMPLE review spreadsheet)
+
+32 of 89 rules were answered. Decisions below are AUTHORITATIVE and supersede
+the proposals above; ✅ = already applied in engine/special_days.py, 📋 = to
+apply in phase 2.
+
+| Rule | Decision | Status |
+|---|---|---|
+| 1c | Fast-day Mincha = the regular weekday Mincha moved ~15 min earlier (not shkia−25). | ✅ |
+| 1e | Confirmed (10 Teves on Friday notes). | ✅ |
+| 1f | Confirmed (fast liturgy notes). | 📋 |
+| 2e | When 9 Av begins Motzaei Shabbos, Kinos ≈ 30 minutes after Shabbos ends. | ✅ |
+| 2f | ONE Tisha B'Av morning minyan (9:00am followed by Kinos), not two. | ✅ |
+| 2h | Confirmed shkia−30 for the fast-afternoon Mincha — "more time is needed for Rashi & Rabbeinu Tam Tefillin". | ✅ |
+| 2j | Confirmed. | ✅ |
+| 3b | Zachor reading time is FIXED at 11:30am. | 📋 |
+| 3e | Purim-night Megillah has no fixed gap — it depends on Maariv finishing (print "immediately after Maariv" style, no computed clock time). | 📋 |
+| 3f | The 6:05 vs 6:15 early-minyan difference was NOT intended — use one standard time. | 📋 |
+| 3h | Confirmed. | 📋 |
+| 4d | Chometz eating/burning deadlines are halachic-hour based (sha'os zmanios can run 48–72 min) — compute as real zmanim (end 4th / end 5th hour). | 📋 |
+| 4e | Sha'a asiris at Pesach: add as a real computed zman "if it can be worked out" (end of the 10th halachic hour). | 📋 |
+| 4h | Chol Hamoed Pesach schedule: generate, but confirm closer to the date (leave prominent/editable). | 📋 |
+| 4i | Confirmed. | 📋 |
+| 4j | Acharon Shel Pesach Mincha before Seudas Moshiach: 20 minutes earlier than normal. | 📋 |
+| 4k | Kinus Torah: print ONLY after yearly confirmation by Hershel Tuvel — do not auto-print. | 📋 |
+| 4l | Sotah shiur after Pesach: standing YEARLY custom, always print. | 📋 |
+| 5a | Confirmed. | 📋 |
+| 6a | Sha'a asiris at Shavuos: NOT needed. | 📋 |
+| 6e | Shavuos 2nd-day early Mincha: 20 minutes earlier than normal. | 📋 |
+| 7b | Confirmed. | 📋 |
+| 7f | Rosh Chodesh Kislev / Yud-Tes Kislev / Chag HaGeulah: CAN appear (labels at minimum). | 📋 |
+| 8a | Confirmed (Elul customs). | ✅ |
+| 8c | First-Selichos farbrengen + Goral: LEAVE OUT — needs confirmation every year. | 📋 |
+| 9a | Erev Yom Kippur early Mincha + lekach: fixed 3:15pm. | 📋 |
+| 9b | Neilah: copy the most recent year's timing. | 📋 |
+| 10f | Shmini Atzeres evening: use the name "Shmini Atzeres Under the Stars" — it is a COMMUNITY MEAL, not a children's program; "Children's program including Hakofos" is a SEPARATE item. | 📋 |
+| 10h | Confirmed. | 📋 |
+| 11c | Chanukah extra 9:00/9:15am Shacharis depends on NSW SCHOOL holidays (e.g. 2027: school holidays start on the last day of Chanukah) — needs a school-holiday condition, not a Chanukah-wide rule. | 📋 |
+| 12g | Early-minyan / halacha-shiur season ends when CANDLE-LIGHTING TIME gets too early (threshold TBD from history). | 📋 |
+| 12h | Public holidays: auto-detect from an Australian (NSW) calendar, and apply ONLY on work-free public holidays. | ✅ (detection exists; work-free filter to verify) |
+
+Questions tab came back unanswered; open items covered above where the rule
+row carried the same question.

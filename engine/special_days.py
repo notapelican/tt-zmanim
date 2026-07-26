@@ -48,6 +48,18 @@ def _round5(dt: datetime) -> datetime:
     return dt + timedelta(minutes=(5 - rem) if rem >= 3 else -rem)
 
 
+def _ampm(dt: datetime) -> str:
+    return f"{dt.hour % 12 or 12}:{dt.minute:02d}{'am' if dt.hour < 12 else 'pm'}"
+
+
+def _shift_hhmm(hhmm: str, minutes: int) -> str:
+    """'19:58' shifted by N minutes, rounded to the nearest 5 -> 'HH:MM'."""
+    h, m = int(hhmm[:2]), int(hhmm[3:5])
+    total = h * 60 + m + minutes
+    total = 5 * round(total / 5)
+    return f"{total // 60 % 24:02d}:{total % 60:02d}"
+
+
 def _line(label, time_s, *, day_spec=None, date_iso=None, rule_id=None,
           section=WEEKDAY, kind="minyan"):
     return {"rule_id": rule_id, "section": section, "label": label,
@@ -114,10 +126,12 @@ def _minor_fast_mincha(entries, notes, sunday, shabbos, engine, week_days):
         idx = _find(entries, "weekday_mincha")
         if idx is None:
             continue
+        # Shul review (rule 1c): the fast-day Mincha is the regular weekday
+        # Mincha moved ~15 minutes earlier (not an independent shkia offset).
+        t = _shift_hhmm(entries[idx]["time"][:5], -15)
         _exclude_days(entries, idx, {d}, week_days)
-        t = _round5(engine.shkia(d, "nearest") - timedelta(minutes=25))
         _insert_after(entries, idx, [
-            _line("Mincha", _fmt(t), day_spec=_WD[d.weekday()],
+            _line("Mincha", t, day_spec=_WD[d.weekday()],
                   date_iso=d.isoformat(), rule_id="sd_fast_mincha"),
         ])
 
@@ -132,7 +146,9 @@ def _av9(entries, notes, sunday, shabbos, engine, week_days):
     erev = d - timedelta(days=1)
     wd = _WD[d.weekday()]
 
-    # Shacharis 8:00 & 9:30 followed by Kinos (fixed; evidence 5782/5786).
+    # Shacharis followed by Kinos. Shul review (rule 2f): ONE minyan going
+    # forward (the 5786 sheet's two-minyan 8:00/9:30 pattern is superseded);
+    # 9:00am per the one-minyan year (5782).
     for rid in ("shacharis_wk_1", "shacharis_wk_2"):
         idx = _find(entries, rid)
         if idx is not None:
@@ -142,10 +158,8 @@ def _av9(entries, notes, sunday, shabbos, engine, week_days):
         idx = _find(entries, "shacharis_sun_2")
     if idx is not None:
         _insert_after(entries, idx, [
-            _line("Shacharis", "08:00", day_spec=wd, date_iso=d.isoformat(),
-                  rule_id="sd_av9_shacharis_1"),
-            _line("Shacharis", "09:30 followed by Kinos", day_spec=wd,
-                  date_iso=d.isoformat(), rule_id="sd_av9_shacharis_2"),
+            _line("Shacharis", "09:00 followed by Kinos", day_spec=wd,
+                  date_iso=d.isoformat(), rule_id="sd_av9_shacharis"),
         ])
 
     # Mincha: erev-fast early Mincha (weekday erev only, ahead of the seudah
@@ -173,7 +187,10 @@ def _av9(entries, notes, sunday, shabbos, engine, week_days):
     # Eicha & Kinos after Maariv on the night the fast begins.
     midx = _find(entries, "weekday_maariv")
     if erev.weekday() == 5:  # nidche: fast begins Motzaei Shabbos
-        notes.append("Megillas Eicha & Kinos after Maariv on Motzaei Shabbos.")
+        # Shul review (rule 2e): Kinos ~30 minutes after Shabbos ends.
+        t = _round5(engine.tzeis_shabbos(erev, "nearest") + timedelta(minutes=30))
+        notes.append("Megillas Eicha & Kinos after Maariv on Motzaei Shabbos "
+                     f"(approx {_ampm(t)}).")
     elif midx is not None:
         e = entries[midx]
         e["time"] = f"{e['time']} (Eicha & Kinos on {_WD[erev.weekday()]} after Maariv)"
@@ -239,10 +256,9 @@ def _december_notes(notes, sunday, shabbos, engine):
         nittel = date(year, 12, 24)
         if sunday <= nittel <= shabbos:
             c = engine.chatzos(nittel, "nearest")
-            ampm = f"{c.hour % 12 or 12}:{c.minute:02d}{'am' if c.hour < 12 else 'pm'}"
             notes.append(
                 f"Nittel ({_WD[nittel.weekday()]} night): the custom is not to "
-                f"study Torah from shkia until chatzos ({ampm}).")
+                f"study Torah from shkia until chatzos ({_ampm(c)}).")
 
 
 def apply_special_days(entries: list[dict], sunday: date, shabbos: date,
