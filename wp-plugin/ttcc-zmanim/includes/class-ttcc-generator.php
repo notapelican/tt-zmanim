@@ -206,7 +206,7 @@ class TTCC_Zmanim_Generator {
 		<div class="tg-actions">
 			<button type="button" class="tg-primary" data-export="pdf" data-busy-disable><?php esc_html_e( 'Download PDF', 'ttcc-zmanim' ); ?></button>
 			<button type="button" class="tg-wa-btn" data-export="png" data-variant="square" data-busy-disable
-				title="<?php esc_attr_e( 'Square 1:1 image (2160×2160) with a padded margin — the shape WhatsApp shows in full, in a chat or a status.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'WhatsApp image', 'ttcc-zmanim' ); ?></button>
+				title="<?php esc_attr_e( 'The sheet as printed, centred on a square 1:1 image (2160×2160) with a padded margin — the shape WhatsApp shows in full, in a chat or a status.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'WhatsApp image', 'ttcc-zmanim' ); ?></button>
 			<button type="button" class="tg-wa-btn" data-role="wa-show" data-busy-disable><?php esc_html_e( 'WhatsApp text', 'ttcc-zmanim' ); ?></button>
 			<button type="button" data-export="png" data-variant="portrait" data-busy-disable
 				title="<?php esc_attr_e( '3:4 portrait image (2160×2880) for a social post or a noticeboard screen.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall image', 'ttcc-zmanim' ); ?></button>

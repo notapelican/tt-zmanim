@@ -75,12 +75,16 @@ See `WARPLAN.md` for the full plan and phase gates.
     Same block data, same shared line-merge/section-order logic. Requires
     `python-docx` (`pip install -r requirements.txt`).
 - `wp-plugin/ttcc-zmanim/` — Phase 4 WordPress plugin (calls the sheet service;
-  never recomputes a time). Surfaces: the wp-admin dashboard/archive/profiles,
-  the front-end clergy generator (`[ttcc_generator]` — pick week(s), Classic or
-  Modern, adjust/add lines, export PDF, a 1:1 WhatsApp image, a 3:4 image or the
-  WhatsApp text; no styling controls and no writes to the archive), the read-only `[ttcc_week]` / `[ttcc_browse]` /
-  `[ttcc_shabbos]` embeds, and the piSignage screens. See
-  `PHASE4-OPERATOR-GUIDE.md`.
+  never recomputes a time). Surfaces:
+  - the wp-admin dashboard / archive / schedule profiles / settings;
+  - the front-end clergy generator, `[ttcc_generator]` — pick week(s), Classic or
+    Modern, adjust times and add lines, then export a PDF, a 1:1 WhatsApp image
+    (the printed sheet centred on a square canvas), a 3:4 image or the WhatsApp
+    text. No styling controls and no writes to the archive;
+  - the read-only `[ttcc_week]` / `[ttcc_browse]` / `[ttcc_shabbos]` embeds and
+    the piSignage screens.
+
+  See `PHASE4-OPERATOR-GUIDE.md`.
 - `samples/` — original PDFs.
 
 ## Running the golden regressions

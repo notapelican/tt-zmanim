@@ -48,9 +48,10 @@ zip/upload. Cutting a release is a tag push; see `RELEASING.md`.
    (blue "zman" badge) are not. A ⚠ appears if an edit crosses a halachic bound
    — allowed, but check. **Revert** returns a line to the calculated value.
 3. Add/remove lines and notes as needed. Give it a **Title**, set status, **Save**.
-4. **Export**: PDF (print), PNG square (1:1, 2160×2160 — the WhatsApp share
-   shape, padded so a crop cannot clip a time; covers the first printed sheet),
-   PNG portrait (3:4 for social/screens), or Word.
+4. **Export**: PDF (print), PNG square (the sheet exactly as printed, centred on
+   a 1:1 2160×2160 canvas — the shape WhatsApp shows in full, padded so a crop
+   cannot clip a time; covers the first printed sheet), PNG portrait (3:4 for
+   social/screens), or Word.
 5. Past sheets live in **Archive** (edit/regenerate/re-export). Each records the
    engine version it was made with — regenerating after an engine update may
    change times; the stored snapshot reprints exactly as approved.
@@ -69,7 +70,8 @@ sheet themselves — no wp-admin login, no styling decisions:
    change a minyan time, hide a line (it moves to "Hidden lines" so it can come
    back), add a line — with or without a time — and add or hide notes.
    Astronomical times stay read-only.
-4. **Download PDF**, **WhatsApp image** (square 1:1, ready to send), **WhatsApp
+4. **Download PDF**, **WhatsApp image** (the printed sheet on a square 1:1
+   canvas, ready to send), **WhatsApp
    text** (with Copy and "Open in WhatsApp"), or **Tall image** (3:4 for social).
    When a range fills more than one printed sheet — a yom-tov fortnight, say —
    the page says so: the square image covers the first sheet, the PDF has all
