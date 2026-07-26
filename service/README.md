@@ -19,7 +19,7 @@ All require `Authorization: Bearer <TTCC_SERVICE_TOKEN>` except `/health`.
 | POST | `/highlights` | same as `/generate` | `{weeks:[…], engine_version}` — per-week Shabbos/YT headline times (candles, ends, fasts) for the public widget & Shabbos signage screen |
 | POST | `/render/html` | `{start,end,…}` **or** `{doc}` (+`variant?`) | `{html, engine_version}` |
 | POST | `/render/pdf` | same as render/html | `application/pdf` |
-| POST | `/render/png` | same (+`variant:"portrait"\|"square"`) | `image/png` — 3:4 social (2160×2880), or the page as printed on a 1:1 WhatsApp canvas (2160×2160) |
+| POST | `/render/png` | same (+`variant:"portrait"\|"square"`) | `image/png` — the sheet centred on a 3:4 social canvas (2160×2880), or laid out on a square page for a 1:1 WhatsApp canvas (2160×2160) |
 | POST | `/render/docx` | same | `.docx` (optional Word copy) |
 | GET | `/profiles/default` | — | `{profiles, notes}` seed data for the editor |
 

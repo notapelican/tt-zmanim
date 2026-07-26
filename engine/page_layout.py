@@ -17,6 +17,11 @@ pages, shrink-to-fit on dense ones. The same HTML therefore looks identical
 in the dashboard preview iframe, the printed PDF and the PNG raster (all
 three execute the script before display/print).
 
+The page box is a fixed 210x297mm here, but the fit pass only ever reads the
+box it is given, so a renderer may re-shape it in CSS — the share-image
+rasterizer (service/raster.py) puts the sheet on a square page for a 1:1
+WhatsApp canvas, and the layout spec above then applies to that square.
+
 Layout/styling only — never computes or re-rounds a time.
 """
 from __future__ import annotations
@@ -73,15 +78,21 @@ html, body {{ margin:0; padding:0; }}
 """
 
 
-# Runs in-page after load (and after web fonts settle): for each .page,
-# iterate width/scale to a fixed point where the content's displayed height
-# fills the printable box, then back off until nothing overflows. Sets
-# data-ttcc-fitted="1" on <html> when done so the rasterizer / preview can
-# wait for a stable layout.
+# Runs in-page after load (and after web fonts settle): for each .page, search
+# for the largest uniform content scale that still fits the printable box, and
+# centre what is left over. Sets data-ttcc-fitted="1" on <html> when done so the
+# rasterizer / preview can wait for a stable layout.
 FIT_JS = """
 <script id="ttcc-fit">
 (function () {
-  var MIN = %(min)s, MAX = %(max)s;
+  var MIN = %(min)s;
+  // The ceiling stops a sparse A4 page blowing type up comically large. A share
+  // image wants the opposite — filling the frame is the point — so a renderer
+  // can raise it with the --ttcc-fit-max custom property on :root. Whatever it
+  // is set to, fitPage's search still holds the content inside the page.
+  var MAX = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--ttcc-fit-max')
+  ) || %(max)s;
   // 'fill' (default): scale content to fill the page. 'fixed': show content at
   // its chosen (base) size and only shrink to prevent overflow — so the
   // content-size control has a visible effect.
@@ -107,8 +118,9 @@ FIT_JS = """
     }
   }
   // Leftover height is split above and below the block, so a page that cannot
-  // grow all the way (the MAX clamp, or 'fixed' sizing) reads as a centred sheet
-  // rather than content pinned to the top with all the paper at the foot.
+  // grow all the way (the MAX clamp, 'fixed' sizing, or a row that has run out of
+  // width — see fitPage) reads as a centred sheet rather than content pinned to
+  // the top with all the paper at the foot.
   // translateY sits left of scale() in the list, so its px are page px.
   function centreY(c, H, s) {
     // Balance what is DRAWN (offsetHeight), not the flow height: a trailing
@@ -126,40 +138,41 @@ FIT_JS = """
     if (!m || !c) { return; }
     var W = m.clientWidth, H = m.clientHeight;
     if (!W || !H) { return; }
-    if (MODE === 'fixed') {
-      // Natural (base) size; scale down only if it would overflow the page.
-      c.style.width = W + 'px';
-      c.style.transform = 'scale(1)';
-      var nh = c.scrollHeight;
-      var sf = Math.max(MIN, Math.min(1, nh ? H / nh : 1));
-      var g2 = 0;
-      c.style.width = (W / sf) + 'px';
-      c.style.transform = 'scale(' + sf + ')';
-      while (c.scrollHeight * sf > H + 0.5 && sf > MIN && g2++ < 60) {
-        sf -= 0.01;
-        c.style.width = (W / sf) + 'px';
-        c.style.transform = 'scale(' + sf + ')';
+    // The .fit-line headers are nowrap and are shrunk to fit AFTERWARDS, by
+    // fitLines — so mid-search they legitimately stick out past the content
+    // width. Clip them to their own box (which is the printable width, where
+    // .page-margin would clip them anyway) so they stay out of the width test
+    // below; only the body rows should hold the scale back.
+    var fl = page.querySelectorAll('.fit-line'), fi;
+    for (fi = 0; fi < fl.length; fi++) { fl[fi].style.overflow = 'hidden'; }
+    // The content is laid out at width W/s and drawn at scale s, so its drawn
+    // width is always W: a larger s means a NARROWER design width, hence more
+    // wrapping. Two things can therefore break as s grows, and both break
+    // monotonically:
+    //   - the block gets taller than the page (scrollHeight * s > H);
+    //   - a row runs out of room for its label, which never wraps, and spills
+    //     sideways out of its cell (scrollWidth > clientWidth).
+    // So "does scale v still fit?" is monotone in v and the largest fitting
+    // scale can be bisected for. (Iterating s = H/scrollHeight instead — the
+    // obvious fixed point — oscillates on a tall or narrow box and can settle
+    // well below the true fit.)
+    function fits(v) {
+      c.style.width = (W / v) + 'px';
+      c.style.transform = 'scale(' + v + ')';
+      return c.scrollHeight * v <= H + 0.5 && c.scrollWidth <= c.clientWidth + 0.5;
+    }
+    // 'fixed' sizing never magnifies: the base size is the operator's choice, so
+    // 1 is the ceiling and the search only ever shrinks to prevent overflow.
+    var lo = MIN, hi = (MODE === 'fixed') ? 1 : MAX, s, i;
+    if (fits(hi)) {
+      s = hi;
+    } else {
+      for (i = 0; i < 16; i++) {           // ~1e-4 of the range: sub-pixel
+        var mid = (lo + hi) / 2;
+        if (fits(mid)) { lo = mid; } else { hi = mid; }
       }
-      centreY(c, H, sf);
-      return;
-    }
-    var s = 1, k, h, next;
-    for (k = 0; k < 6; k++) {
-      c.style.width = (W / s) + 'px';
-      c.style.transform = 'scale(' + s + ')';
-      h = c.scrollHeight;
-      if (!h) { return; }
-      next = Math.max(MIN, Math.min(MAX, H / h));
-      if (Math.abs(next - s) < 0.004) { s = next; break; }
-      s = next;
-    }
-    c.style.width = (W / s) + 'px';
-    c.style.transform = 'scale(' + s + ')';
-    var guard = 0;
-    while (c.scrollHeight * s > H + 0.5 && s > MIN && guard++ < 60) {
-      s -= 0.01;
-      c.style.width = (W / s) + 'px';
-      c.style.transform = 'scale(' + s + ')';
+      s = lo;                              // MIN if even that overflows
+      fits(s);                             // re-apply: the last probe was `hi`
     }
     centreY(c, H, s);
   }

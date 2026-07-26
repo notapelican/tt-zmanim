@@ -268,6 +268,33 @@ def test_raster_pdf_and_png_if_chromium():
     assert _png_size(square.content) == (2160, 2160), _png_size(square.content)
 
 
+def test_canvas_css_geometry():
+    """The share canvases centre one page exactly, by arithmetic rather than by
+    measuring in the browser — so the arithmetic is what needs guarding."""
+    from service.raster import _A4_PX, _CANVASES, _canvas_css
+
+    for name, c in _CANVASES.items():
+        css = _canvas_css(name)
+        availw, availh = c["w"] - 2 * c["pad"], c["h"] - 2 * c["pad"]
+        assert f'width:{c["w"]}px !important' in css, name       # body is the canvas
+        assert "translate(-50%, -50%)" in css, name              # page is centred on it
+        assert ".page ~ .page { display:none" in css, name       # first page only
+        if c["page"] == "canvas":
+            # The page IS the padded canvas: scale 1, and the padding is the
+            # crop margin all round.
+            assert f"width:{availw:g}px !important" in css, name
+            assert f"height:{availh:g}px !important" in css, name
+            assert "scale(1)" in css, name
+        else:
+            # A4, letterboxed: scaled to touch the padded box on its tight axis
+            # and no further, so nothing is drawn inside the crop margin.
+            pw, ph = _A4_PX
+            scale = min(availw / pw, availh / ph)
+            assert f"scale({scale:.6g})" in css, name
+            assert pw * scale <= availw + 0.5 and ph * scale <= availh + 0.5, name
+            assert max(pw * scale, ph * scale * availw / availh) > availw - 1, name
+
+
 def _png_size(data: bytes) -> tuple[int, int]:
     """Width/height from the PNG IHDR (no image library needed)."""
     import struct

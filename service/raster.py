@@ -14,119 +14,89 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-# 3:4 portrait social canvas (WhatsApp/social share). width:height = 0.75.
-_PORTRAIT_W = 1080
-_PORTRAIT_H = 1440
-
-# Injected only for the "portrait" PNG variant. The sheet HTML is an A4 print
-# document with small absolute pt fonts; on a 1080px canvas that reads tiny. We
-# don't touch the engine's layout — instead we single-column it, loosen the line
-# rhythm a little, and then (in _PORTRAIT_FIT_JS below) scale the whole block up
-# to fill the canvas. The overrides need !important to beat the pt-absolute
-# engine CSS (same trick as column-count). Spacing is in the *design* frame; the
-# fit transform scales it along with everything else.
-_PORTRAIT_CSS = """
-<style id="ttcc-portrait">
-  html, body { margin: 0 !important; padding: 0 !important; background: #fff; }
-  body.sheet { width: auto !important; }
-  .single, .multi { column-count: 1 !important; }
-  .single .row { margin: 2.5px 0 !important; }
-  .single .barwrap { margin: 9px 0 3px !important; }
-  .single .subtitle { margin-bottom: 6px !important; }
-  .single .foot { margin-top: 12px !important; }
-</style>
-"""
-
-# Runs in-page after layout. Wraps the sheet in a fixed 1080x1440 canvas and
-# uniformly scales it to fill (contain). Because the sheet's rows are single-line
-# (label + dotted leader + value), the block height barely depends on width — so
-# we first pick a design width that makes the block's aspect match the 3:4 target
-# (height * 1080/1440), then scale to fill and center. This fills the frame with
-# readable type instead of leaving a small print doc floating in the corner.
-_PORTRAIT_FIT_JS = """
-() => {
-  const TW = %d, TH = %d, PAD = 44;
-  const availW = TW - 2 * PAD, availH = TH - 2 * PAD;
-  const stage = document.createElement('div');
-  stage.id = 'ttcc-stage';
-  stage.style.position = 'absolute';
-  stage.style.transformOrigin = 'top left';
-  while (document.body.firstChild) stage.appendChild(document.body.firstChild);
-  const canvas = document.createElement('div');
-  canvas.id = 'ttcc-canvas';
-  canvas.style.cssText =
-    'position:relative;width:' + TW + 'px;height:' + TH + 'px;overflow:hidden;background:#fff;';
-  canvas.appendChild(stage);
-  document.body.appendChild(canvas);
-  const measure = (w) => { stage.style.width = w + 'px'; return { w: stage.scrollWidth, h: stage.scrollHeight }; };
-  let m = measure(760);
-  let designW = Math.round(m.h * (TW / TH));
-  designW = Math.max(480, Math.min(940, designW));
-  m = measure(designW);
-  const s = Math.min(availW / m.w, availH / m.h);
-  stage.style.transform = 'scale(' + s + ')';
-  stage.style.left = ((TW - m.w * s) / 2) + 'px';
-  stage.style.top = ((TH - m.h * s) / 2) + 'px';
-  return { w: m.w, h: m.h, s: s };
-}
-""" % (_PORTRAIT_W, _PORTRAIT_H)
-
-# 1:1 WhatsApp canvas (emitted at 2x = 2160x2160). Square is the shape WhatsApp
-# shows whole — chat bubble, status and thumbnail alike — so the file is square
-# even though the sheet on it is not: the page keeps its A4 proportions and house
-# layout, exactly as printed, and is centred on the square with white around it.
-# (An earlier take re-shaped the page box into a square to win ~30% more type
-# size; it read as a different document, so the sheet's own shape wins.)
+# --- social canvases --------------------------------------------------------
 #
-# The padding is the crop insurance: nothing sits within ~3% of the top/bottom
-# edge, and the letterbox bars leave ~17% clear at the sides, so a centre-ward
-# crop — or a circular avatar crop — only ever eats white.
-_SQUARE = 1080
-_SQUARE_PAD = 32
+# Both image variants put one printed page on a fixed canvas, centred, with a
+# margin of white all round. That margin is the crop insurance: nothing is drawn
+# inside ``pad``, so a centre-ward crop — or a circular avatar crop — only ever
+# eats white. Only the first page is drawn; two pages on one canvas would each
+# land near half size. The plugin counts the pages and says so next to the
+# button, and the PDF carries all of them.
+#
+# What differs is the shape of the page put on the canvas:
+#
+# * ``page: None`` keeps the sheet on its A4 box and scales the whole page to
+#   fit. A4 is 1:1.41 and the 3:4 canvas is 1:1.33, so the letterbox bars cost
+#   almost nothing — the sheet arrives as printed, at nearly the largest size
+#   the frame allows.
+# * ``page: "canvas"`` re-boxes the page to the canvas's own shape, so the
+#   sheet's fit-to-page pass (page_layout.FIT_JS) lays the block out inside a
+#   square exactly as it would on paper. Letterboxing A4 into a square instead
+#   spends a third of the frame on white and leaves the type ~40% smaller.
+#   Multi-block ranges arrange themselves the way the layout spec already says
+#   (two full-height columns, or a 2x2 grid), so a fortnight or a month still
+#   lands readably on one square.
+#
+# ``css`` is a per-canvas typographic adjustment. A week's rows are wide and
+# short, so a single-week block is a landscape slab; in a tall frame it needs a
+# looser rhythm to reach the foot. The values are in the *design* frame, so the
+# fit pass scales them with the type. Multi-block pages already fill a tall
+# frame and are left alone.
+_A4_PX = (210 * 96 / 25.4, 297 * 96 / 25.4)  # the .page box, in CSS px
 
-# Layout only touches the page's own box model; the sheet's fit-to-page pass
-# (page_layout.FIT_JS) has already sized the content inside it by the time this
-# runs. Only the first page is rendered: two A4 pages side by side in one square
-# would each land near half size. The plugin counts the pages in the preview and
-# says so next to the button; the PDF carries all of them.
-_SQUARE_CSS = """
-<style id="ttcc-square">
-  html, body { margin:0 !important; padding:0 !important; background:#fff !important; }
-  body.sheet { width:auto !important; }
-  .page { margin:0 !important; box-shadow:none !important;
-          page-break-after:auto !important; break-after:auto !important; }
-  .page ~ .page { display:none !important; }
-</style>
-"""
-
-# Runs in-page after the sheet has settled: park the A4 page on a fixed square
-# canvas, scale it to fit the padded box (height-bound, since A4 is taller than
-# wide) and centre it. Uniform scale — the page's proportions never change.
-_SQUARE_FIT_JS = """
-() => {
-  const TW = %d, TH = %d, PAD = %d;
-  const stage = document.createElement('div');
-  stage.id = 'ttcc-stage';
-  stage.style.position = 'absolute';
-  stage.style.transformOrigin = 'top left';
-  while (document.body.firstChild) stage.appendChild(document.body.firstChild);
-  const canvas = document.createElement('div');
-  canvas.id = 'ttcc-canvas';
-  canvas.style.cssText =
-    'position:relative;width:' + TW + 'px;height:' + TH + 'px;overflow:hidden;background:#fff;';
-  canvas.appendChild(stage);
-  document.body.appendChild(canvas);
-  const page = stage.querySelector('.page');
-  const w = page ? page.offsetWidth : stage.scrollWidth;
-  const h = page ? page.offsetHeight : stage.scrollHeight;
-  const s = Math.min((TW - 2 * PAD) / w, (TH - 2 * PAD) / h);
-  stage.style.width = w + 'px';
-  stage.style.transform = 'scale(' + s + ')';
-  stage.style.left = ((TW - w * s) / 2) + 'px';
-  stage.style.top = ((TH - h * s) / 2) + 'px';
-  return { w: w, h: h, s: +s.toFixed(3) };
+_CANVASES = {
+    # 1:1 WhatsApp canvas — the shape WhatsApp shows whole, in the chat bubble,
+    # in Status and as a thumbnail. Emitted at 2x = 2160x2160.
+    "square": {"w": 1080, "h": 1080, "pad": 32, "page": "canvas", "css": ""},
+    # 3:4 for feeds and phone screens. Emitted at 2x = 2160x2880.
+    "portrait": {"w": 1080, "h": 1440, "pad": 40, "page": None, "css": """
+  .single .row { margin:2.5px 0 !important; }
+  .single .barwrap { margin:9px 0 3px !important; }
+  .single .subtitle { margin-bottom:6px !important; }
+  .single .foot { margin-top:12px !important; }
+  /* Two blocks stack instead of standing side by side: half of a tall frame's
+     width starves the rows, and the fit pass then has to hold the whole page
+     back to keep them readable. One over the other, each gets the full width
+     and the pair fills the frame. The divider turns with them. */
+  .page-cells.two { grid-template-columns:1fr !important; }
+  .page-cells.two > .cell { padding:0 0 2mm !important; }
+  .page-cells.two > .cell:nth-child(2n) { border-left:0 !important;
+      border-top:1px solid #000 !important; padding:2mm 0 0 !important; }
+"""},
 }
-""" % (_SQUARE, _SQUARE, _SQUARE_PAD)
+
+
+def _canvas_css(name: str) -> str:
+    """Centre one page of the sheet on the named canvas.
+
+    The page is absolutely centred and scaled as a whole, so the centring is
+    exact and needs no measure-and-scale pass in the browser.
+    """
+    c = _CANVASES[name]
+    availw, availh = c["w"] - 2 * c["pad"], c["h"] - 2 * c["pad"]
+    if c["page"] == "canvas":
+        pw, ph, scale = availw, availh, 1.0
+    else:
+        pw, ph = _A4_PX
+        scale = min(availw / pw, availh / ph)
+    box = f"width:{pw:g}px !important; height:{ph:g}px !important;"
+    return f"""
+<style id="ttcc-canvas-{name}">
+  /* Let the sheet's fit pass grow the block past the print ceiling: on a share
+     image, filling the frame is the point. It stops of its own accord when a
+     row can no longer fit its label — see page_layout.FIT_JS. */
+  :root {{ --ttcc-fit-max: 4; }}
+  html {{ margin:0 !important; padding:0 !important; background:#fff !important; }}
+  body, body.sheet {{ position:relative !important; margin:0 !important;
+                      width:{c["w"]}px !important; height:{c["h"]}px !important;
+                      overflow:hidden !important; background:#fff !important; }}
+  .page {{ position:absolute !important; left:50% !important; top:50% !important;
+           {box} margin:0 !important; box-shadow:none !important;
+           transform:translate(-50%, -50%) scale({scale:.6g}) !important;
+           page-break-after:auto !important; break-after:auto !important; }}
+  .page ~ .page {{ display:none !important; }}
+{c["css"]}</style>
+"""
 
 
 _LAUNCH_ARGS = ["--no-sandbox", "--disable-dev-shm-usage"]
@@ -239,53 +209,33 @@ def html_to_png(
 ) -> bytes:
     """Screenshot the HTML.
 
-    ``variant="portrait"`` scales the sheet to fill a 3:4 social canvas
-    (1080x1440, emitted at 2x = 2160x2880); ``variant="square"`` fills a padded
-    1:1 WhatsApp canvas (1080x1080 -> 2160x2160); otherwise a full-page
-    screenshot at print width.
+    ``variant="square"`` lays the sheet out on a 1:1 WhatsApp canvas
+    (1080x1080, emitted at 2x = 2160x2160); ``variant="portrait"`` on a 3:4
+    social canvas (1080x1440 -> 2160x2880); otherwise a full-page screenshot at
+    print width. See ``_canvas_css`` for how the image variants are laid out.
     """
     from playwright.sync_api import sync_playwright
 
-    portrait = variant == "portrait"
-    square = variant == "square"
-    if portrait:
-        html = _inject_head(html, _PORTRAIT_CSS)
-    elif square:
-        html = _inject_head(html, _SQUARE_CSS)
+    canvas = _CANVASES.get(variant)
+    if canvas:
+        html = _inject_head(html, _canvas_css(variant))
 
     with sync_playwright() as p:
         browser = _launch(p)
         try:
-            if square:
+            if canvas:
                 page = browser.new_page(
-                    viewport={"width": _SQUARE, "height": _SQUARE},
+                    viewport={"width": canvas["w"], "height": canvas["h"]},
                     device_scale_factor=2,
                 )
                 page.set_default_timeout(timeout_ms)
                 _apply_referer(page, referer)
                 page.set_content(html, wait_until="networkidle")
-                # Wait for the sheet's own fit pass before scaling the page as a
-                # whole, so it is measured at its final size.
+                # The sheet's own fit pass sizes the content inside the re-boxed
+                # page; nothing else to do once it reports it has settled.
                 _wait_for_fit(page, html, timeout_ms)
-                page.evaluate(_SQUARE_FIT_JS)
                 return page.screenshot(
-                    clip={"x": 0, "y": 0, "width": _SQUARE, "height": _SQUARE},
-                    type="png",
-                )
-            if portrait:
-                page = browser.new_page(
-                    viewport={"width": _PORTRAIT_W, "height": _PORTRAIT_H},
-                    device_scale_factor=2,
-                )
-                page.set_default_timeout(timeout_ms)
-                _apply_referer(page, referer)
-                page.set_content(html, wait_until="networkidle")
-                _wait_for_fit(page, html, timeout_ms)
-                # Fit-to-canvas: screenshot() ignores @page, so we scale in-page
-                # and clip to an exact 1080x1440 region.
-                page.evaluate(_PORTRAIT_FIT_JS)
-                return page.screenshot(
-                    clip={"x": 0, "y": 0, "width": _PORTRAIT_W, "height": _PORTRAIT_H},
+                    clip={"x": 0, "y": 0, "width": canvas["w"], "height": canvas["h"]},
                     type="png",
                 )
             page = browser.new_page(
