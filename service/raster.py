@@ -71,6 +71,45 @@ _PORTRAIT_FIT_JS = """
 }
 """ % (_PORTRAIT_W, _PORTRAIT_H)
 
+# 1:1 WhatsApp canvas (emitted at 2x = 2160x2160). Square is the shape WhatsApp
+# shows whole — chat bubble, status and thumbnail alike — and the sheet sits
+# inside a padded safe area (~8% per side) so a centre-ward crop, or a circular
+# avatar crop, only eats white and never a time.
+_SQUARE = 1080
+_SQUARE_SAFE = 968                               # the sheet panel inside the canvas
+_SQUARE_PAD = (_SQUARE - _SQUARE_SAFE) // 2      # canvas padding around it
+_SQUARE_INNER = 28                               # the panel's own inner margin (px)
+
+# The page box itself is re-shaped into that square rather than an A4 page being
+# scaled into it: A4 is 0.71 wide-to-tall, so letterboxing it inside a square
+# wastes ~30% of the canvas on white and shrinks the type to match. Resizing the
+# box instead lets the sheet's own fit-to-page pass (page_layout.FIT_JS, which
+# runs before the screenshot) reflow and fill the square with the largest type
+# that fits — no transform of ours involved.
+#
+# Only the first page is rendered. A multi-page sheet (a yom-tov range with day
+# blocks) cannot be squeezed into one square: its 2x2 cell grid needs A4-ish
+# width, and forcing several pages into panels either overlaps the dotted-leader
+# rows or shrinks past the fit floor and clips them. The plugin counts the pages
+# in the preview and says so next to the button; the PDF carries all of them.
+_SQUARE_CSS = f"""
+<style id="ttcc-square">
+  html {{ margin:0 !important; padding:0 !important; background:#fff !important; }}
+  body, body.sheet {{ box-sizing:border-box !important; margin:0 !important;
+    width:{_SQUARE}px !important; height:{_SQUARE}px !important;
+    padding:{_SQUARE_PAD}px !important; background:#fff !important;
+    display:flex !important; align-items:center !important;
+    justify-content:center !important; }}
+  .page {{ box-sizing:border-box !important; width:{_SQUARE_SAFE}px !important;
+    height:{_SQUARE_SAFE}px !important; margin:0 !important;
+    page-break-after:auto !important; break-after:auto !important; }}
+  .page ~ .page {{ display:none !important; }}
+  .page-margin {{ left:{_SQUARE_INNER}px !important; top:{_SQUARE_INNER}px !important;
+    right:{_SQUARE_INNER}px !important; bottom:{_SQUARE_INNER}px !important; }}
+</style>
+"""
+
+
 _LAUNCH_ARGS = ["--no-sandbox", "--disable-dev-shm-usage"]
 
 
@@ -179,18 +218,40 @@ def html_to_pdf(html: str, *, timeout_ms: int = 20000, referer: str | None = Non
 def html_to_png(
     html: str, *, variant: str = "print", timeout_ms: int = 20000, referer: str | None = None
 ) -> bytes:
-    """Screenshot the HTML. ``variant="portrait"`` scales the sheet to fill a 3:4
-    social canvas (1080x1440, emitted at 2x = 2160x2880); otherwise a full-page
-    screenshot at print width."""
+    """Screenshot the HTML.
+
+    ``variant="portrait"`` scales the sheet to fill a 3:4 social canvas
+    (1080x1440, emitted at 2x = 2160x2880); ``variant="square"`` fills a padded
+    1:1 WhatsApp canvas (1080x1080 -> 2160x2160); otherwise a full-page
+    screenshot at print width.
+    """
     from playwright.sync_api import sync_playwright
 
     portrait = variant == "portrait"
+    square = variant == "square"
     if portrait:
         html = _inject_head(html, _PORTRAIT_CSS)
+    elif square:
+        html = _inject_head(html, _SQUARE_CSS)
 
     with sync_playwright() as p:
         browser = _launch(p)
         try:
+            if square:
+                page = browser.new_page(
+                    viewport={"width": _SQUARE, "height": _SQUARE},
+                    device_scale_factor=2,
+                )
+                page.set_default_timeout(timeout_ms)
+                _apply_referer(page, referer)
+                page.set_content(html, wait_until="networkidle")
+                # The square panels are sized in CSS, so the sheet's own fit pass
+                # fills them; nothing left to scale here.
+                _wait_for_fit(page, html, timeout_ms)
+                return page.screenshot(
+                    clip={"x": 0, "y": 0, "width": _SQUARE, "height": _SQUARE},
+                    type="png",
+                )
             if portrait:
                 page = browser.new_page(
                     viewport={"width": _PORTRAIT_W, "height": _PORTRAIT_H},

@@ -183,6 +183,8 @@ defined( 'ABSPATH' ) || exit;
 	<div class="ttcc-toolbar ttcc-exports">
 		<strong><?php esc_html_e( 'Export:', 'ttcc-zmanim' ); ?></strong>
 		<button type="button" class="button" data-export="pdf"><?php esc_html_e( 'PDF', 'ttcc-zmanim' ); ?></button>
+		<button type="button" class="button" data-export="png" data-variant="square"
+			title="<?php esc_attr_e( 'Square 1:1 image (2160×2160) with a padded margin — the shape WhatsApp shows in full. Covers the first printed sheet.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'PNG (square · WhatsApp)', 'ttcc-zmanim' ); ?></button>
 		<button type="button" class="button" data-export="png" data-variant="portrait"><?php esc_html_e( 'PNG (portrait)', 'ttcc-zmanim' ); ?></button>
 		<button type="button" class="button" data-export="docx"><?php esc_html_e( 'Word (.docx)', 'ttcc-zmanim' ); ?></button>
 		<button type="button" class="button" id="ttcc-whatsapp"><?php esc_html_e( 'WhatsApp message', 'ttcc-zmanim' ); ?></button>

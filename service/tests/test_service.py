@@ -256,6 +256,24 @@ def test_raster_pdf_and_png_if_chromium():
     )
     assert png.status_code == 200, png.text
     assert png.content[:8] == b"\x89PNG\r\n\x1a\n"
+    assert _png_size(png.content) == (2160, 2880), _png_size(png.content)
+
+    # The WhatsApp share shape must come out exactly 1:1 (1080 at 2x).
+    square = client.post(
+        "/render/png",
+        json={"start": START, "end": END, "variant": "square"},
+        headers=AUTH,
+    )
+    assert square.status_code == 200, square.text
+    assert _png_size(square.content) == (2160, 2160), _png_size(square.content)
+
+
+def _png_size(data: bytes) -> tuple[int, int]:
+    """Width/height from the PNG IHDR (no image library needed)."""
+    import struct
+
+    assert data[:8] == b"\x89PNG\r\n\x1a\n", "not a PNG"
+    return struct.unpack(">II", data[16:24])
 
 
 def _main() -> int:

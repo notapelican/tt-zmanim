@@ -267,6 +267,15 @@
 	.ttcc-gen button { transition: none; }
 }
 
+.ttcc-gen .tg-hint-line {
+	margin: 0;
+	padding: 10px 26px;
+	font-size: 13px;
+	color: var(--tg-flame-ink);
+	background: #fdf8ee;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
 .ttcc-gen .tg-alert {
 	margin: 0;
 	padding: 12px 26px;
@@ -321,14 +330,31 @@
 .ttcc-gen .tg-block { margin-top: 18px; }
 .ttcc-gen .tg-block:first-child { margin-top: 10px; }
 
-.ttcc-gen .tg-block-title {
-	font-family: 'Montserrat', 'Assistant', sans-serif;
-	font-size: 14.5px;
-	font-weight: 700;
+.ttcc-gen .tg-block-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
 	margin: 0 0 2px;
 	padding-bottom: 7px;
 	border-bottom: 2px solid var(--tg-navy);
 }
+
+.ttcc-gen .tg-block-title {
+	font-family: 'Montserrat', 'Assistant', sans-serif;
+	font-size: 14.5px;
+	font-weight: 700;
+	margin: 0;
+}
+
+/* The add-line button reads as an action, not a row control. */
+.ttcc-gen .tg-add-btn {
+	flex: none;
+	color: var(--tg-flame-ink);
+	border-color: var(--tg-line);
+	background: var(--tg-surface);
+}
+.ttcc-gen .tg-add-btn:hover:not(:disabled) { border-color: var(--tg-flame); background: var(--tg-raised); }
 
 .ttcc-gen .tg-section {
 	font-size: 11px;
@@ -413,11 +439,10 @@
 .ttcc-gen .tg-hidden .tg-line-acts { grid-area: acts; }
 
 /* add-line form */
-.ttcc-gen .tg-add { margin-top: 10px; }
 .ttcc-gen .tg-add-form {
 	display: grid;
 	gap: 8px;
-	margin-top: 8px;
+	margin: 10px 0 4px;
 	padding: 12px;
 	background: var(--tg-raised);
 	border: 1px solid var(--tg-line);
@@ -576,7 +601,16 @@
 	.ttcc-gen .tg-actions,
 	.ttcc-gen .tg-wa,
 	.ttcc-gen .tg-foot { padding-left: 18px; padding-right: 18px; }
-	.ttcc-gen .tg-alert { padding-left: 18px; padding-right: 18px; }
+	.ttcc-gen .tg-hint-line {
+	margin: 0;
+	padding: 10px 26px;
+	font-size: 13px;
+	color: var(--tg-flame-ink);
+	background: #fdf8ee;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-alert { padding-left: 18px; padding-right: 18px; }
 }
 
 @media (max-width: 640px) {
@@ -621,6 +655,15 @@
 	.ttcc-gen .tg-seg button[aria-pressed="true"] { background: #2c3a5e; }
 	.ttcc-gen .tg-tag.is-override { background: rgba(227, 168, 59, .18); color: #f0c877; }
 	.ttcc-gen .tg-tag.is-manual { background: rgba(45, 160, 90, .18); color: #7fd3a1; }
-	.ttcc-gen .tg-alert { background: rgba(180, 69, 58, .16); color: #f0b0a8; border-color: rgba(180, 69, 58, .3); }
+	.ttcc-gen .tg-hint-line {
+	margin: 0;
+	padding: 10px 26px;
+	font-size: 13px;
+	color: var(--tg-flame-ink);
+	background: #fdf8ee;
+	border-bottom: 1px solid var(--tg-line-soft);
+}
+
+.ttcc-gen .tg-alert { background: rgba(180, 69, 58, .16); color: #f0b0a8; border-color: rgba(180, 69, 58, .3); }
 	.ttcc-gen-notice { background: #1b1f2b; border-color: rgba(255, 255, 255, .14); color: #aeb5c8; }
 }

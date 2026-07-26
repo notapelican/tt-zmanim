@@ -205,13 +205,17 @@ class TTCC_Zmanim_Generator {
 
 		<div class="tg-actions">
 			<button type="button" class="tg-primary" data-export="pdf" data-busy-disable><?php esc_html_e( 'Download PDF', 'ttcc-zmanim' ); ?></button>
-			<button type="button" data-export="png" data-busy-disable><?php esc_html_e( 'Download image', 'ttcc-zmanim' ); ?></button>
+			<button type="button" class="tg-wa-btn" data-export="png" data-variant="square" data-busy-disable
+				title="<?php esc_attr_e( 'Square 1:1 image (2160×2160) with a padded margin — the shape WhatsApp shows in full, in a chat or a status.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'WhatsApp image', 'ttcc-zmanim' ); ?></button>
 			<button type="button" class="tg-wa-btn" data-role="wa-show" data-busy-disable><?php esc_html_e( 'WhatsApp text', 'ttcc-zmanim' ); ?></button>
-			<button type="button" data-role="edit-toggle" aria-expanded="false"><?php esc_html_e( 'Adjust times & lines', 'ttcc-zmanim' ); ?></button>
+			<button type="button" data-export="png" data-variant="portrait" data-busy-disable
+				title="<?php esc_attr_e( '3:4 portrait image (2160×2880) for a social post or a noticeboard screen.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall image', 'ttcc-zmanim' ); ?></button>
+			<button type="button" data-role="edit-toggle" aria-expanded="false"><?php esc_html_e( 'Add or adjust times', 'ttcc-zmanim' ); ?></button>
 			<span class="tg-spacer"></span>
 			<span class="tg-status" data-role="status" role="status" aria-live="polite"></span>
 		</div>
 
+		<p class="tg-hint-line" data-role="pages-note" hidden></p>
 		<p class="tg-alert" data-role="alert" role="alert" hidden></p>
 
 		<section class="tg-wa" data-role="wa" hidden aria-label="<?php esc_attr_e( 'WhatsApp broadcast text', 'ttcc-zmanim' ); ?>">
@@ -279,8 +283,10 @@ class TTCC_Zmanim_Generator {
 			'previewFailed'         => __( 'The sheet could not be built.', 'ttcc-zmanim' ),
 			'textFailed'            => __( 'The message could not be built.', 'ttcc-zmanim' ),
 			'throttled'             => __( 'Too many sheets in a short time — please wait a minute and try again.', 'ttcc-zmanim' ),
-			'showEditor'            => __( 'Adjust times & lines', 'ttcc-zmanim' ),
+			'showEditor'            => __( 'Add or adjust times', 'ttcc-zmanim' ),
 			'hideEditor'            => __( 'Hide the editor', 'ttcc-zmanim' ),
+			/* translators: %d: how many printed sheets (pages) the range needs. */
+			'squarePartial'         => __( 'This range fills %d sheets — the WhatsApp image shows the first one. The PDF has all of them.', 'ttcc-zmanim' ),
 			'nothingToEdit'         => __( 'Nothing to edit for this range yet.', 'ttcc-zmanim' ),
 			'notes'                 => __( 'Notes', 'ttcc-zmanim' ),
 			'noteText'              => __( 'Note text', 'ttcc-zmanim' ),
@@ -405,7 +411,7 @@ class TTCC_Zmanim_Generator {
 
 	/**
 	 * admin-ajax (POST, front-end): stream a PDF/PNG of the visitor's sheet.
-	 * POST fields: kind, start, weeks, template, overrides (JSON).
+	 * POST fields: kind, variant (png only), start, weeks, template, overrides (JSON).
 	 */
 	public static function handle_export() {
 		if ( ! self::can_use() ) {
@@ -425,6 +431,13 @@ class TTCC_Zmanim_Generator {
 		$kind = isset( $_POST['kind'] ) ? sanitize_key( wp_unslash( $_POST['kind'] ) ) : 'pdf';
 		if ( ! in_array( $kind, array( 'pdf', 'png' ), true ) ) {
 			wp_die( esc_html__( 'Unknown export type.', 'ttcc-zmanim' ), '', array( 'response' => 400 ) );
+		}
+		// Images come in two share shapes: 'square' (1:1, WhatsApp) and 'portrait'
+		// (3:4, social). The PDF is always the print variant.
+		$variant = 'print';
+		if ( 'png' === $kind ) {
+			$asked   = isset( $_POST['variant'] ) ? sanitize_key( wp_unslash( $_POST['variant'] ) ) : '';
+			$variant = in_array( $asked, array( 'square', 'portrait' ), true ) ? $asked : 'square';
 		}
 
 		$range = self::resolve_range(
@@ -448,13 +461,13 @@ class TTCC_Zmanim_Generator {
 		if ( is_wp_error( $built ) ) {
 			wp_die( esc_html( $built->get_error_message() ), '', array( 'response' => 503 ) );
 		}
-		$variant = ( 'png' === $kind ) ? 'portrait' : 'print';
-		$result  = TTCC_Zmanim_Service_Client::render_binary( $kind, $built['doc'], $variant, self::house_design( $template ) );
+		$result = TTCC_Zmanim_Service_Client::render_binary( $kind, $built['doc'], $variant, self::house_design( $template ) );
 		if ( is_wp_error( $result ) ) {
 			wp_die( esc_html( $result->get_error_message() ), '', array( 'response' => 503 ) );
 		}
 
-		$filename = 'ttcc-times-' . $range['start'] . '.' . $kind;
+		$suffix   = ( 'png' === $kind ) ? '-' . $variant : '';
+		$filename = 'ttcc-times-' . $range['start'] . $suffix . '.' . $kind;
 		nocache_headers();
 		header( 'Content-Type: ' . ( $result['content_type'] ? $result['content_type'] : 'application/octet-stream' ) );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );

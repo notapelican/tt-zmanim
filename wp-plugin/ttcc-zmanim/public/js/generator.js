@@ -85,6 +85,7 @@
 			preview: q( '[data-role="preview"]' ),
 			zoomVal: q( '[data-role="zoom-val"]' ),
 			engine: q( '[data-role="engine"]' ),
+			pagesNote: q( '[data-role="pages-note"]' ),
 			wa: q( '[data-role="wa"]' ),
 			waText: q( '[data-role="wa-text"]' ),
 			waStatus: q( '[data-role="wa-status"]' ),
@@ -177,7 +178,8 @@
 				var wk = state.doc.blocks.filter( function ( b ) { return 'week' === b.type; } );
 				if ( wk.length ) {
 					var first = weekTitle( wk[0] ), last = weekTitle( wk[ wk.length - 1 ] );
-					parshios = ( wk.length > 1 && first && last ) ? ( first + ' → ' + last ) : first;
+					// A yom-tov fortnight can repeat one parsha — don't print "X → X".
+					parshios = ( wk.length > 1 && first && last && first !== last ) ? ( first + ' → ' + last ) : first;
 				}
 			}
 			ui.summary.innerHTML = '';
@@ -206,6 +208,25 @@
 
 		function frameDoc() {
 			try { return ui.preview.contentDocument; } catch ( e ) { return null; }
+		}
+
+		/**
+		 * The square (WhatsApp) image covers one printed sheet, so when a range
+		 * fills more than one, say so rather than letting the download quietly
+		 * drop the rest. The rendered preview is the authority on how many pages
+		 * the layout produced.
+		 */
+		function updatePagesNote() {
+			var doc = frameDoc();
+			var pages = doc ? doc.querySelectorAll( '.page' ).length : 0;
+			var note = ui.pagesNote;
+			if ( ! note ) { return; }
+			if ( pages > 1 ) {
+				note.textContent = cfg.i18n.squarePartial.replace( '%d', pages );
+				note.hidden = false;
+			} else {
+				note.hidden = true;
+			}
 		}
 
 		function contentHeight() {
@@ -258,6 +279,7 @@
 			ui.preview.onload = function () {
 				decorate();
 				fit();
+				updatePagesNote();
 				// The sheet's own fit-to-page script settles after web fonts load
 				// and flags data-ttcc-fitted; re-measure once it does.
 				var tries = 0;
@@ -456,9 +478,13 @@
 			return seen;
 		}
 
+		/**
+		 * Inline "add a line" editor. Returns {button, form} rather than one node
+		 * so the button can live in the block's heading — the whole point of the
+		 * panel is that adding a line is obvious without scrolling past 20 rows.
+		 */
 		function addLineForm( block ) {
-			var wrap = el( 'div', 'tg-add' );
-			var open = el( 'button', 'tg-mini', cfg.i18n.addLine );
+			var open = el( 'button', 'tg-mini tg-add-btn', cfg.i18n.addLine );
 			open.type = 'button';
 			var form = el( 'div', 'tg-add-form' );
 			form.hidden = true;
@@ -584,9 +610,7 @@
 			form.appendChild( rowB );
 			form.appendChild( rowC );
 			form.appendChild( rowD );
-			wrap.appendChild( open );
-			wrap.appendChild( form );
-			return wrap;
+			return { button: open, form: form };
 		}
 
 		/**
@@ -705,10 +729,19 @@
 			}
 			doc.blocks.forEach( function ( block ) {
 				var wrap = el( 'div', 'tg-block' );
-				wrap.appendChild( el( 'h4', 'tg-block-title',
-					block.title || ( block.weekday ? ( block.weekday + ' ' + ( block.hebrew_date || '' ) ) : '' ) ) );
+				var add = addLineForm( block );
 
-				var section = ' ';
+				// The add-line button lives in the heading (and its form right
+				// under it) so adding a time is the first thing visible for a
+				// block, not something found by scrolling past every line.
+				var head = el( 'div', 'tg-block-head' );
+				head.appendChild( el( 'h4', 'tg-block-title',
+					block.title || ( block.weekday ? ( block.weekday + ' ' + ( block.hebrew_date || '' ) ) : '' ) ) );
+				head.appendChild( add.button );
+				wrap.appendChild( head );
+				wrap.appendChild( add.form );
+
+				var section = null;   // sentinel: no printed section seen yet
 				( block.entries || [] ).forEach( function ( entry ) {
 					var sec = entry.section || '';
 					if ( sec !== section ) {
@@ -720,7 +753,6 @@
 
 				var hidden = hiddenLinesGroup( block );
 				if ( hidden ) { wrap.appendChild( hidden ); }
-				wrap.appendChild( addLineForm( block ) );
 				wrap.appendChild( notesEditor( block ) );
 				body.appendChild( wrap );
 			} );
@@ -742,7 +774,7 @@
 		 * file (Content-Disposition), and a POST body keeps long override sets off
 		 * the query string.
 		 */
-		function download( kind ) {
+		function download( kind, variant ) {
 			var form = document.createElement( 'form' );
 			form.method = 'POST';
 			form.action = cfg.ajaxUrl;
@@ -753,6 +785,7 @@
 			var fields = {
 				action: cfg.exportAction,
 				kind: kind,
+				variant: variant || '',
 				start: state.start,
 				weeks: String( state.weeks ),
 				template: state.template,
@@ -870,7 +903,7 @@
 		} );
 
 		qa( '[data-export]' ).forEach( function ( b ) {
-			b.addEventListener( 'click', function () { download( b.dataset.export ); } );
+			b.addEventListener( 'click', function () { download( b.dataset.export, b.dataset.variant ); } );
 		} );
 
 		q( '[data-role="wa-show"]' ).addEventListener( 'click', showWhatsApp );
