@@ -106,6 +106,20 @@ FIT_JS = """
       }
     }
   }
+  // Leftover height is split above and below the block, so a page that cannot
+  // grow all the way (the MAX clamp, or 'fixed' sizing) reads as a centred sheet
+  // rather than content pinned to the top with all the paper at the foot.
+  // translateY sits left of scale() in the list, so its px are page px.
+  function centreY(c, H, s) {
+    // Balance what is DRAWN (offsetHeight), not the flow height: a trailing
+    // margin can push scrollHeight past the painted box and would bias the
+    // block upwards. Capped by the room the flow actually leaves, so trailing
+    // whitespace is all that a tight page can ever lose.
+    var slack = H - c.offsetHeight * s;
+    var room = H - c.scrollHeight * s;
+    var t = Math.max(0, Math.min(slack / 2, room));
+    c.style.transform = ( t > 1 ? 'translateY(' + t + 'px) ' : '' ) + 'scale(' + s + ')';
+  }
   function fitPage(page) {
     var m = page.querySelector('.page-margin');
     var c = page.querySelector('.page-content');
@@ -126,6 +140,7 @@ FIT_JS = """
         c.style.width = (W / sf) + 'px';
         c.style.transform = 'scale(' + sf + ')';
       }
+      centreY(c, H, sf);
       return;
     }
     var s = 1, k, h, next;
@@ -146,6 +161,7 @@ FIT_JS = """
       c.style.width = (W / s) + 'px';
       c.style.transform = 'scale(' + s + ')';
     }
+    centreY(c, H, s);
   }
   function fitViewport() {
     // Narrow viewports (public embeds on phones): shrink whole pages to the

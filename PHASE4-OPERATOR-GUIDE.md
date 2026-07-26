@@ -80,7 +80,9 @@ sheet themselves — no wp-admin login, no styling decisions:
    the page says so: the square image covers the first sheet, the PDF has all
    of them.
 
-Sheets on this page always **fill their page**: the design comes from the house
+A block that cannot fill its page — a light week, or `Fixed size` sizing — is
+centred on it, so the leftover paper is shared between head and foot instead of
+sitting under the sheet. Sheets on this page always **fill their page**: the design comes from the house
 preset, but content sizing is forced to Fill, so the block is scaled up
 uniformly — same fonts, same proportions — until it reaches the page. A preset
 saved in `Fixed size` mode would otherwise print at its base font size and end

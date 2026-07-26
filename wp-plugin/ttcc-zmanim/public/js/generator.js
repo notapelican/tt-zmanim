@@ -25,6 +25,7 @@
 	// _SQUARE and _PORTRAIT_W/H). Only used to reserve the right aspect box while
 	// the picture loads; the picture itself is the service's real render.
 	var CANVAS = { square: [ 1080, 1080 ], portrait: [ 1080, 1440 ] };
+	var PAGE_GAP = 10;             // gap decorate() puts between stacked pages
 
 	function el( tag, cls, text ) {
 		var n = document.createElement( tag );
@@ -238,32 +239,49 @@
 		}
 
 		/**
-		 * How tall the stacked pages are on screen, with the last page's unused
-		 * paper trimmed off.
+		 * Sheet-view geometry: the stacked pages' full height, the height to show
+		 * once the last page's unused paper is trimmed, and how far to lift the
+		 * document so the box hugs the sheet at the head too.
 		 *
-		 * The sheet's fit pass grows content to fill its page but stops at a
-		 * ceiling, so a sparse week leaves blank paper at the foot. On printed A4
-		 * that is just paper; in a preview box it is dead white. The page's own
-		 * print margin is kept, so the sheet still ends on its border.
+		 * The page centres a block that cannot fill it, so the leftover paper is
+		 * split above and below. Cropping only the foot would leave a lopsided gap
+		 * at the head, so with a single page (the usual case) the document rides up
+		 * by the top half. A multi-page stack cannot ride up — the crop would land
+		 * mid-document — so there the head keeps its share.
 		 */
-		function contentHeight() {
+		function sheetMetrics() {
 			var doc = frameDoc();
-			if ( ! doc ) { return Math.round( PAGE_W * 297 / 210 ); }
-			var full = Math.max(
-				doc.documentElement ? doc.documentElement.scrollHeight : 0,
-				doc.body ? doc.body.scrollHeight : 0
-			);
+			var a4 = Math.round( PAGE_W * 297 / 210 );
+			if ( ! doc ) { return { full: a4, height: a4, shift: 0 }; }
 			var pages = doc.querySelectorAll( '.page' );
+			// Sum the page boxes rather than reading scrollHeight: the iframe's own
+			// height is set from this number, and the document is at least as tall
+			// as its viewport — measuring it back would ratchet upwards on every fit.
+			var full = 0, i;
+			for ( i = 0; i < pages.length; i++ ) { full += pages[ i ].offsetHeight; }
+			full += PAGE_GAP * Math.max( 0, pages.length - 1 );   // decorate()'s separation
+			if ( ! full ) {
+				full = Math.max(
+					doc.documentElement ? doc.documentElement.scrollHeight : 0,
+					doc.body ? doc.body.scrollHeight : 0
+				);
+			}
 			var last = pages.length ? pages[ pages.length - 1 ] : null;
 			var margin = last ? last.querySelector( '.page-margin' ) : null;
 			var content = last ? last.querySelector( '.page-content' ) : null;
-			if ( ! last || ! margin || ! content ) { return full + 2; }
+			if ( ! last || ! margin || ! content ) { return { full: full, height: full, shift: 0 }; }
+
 			// .page-margin is inset equally on all four sides, so its offsetTop is
-			// the border width. .page-content carries the fit transform, hence its
-			// client rect (visual height) rather than its layout height.
-			var used = margin.offsetTop * 2 + content.getBoundingClientRect().height;
-			var tail = Math.floor( last.offsetHeight - used );
-			return Math.max( 240, full - Math.max( 0, tail ) ) + 2;
+			// the print border. .page-content carries the fit transform, hence its
+			// client rect: the gap between the two tops is the centring slack.
+			var mRect = margin.getBoundingClientRect();
+			var cRect = content.getBoundingClientRect();
+			var border = margin.offsetTop;
+			var offset = Math.max( 0, Math.round( cRect.top - mRect.top ) );
+			var used = border + offset + Math.round( cRect.height ) + border;
+			var trim = Math.max( 0, last.offsetHeight - used );
+			var shift = ( 1 === pages.length ) ? offset : 0;
+			return { full: full, height: Math.max( 240, full - trim - shift ), shift: shift };
 		}
 
 		/** Stack the A4 pages with a little separation; no inner scrollbars. */
@@ -277,19 +295,19 @@
 				doc.head.appendChild( st );
 			}
 			st.textContent = 'html,body{overflow:hidden!important;background:#fff;}' +
-				'.page{margin:0 auto 10px;box-shadow:0 0 0 1px rgba(20,29,51,.10);}' +
+				'.page{margin:0 auto ' + PAGE_GAP + 'px;box-shadow:0 0 0 1px rgba(20,29,51,.10);}' +
 				'.page:last-child{margin-bottom:0;}';
 		}
 
 		/** Natural pixel size of whatever the pane is showing. */
-		function naturalSize() {
+		function naturalSize( metrics ) {
 			if ( 'square' === state.view ) { return { w: CANVAS.square[0], h: CANVAS.square[1] }; }
 			if ( 'portrait' === state.view ) { return { w: CANVAS.portrait[0], h: CANVAS.portrait[1] }; }
-			return { w: PAGE_W, h: contentHeight() };
+			return { w: PAGE_W, h: ( metrics || sheetMetrics() ).height };
 		}
 
-		function scale() {
-			var nat = naturalSize();
+		function scale( nat ) {
+			nat = nat || naturalSize();
 			if ( 'fit' !== state.zoom.mode ) { return state.zoom.scale; }
 			var pane = ui.frame.parentNode;
 			var avail = ( ( pane && ( pane.clientWidth || pane.offsetWidth ) ) || nat.w ) - 4;
@@ -300,12 +318,16 @@
 		}
 
 		function fit() {
-			var nat = naturalSize(), s = scale();
-			if ( 'sheet' === state.view ) {
+			var metrics = ( 'sheet' === state.view ) ? sheetMetrics() : null;
+			var nat = naturalSize( metrics ), s = scale( nat );
+			if ( metrics ) {
+				// The iframe holds the whole document (so nothing scrolls inside it)
+				// and is lifted under the frame's crop.
 				ui.preview.style.width = nat.w + 'px';
-				ui.preview.style.height = nat.h + 'px';
+				ui.preview.style.height = metrics.full + 'px';
 				ui.preview.style.transformOrigin = 'top left';
 				ui.preview.style.transform = 'scale(' + s + ')';
+				ui.preview.style.marginTop = ( -metrics.shift * s ) + 'px';
 			}
 			// floor, not ceil: a sub-pixel overshoot would put a scrollbar under a
 			// preview that is meant to be exactly fitted.
