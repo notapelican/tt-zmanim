@@ -74,6 +74,13 @@ See `WARPLAN.md` for the full plan and phase gates.
   - `render_docx.py` — optional secondary "Word copy" export (python-docx).
     Same block data, same shared line-merge/section-order logic. Requires
     `python-docx` (`pip install -r requirements.txt`).
+- `wp-plugin/ttcc-zmanim/` — Phase 4 WordPress plugin (calls the sheet service;
+  never recomputes a time). Surfaces: the wp-admin dashboard/archive/profiles,
+  the front-end clergy generator (`[ttcc_generator]` — pick week(s), Classic or
+  Modern, adjust/add lines, export PDF/PNG/WhatsApp text, no styling controls and
+  no writes to the archive), the read-only `[ttcc_week]` / `[ttcc_browse]` /
+  `[ttcc_shabbos]` embeds, and the piSignage screens. See
+  `PHASE4-OPERATOR-GUIDE.md`.
 - `samples/` — original PDFs.
 
 ## Running the golden regressions

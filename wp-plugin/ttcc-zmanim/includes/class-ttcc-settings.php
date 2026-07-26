@@ -34,6 +34,16 @@ class TTCC_Zmanim_Settings {
 		return $slug;
 	}
 
+	/**
+	 * Who may use the front-end [ttcc_generator] page:
+	 * 'open' (default) = any visitor who can see the page, 'logged_in' = signed-in
+	 * users only, 'off' = nobody but timesheet managers.
+	 */
+	public static function generator_access() {
+		$mode = (string) self::get( 'generator_access', 'open' );
+		return in_array( $mode, array( 'open', 'logged_in', 'off' ), true ) ? $mode : 'open';
+	}
+
 	/** Modern-layout defaults new sheets inherit (localized to the dashboard). */
 	public static function design_defaults() {
 		return array(
@@ -88,6 +98,9 @@ class TTCC_Zmanim_Settings {
 		// Export sizing: 'fit' (default — exports match the preview's
 		// fit-to-page scaling) or 'natural' (no scaling; may overflow pages).
 		$out['export_fit'] = ( isset( $input['export_fit'] ) && 'natural' === $input['export_fit'] ) ? 'natural' : 'fit';
+		// Front-end generator access ([ttcc_generator]).
+		$access = isset( $input['generator_access'] ) ? (string) $input['generator_access'] : 'open';
+		$out['generator_access'] = in_array( $access, array( 'open', 'logged_in', 'off' ), true ) ? $access : 'open';
 		// Adobe Fonts (Typekit) web-project id — site-level; lowercase alnum.
 		$out['adobe_kit'] = isset( $input['adobe_kit'] ) ? substr( preg_replace( '/[^a-z0-9]/', '', strtolower( (string) $input['adobe_kit'] ) ), 0, 20 ) : '';
 		// GitHub token for over-the-air plugin updates from the private repo.
@@ -173,6 +186,30 @@ class TTCC_Zmanim_Settings {
 						</td>
 					</tr>
 					<?php endif; ?>
+				</table>
+
+				<h2><?php esc_html_e( 'Clergy generator (front-end page)', 'ttcc-zmanim' ); ?></h2>
+				<p class="description">
+					<?php
+					printf(
+						/* translators: %s: the shortcode to paste into a page. */
+						esc_html__( 'Put %s on any page to give clergy a simple self-service generator: pick the week(s), print the sheet or copy the WhatsApp text, and add or adjust lines. Styling is not exposed there — sheets use the house design below (or the default style preset), and the only choice is Classic or Modern.', 'ttcc-zmanim' ),
+						'<code>[ttcc_generator]</code>'
+					);
+					?>
+				</p>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="ttcc_generator_access"><?php esc_html_e( 'Who can generate', 'ttcc-zmanim' ); ?></label></th>
+						<td>
+							<select id="ttcc_generator_access" name="<?php echo esc_attr( self::OPTION ); ?>[generator_access]">
+								<option value="open" <?php selected( self::generator_access(), 'open' ); ?>><?php esc_html_e( 'Anyone who can view the page', 'ttcc-zmanim' ); ?></option>
+								<option value="logged_in" <?php selected( self::generator_access(), 'logged_in' ); ?>><?php esc_html_e( 'Signed-in users only', 'ttcc-zmanim' ); ?></option>
+								<option value="off" <?php selected( self::generator_access(), 'off' ); ?>><?php esc_html_e( 'Disabled (timesheet managers only)', 'ttcc-zmanim' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'The page never writes to the archive — it only generates and exports. Requests are capped at 4 weeks and rate-limited per visitor. Put it behind a private/password-protected page, or require sign-in, if the shul would rather it were not public.', 'ttcc-zmanim' ); ?></p>
+						</td>
+					</tr>
 				</table>
 
 				<h2><?php esc_html_e( 'Modern layout — defaults', 'ttcc-zmanim' ); ?></h2>
