@@ -48,10 +48,10 @@ zip/upload. Cutting a release is a tag push; see `RELEASING.md`.
    (blue "zman" badge) are not. A ⚠ appears if an edit crosses a halachic bound
    — allowed, but check. **Revert** returns a line to the calculated value.
 3. Add/remove lines and notes as needed. Give it a **Title**, set status, **Save**.
-4. **Export**: PDF (print), PNG square (the sheet exactly as printed, centred on
-   a 1:1 2160×2160 canvas — the shape WhatsApp shows in full, padded so a crop
-   cannot clip a time; covers the first printed sheet), PNG portrait (3:4 for
-   social/screens), or Word.
+4. **Export**: PDF (print), PNG square (a 1:1 2160×2160 WhatsApp image — the
+   shape WhatsApp shows in full, padded so a crop cannot clip a time), PNG
+   portrait (3:4 for social/screens), or Word. Both images cover the first
+   printed sheet; see **Share images** below for what they look like.
 5. Past sheets live in **Archive** (edit/regenerate/re-export). Each records the
    engine version it was made with — regenerating after an engine update may
    change times; the stored snapshot reprints exactly as approved.
@@ -73,16 +73,13 @@ sheet themselves — no wp-admin login, no styling decisions:
 4. Above the preview, **Sheet / Square 1:1 / Tall 3:4** switches what is on
    screen. The two image views show the *actual rendered PNG* the download
    gives, so a sheet can be checked in its share shape before it goes out.
-5. **Download PDF**, **WhatsApp image** (the printed sheet on a square 1:1
-   canvas, ready to send), **WhatsApp
+5. **Download PDF**, **WhatsApp image** (square 1:1, ready to send), **WhatsApp
    text** (with Copy and "Open in WhatsApp"), or **Tall image** (3:4 for social).
    When a range fills more than one printed sheet — a yom-tov fortnight, say —
-   the page says so: the square image covers the first sheet, the PDF has all
+   the page says so: the share images cover the first sheet, the PDF has all
    of them.
 
-A block that cannot fill its page — a light week, or `Fixed size` sizing — is
-centred on it, so the leftover paper is shared between head and foot instead of
-sitting under the sheet. Sheets on this page always **fill their page**: the design comes from the house
+Sheets on this page always **fill their page**: the design comes from the house
 preset, but content sizing is forced to Fill, so the block is scaled up
 uniformly — same fonts, same proportions — until it reaches the page. A preset
 saved in `Fixed size` mode would otherwise print at its base font size and end
@@ -99,13 +96,50 @@ published. Requests are capped at 4 weeks and rate-limited per visitor;
 it off), and unedited sheets are cached for 30 minutes so browsing weeks is
 cheap.
 
+## Share images (square 1:1 and tall 3:4)
+
+Both come out of the same renderer as the PDF — same house layout, same fonts,
+same section bars, same margins. What changes is the shape of the paper:
+
+- **Square 1:1** puts the sheet on a *square page*. A week's rows are wide and
+  short, so a square sheet is the natural shape for them; letterboxing the A4
+  page into a square instead would spend a third of the frame on white bars and
+  leave the type ~40% smaller. Two weeks land as two full-height columns and
+  three or four as a 2×2 grid — exactly what the printed layout does with them —
+  so the whole 4-week range still fits one readable square.
+- **Tall 3:4** keeps the A4 page and centres it. A4 is 1:1.41 against the
+  canvas's 1:1.33, so the bars cost almost nothing. Two weeks stack one above
+  the other rather than standing side by side: half a tall frame's width starves
+  the rows.
+
+Both are padded so nothing is drawn near an edge — a centre-ward crop, or a
+circular avatar crop, only ever eats white — and the page is centred on the
+canvas exactly.
+
+Content is scaled up to fill the frame, and it stops at the point where a row
+would run out of room for its label; whatever height is left over is then split
+above and below, so a light week reads as a centred sheet rather than one pinned
+to the top. (The same rule now governs the A4 preview and PDF, where it also
+stops a dense two-column page from spilling a time off the edge of its column.)
+
 ## Public surfaces
 
 - Current-week widget: put `[ttcc_week]` on any page/Elementor block.
 - Browse page: `[ttcc_browse]` (read-only).
 - Shabbos & Yom Tov banner: `[ttcc_shabbos]`.
 - Clergy generator: `[ttcc_generator]` (see above).
-- piSignage: the URL shown on the Settings page (`/ttcc-signage/<slug>/`).
+- piSignage: the URL shown on the Settings page (`/ttcc-signage/<slug>/`) — the
+  current week's sheet, sized to whatever panel it is on. There is nothing to
+  configure per screen: the sheet is laid out to fill the display, so the same
+  URL suits a screen hung portrait or landscape, 1080p or 4K, at the largest
+  type that fits. Portrait gets you more of it; a landscape panel puts the
+  week's times in long lines. It reloads every 30 minutes, which is also how it
+  rolls over to the next week. A week that needs more than one sheet (Sukkos,
+  where the yom-tov days push it past four blocks) cycles through them every
+  20 seconds.
+- piSignage, Shabbos screen: `/ttcc-signage/<slug>/shabbos/` — the dark
+  large-type Shabbos & Yom Tov board, self-refreshing. Built for the screen
+  rather than derived from the sheet, so it sizes itself.
 
 ## If the service is down
 

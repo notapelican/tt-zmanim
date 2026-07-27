@@ -400,8 +400,9 @@ JS;
 	.chips{display:flex;flex-wrap:wrap;gap:1vh;margin-top:1.4vh;list-style:none}
 	.chip{font-size:1.8vh;font-weight:600;padding:.5vh 1.8vh;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
 	.chip.fast{border-color:var(--rose);color:var(--rose)}
-	/* Rows are em-sized against .times so the fit loop below can scale a busy
-	   chag week (6+ rows) down to the space left under the identity block. */
+	/* Rows are em-sized against .times so the fit pass below (fitRows) can scale
+	   a busy chag week (6+ rows) down to the space left under the identity
+	   block — one font-size sets the whole rhythm. */
 	.times{list-style:none;display:flex;flex-direction:column;justify-content:center;gap:.7em;flex:1;margin-top:3vh;min-height:0;overflow:hidden;font-size:3vh}
 	.row{display:flex;align-items:center;justify-content:space-between;gap:3vw;border-radius:1.6vh;padding:.8em 3.6vw;background:rgba(246,242,233,.035)}
 	.label{font-weight:700;font-size:1em;line-height:1.2}
@@ -480,20 +481,43 @@ JS;
 		fitRows();
 	}
 
-	// Shrink the row type until every row fits in the space under the
-	// identity block (busy chag weeks can carry 6+ rows).
+	// Shrink the row type until every row fits the space under the identity
+	// block (busy chag weeks can carry 6+ rows, and on a portrait panel their
+	// labels wrap, which makes the rows taller again).
+	//
+	// The list is a fixed-height flex child, so smaller type is never taller:
+	// "does this size fit?" is monotone and the largest fitting size can be
+	// bisected for. Stepping down from 3vh in tenths used to stop at a 1.2vh
+	// floor with the list still overflowing — and since the list is centred and
+	// clipped, that silently sliced a row off the top as well as the bottom
+	// (measured: 78px of rows gone on a 1080x1920 panel, Pesach 2027).
 	function fitRows() {
 		els.times.style.fontSize = '';
+		els.times.style.justifyContent = '';
 		requestAnimationFrame(function () {
-			var size = 3.0; // vh — matches the stylesheet default
-			var guard = 0;
-			while (els.times.scrollHeight > els.times.clientHeight + 1 && size > 1.2 && guard++ < 24) {
-				size -= 0.1;
-				els.times.style.fontSize = size.toFixed(2) + 'vh';
+			var MIN = 0.7, MAX = 3.0;   // vh; MAX is the stylesheet's own size
+			function fits(v) {
+				els.times.style.fontSize = v.toFixed(3) + 'vh';
+				return els.times.scrollHeight <= els.times.clientHeight + 1;
 			}
+			if (fits(MAX)) { els.times.style.fontSize = ''; return; }
+			var lo = MIN, hi = MAX, i, mid;
+			for (i = 0; i < 14; i++) {
+				mid = (lo + hi) / 2;
+				if (fits(mid)) { lo = mid; } else { hi = mid; }
+			}
+			// If even the floor overflows, top-align: a row cut short at the
+			// bottom reads as "more below", where centred-and-clipped loses the
+			// first row without a trace.
+			if (!fits(lo)) { els.times.style.justifyContent = 'flex-start'; }
 		});
 	}
 	window.addEventListener('resize', fitRows);
+	// The first fit can run before Montserrat/Assistant arrive, and fallback
+	// metrics measure a different height. Re-fit when the real faces land.
+	if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+		document.fonts.ready.then(fitRows, function () {});
+	}
 
 	var retryTimer = null;
 	function load() {

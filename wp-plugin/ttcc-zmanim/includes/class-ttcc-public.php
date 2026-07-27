@@ -177,8 +177,7 @@ class TTCC_Zmanim_Public {
 		}
 
 		$sunday = self::current_sunday();
-		$css    = self::signage_css();
-		$html   = self::cached_html( $sunday, self::week_end( $sunday ), 'signage', $css );
+		$html   = self::cached_html( $sunday, self::week_end( $sunday ), 'signage', self::signage_head() );
 
 		nocache_headers();
 		header( 'Content-Type: text/html; charset=utf-8' );
@@ -200,14 +199,54 @@ class TTCC_Zmanim_Public {
 		return substr( $html, 0, $pos ) . $snippet . substr( $html, $pos );
 	}
 
-	/** Large-type, high-contrast overrides for signage screens. The sheet is
-	 * fixed A4 .page boxes; zoom scales them (content included) to screen size. */
-	private static function signage_css() {
+	/**
+	 * Signage sizing: the panel IS the page.
+	 *
+	 * A screen has no scrollbar and nobody standing at it to pinch-zoom, so
+	 * anything outside the display is simply lost. Rather than scale an A4 sheet
+	 * to the screen and letterbox it — which wastes 60% of a landscape panel,
+	 * since A4 is portrait — the .page box is made the viewport, and the sheet's
+	 * own fit-to-page pass (engine/page_layout.py) lays the week out inside it
+	 * exactly as it would on paper. One URL then suits a screen hung either way
+	 * up, at the largest type the panel allows, with nothing off the edge. The
+	 * raised --ttcc-fit-max lets that pass magnify past its print ceiling, which
+	 * a 4K panel needs.
+	 *
+	 * (Fixed zoom factors used to do this job and could not: 2.1x made the page
+	 * 2357px tall, more than a screen height off the bottom of a 1080p panel,
+	 * and a zoomed body is also `zoom` x wider than the screen, which pushed the
+	 * sheet off to the right.)
+	 *
+	 * The margin is in vmin so the border round the sheet stays even and scales
+	 * with the panel; it doubles as insurance against a TV that overscans.
+	 *
+	 * A screen shows one page at a time, so a week that needs more than one —
+	 * Sukkos, where the yom-tov days push the block count past four — cycles
+	 * through them instead of quietly showing the first and dropping the rest.
+	 */
+	private static function signage_head() {
 		return '<style id="ttcc-signage">'
-			. 'html{background:#fff}'
-			. 'body{zoom:1.6;margin:0;padding:1vh 0}'
-			. '.page{margin:0 auto}'
-			. '@media (min-width:1600px){body{zoom:2.1}}'
-			. '</style>';
+			. ':root{--ttcc-fit-max:4}'
+			. 'html,body{margin:0;padding:0;background:#fff;overflow:hidden}'
+			. '.page{width:100vw!important;height:100vh!important;'
+			. 'margin:0!important;box-shadow:none}'
+			. '.page-margin{left:3vmin!important;right:3vmin!important;'
+			. 'top:3vmin!important;bottom:3vmin!important}'
+			. '</style>'
+			. '<script id="ttcc-signage-pages">'
+			. '(function(){function init(){'
+			. 'var P=document.querySelectorAll(".page");if(P.length<2){return;}'
+			// Rotate only once the sheet's fit pass has run: it measures each page,
+			// and a page hidden before it is measured would come back unscaled.
+			// Start anyway after 10s so a fit that never finishes still cycles.
+			. 'var i=0,waited=0,t=setInterval(function(){'
+			. 'if(document.documentElement.getAttribute("data-ttcc-fitted")==="1"||(waited+=200)>10000){'
+			. 'clearInterval(t);show();setInterval(show,' . ( 20 * 1000 ) . ');}},200);'
+			. 'function show(){for(var k=0;k<P.length;k++){P[k].style.display=(k===i)?"":"none";}'
+			. 'i=(i+1)%P.length;}}'
+			// This runs from <head>, so the pages do not exist yet.
+			. 'if(document.readyState==="loading")'
+			. '{document.addEventListener("DOMContentLoaded",init);}else{init();}})();'
+			. '</script>';
 	}
 }
