@@ -128,7 +128,18 @@ stops a dense two-column page from spilling a time off the edge of its column.)
 - Browse page: `[ttcc_browse]` (read-only).
 - Shabbos & Yom Tov banner: `[ttcc_shabbos]`.
 - Clergy generator: `[ttcc_generator]` (see above).
-- piSignage: the URL shown on the Settings page (`/ttcc-signage/<slug>/`).
+- piSignage: the URL shown on the Settings page (`/ttcc-signage/<slug>/`) — the
+  current week's sheet, sized to whatever panel it is on. There is nothing to
+  configure per screen: the sheet is laid out to fill the display, so the same
+  URL suits a screen hung portrait or landscape, 1080p or 4K, at the largest
+  type that fits. Portrait gets you more of it; a landscape panel puts the
+  week's times in long lines. It reloads every 30 minutes, which is also how it
+  rolls over to the next week. A week that needs more than one sheet (Sukkos,
+  where the yom-tov days push it past four blocks) cycles through them every
+  20 seconds.
+- piSignage, Shabbos screen: `/ttcc-signage/<slug>/shabbos/` — the dark
+  large-type Shabbos & Yom Tov board, self-refreshing. Built for the screen
+  rather than derived from the sheet, so it sizes itself.
 
 ## If the service is down
 
