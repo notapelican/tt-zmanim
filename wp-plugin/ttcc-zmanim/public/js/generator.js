@@ -19,6 +19,12 @@
 
 	var PAGE_W = 794;              // A4 width at 96dpi; the sheet HTML is fixed-width.
 	var FIT_MIN = 260, FIT_MAX = 900;
+	// "Fit" means the whole sheet on screen, so it is bounded by the window as
+	// well as by the pane. Everything above the preview bar (title, week picker,
+	// buttons) can be scrolled out of the way, so the sheet may have the viewport
+	// less that bar; FIT_SLACK keeps it off the very bottom edge, and FIT_MIN_H
+	// stops a short window shrinking it to nothing.
+	var FIT_SLACK = 24, FIT_MIN_H = 320;
 	var DEBOUNCE_MS = 400;
 
 	// Share-image canvases, in the service's own units (see service/raster.py —
@@ -93,6 +99,7 @@
 			preview: q( '[data-role="preview"]' ),
 			image: q( '[data-role="image"]' ),
 			zoomVal: q( '[data-role="zoom-val"]' ),
+			previewBar: root.querySelector( '.tg-preview-bar' ),
 			engine: q( '[data-role="engine"]' ),
 			pagesNote: q( '[data-role="pages-note"]' ),
 			wa: q( '[data-role="wa"]' ),
@@ -314,7 +321,14 @@
 			// Never wider than the pane: on a phone the pane is narrower than
 			// FIT_MIN, and a floor there would clip the right edge.
 			var target = Math.min( avail, Math.max( FIT_MIN, Math.min( FIT_MAX, avail ) ) );
-			return Math.max( 0.15, target / nat.w );
+			// ...nor taller than the window. Without this a wide pane scales an A4
+			// sheet up past the height of any laptop screen — 900px wide is 1236
+			// tall — and the foot of the sheet, which is where the Shabbos times
+			// are, could only be reached by scrolling.
+			var vh = document.documentElement.clientHeight || window.innerHeight || 0;
+			var bar = ui.previewBar ? ui.previewBar.offsetHeight : 0;
+			var room = vh ? Math.max( FIT_MIN_H, vh - bar - FIT_SLACK ) : nat.h;
+			return Math.max( 0.15, Math.min( target / nat.w, room / nat.h ) );
 		}
 
 		function fit() {
