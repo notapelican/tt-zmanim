@@ -41,9 +41,32 @@ Plugins page to see it immediately), then **Update now** — one click.
 - The GitHub token is sent server-side only, so it also authenticates the
   private-repo download.
 
+## If an update ever installs the wrong thing
+
+Symptom: WordPress reports the plugin was deactivated because its file does not
+exist, and it disappears from the Plugins screen. Look in
+`wp-content/plugins/ttcc-zmanim/` — if you see `engine/`, `service/` and
+`wp-plugin/` in there, the **repo source zip** was installed instead of the
+plugin zip, so there is no `ttcc-zmanim.php` at the top level.
+
+Recovery: delete that folder in the host's file manager (a filesystem delete does
+**not** run `uninstall.php`, so the tables and settings survive — only the
+Plugins-screen *Delete* link drops them), then upload the release's
+`ttcc-zmanim.zip` via Plugins → Add New → Upload Plugin and activate. Nothing is
+stored in the plugin folder; the archive, presets and settings live in the
+database, and activation only runs `dbDelta`.
+
+Both ends of this are now closed and it should not recur: the updater requires a
+matching release asset and will never fall back to the source zip
+(`includes/class-ttcc-updater.php`), and the workflow attaches the zip to a
+*draft* release before publishing it, so a site checking for updates can never
+catch a release that has no asset yet.
+
 ## Notes
 
 - Releasing only affects the **plugin**. The Python **sheet service** deploys
   separately to Cloud Run (`git pull` + `gcloud run deploy` — see `service/README.md`).
 - The version you tag must be **higher** than the installed version for the
   update to register.
+- If a release is ever cut by hand rather than by the workflow, attach
+  `ttcc-zmanim.zip` **before** publishing it, for the same reason.
