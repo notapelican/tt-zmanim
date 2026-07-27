@@ -28,9 +28,22 @@ jobs:
           zip -r ../ttcc-zmanim.zip ttcc-zmanim \
             -x '*/.git*' '*/.DS_Store' '*/node_modules/*'
 
-      - name: Publish release with the plugin asset
+      # Created as a DRAFT with the zip attached, then published. Creating the
+      # release and uploading the asset are two API calls ~15s apart, and a site
+      # whose update check lands in between sees a release with no assets: the
+      # update checker then falls back to the repo's source zipball and installs
+      # the whole monorepo over the plugin directory (see
+      # includes/class-ttcc-updater.php). The checker always skips drafts, so
+      # this way it never sees the release until the zip is on it.
+      - name: Draft the release with the plugin asset
         uses: softprops/action-gh-release@v2
         with:
           files: ttcc-zmanim.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
+          draft: true
+
+      - name: Publish it, now that the asset is attached
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "$GITHUB_REF_NAME" --draft=false --repo "$GITHUB_REPOSITORY"
