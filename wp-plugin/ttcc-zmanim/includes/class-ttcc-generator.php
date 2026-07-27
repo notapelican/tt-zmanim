@@ -171,56 +171,6 @@ class TTCC_Zmanim_Generator {
 			<div class="tg-summary" data-role="summary" role="status" aria-live="polite"></div>
 		</header>
 
-		<div class="tg-controls">
-			<div class="tg-field">
-				<span class="tg-label" id="<?php echo esc_attr( $uid ); ?>-wk"><?php esc_html_e( 'Week beginning (Sunday)', 'ttcc-zmanim' ); ?></span>
-				<div class="tg-weekpick">
-					<button type="button" class="tg-step" data-nav="-1" data-busy-disable
-						aria-label="<?php esc_attr_e( 'Previous week', 'ttcc-zmanim' ); ?>">&lsaquo;</button>
-					<input type="date" data-role="start" data-busy-disable
-						aria-labelledby="<?php echo esc_attr( $uid ); ?>-wk" />
-					<button type="button" class="tg-step" data-nav="1" data-busy-disable
-						aria-label="<?php esc_attr_e( 'Next week', 'ttcc-zmanim' ); ?>">&rsaquo;</button>
-				</div>
-				<button type="button" class="tg-link" data-role="today" data-busy-disable><?php esc_html_e( 'Jump to this week', 'ttcc-zmanim' ); ?></button>
-			</div>
-
-			<div class="tg-field">
-				<span class="tg-label"><?php esc_html_e( 'Weeks on the sheet', 'ttcc-zmanim' ); ?></span>
-				<div class="tg-seg tg-seg-weeks" role="group" aria-label="<?php esc_attr_e( 'Number of weeks', 'ttcc-zmanim' ); ?>">
-					<?php for ( $i = 1; $i <= self::MAX_WEEKS; $i++ ) : ?>
-						<button type="button" data-weeks="<?php echo esc_attr( $i ); ?>" data-busy-disable
-							aria-pressed="<?php echo $i === $weeks ? 'true' : 'false'; ?>"><?php echo esc_html( $i ); ?></button>
-					<?php endfor; ?>
-				</div>
-			</div>
-
-			<div class="tg-field">
-				<span class="tg-label"><?php esc_html_e( 'Sheet style', 'ttcc-zmanim' ); ?></span>
-				<div class="tg-seg" role="group" aria-label="<?php esc_attr_e( 'Sheet style', 'ttcc-zmanim' ); ?>">
-					<?php foreach ( array( 'classic' => __( 'Classic', 'ttcc-zmanim' ), 'modern' => __( 'Modern', 'ttcc-zmanim' ) ) as $style => $label ) : ?>
-						<button type="button" data-style="<?php echo esc_attr( $style ); ?>" data-busy-disable
-							aria-pressed="<?php echo $style === $cfg['template'] ? 'true' : 'false'; ?>"><?php echo esc_html( $label ); ?></button>
-					<?php endforeach; ?>
-				</div>
-			</div>
-		</div>
-
-		<div class="tg-actions">
-			<button type="button" class="tg-primary" data-export="pdf" data-busy-disable><?php esc_html_e( 'Download PDF', 'ttcc-zmanim' ); ?></button>
-			<button type="button" class="tg-wa-btn" data-export="png" data-variant="square" data-busy-disable
-				title="<?php esc_attr_e( 'The sheet as printed, centred on a square 1:1 image (2160×2160) with a padded margin — the shape WhatsApp shows in full, in a chat or a status.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'WhatsApp image', 'ttcc-zmanim' ); ?></button>
-			<button type="button" class="tg-wa-btn" data-role="wa-show" data-busy-disable><?php esc_html_e( 'WhatsApp text', 'ttcc-zmanim' ); ?></button>
-			<button type="button" data-export="png" data-variant="portrait" data-busy-disable
-				title="<?php esc_attr_e( '3:4 portrait image (2160×2880) for a social post or a noticeboard screen.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall image', 'ttcc-zmanim' ); ?></button>
-			<button type="button" data-role="edit-toggle" aria-expanded="false"><?php esc_html_e( 'Add or adjust times', 'ttcc-zmanim' ); ?></button>
-			<span class="tg-spacer"></span>
-			<span class="tg-status" data-role="status" role="status" aria-live="polite"></span>
-		</div>
-
-		<p class="tg-hint-line" data-role="pages-note" hidden></p>
-		<p class="tg-alert" data-role="alert" role="alert" hidden></p>
-
 		<section class="tg-wa" data-role="wa" hidden aria-label="<?php esc_attr_e( 'WhatsApp broadcast text', 'ttcc-zmanim' ); ?>">
 			<div class="tg-wa-head">
 				<h3 class="tg-wa-title"><?php esc_html_e( 'WhatsApp broadcast', 'ttcc-zmanim' ); ?></h3>
@@ -235,6 +185,58 @@ class TTCC_Zmanim_Generator {
 		</section>
 
 		<div class="tg-body">
+			<div class="tg-side">
+
+			<div class="tg-controls">
+				<div class="tg-field">
+					<span class="tg-label" id="<?php echo esc_attr( $uid ); ?>-wk"><?php esc_html_e( 'Week beginning (Sunday)', 'ttcc-zmanim' ); ?></span>
+					<div class="tg-weekpick">
+						<button type="button" class="tg-step" data-nav="-1" data-busy-disable
+							aria-label="<?php esc_attr_e( 'Previous week', 'ttcc-zmanim' ); ?>">&lsaquo;</button>
+						<input type="date" data-role="start" data-busy-disable
+							aria-labelledby="<?php echo esc_attr( $uid ); ?>-wk" />
+						<button type="button" class="tg-step" data-nav="1" data-busy-disable
+							aria-label="<?php esc_attr_e( 'Next week', 'ttcc-zmanim' ); ?>">&rsaquo;</button>
+					</div>
+					<button type="button" class="tg-link" data-role="today" data-busy-disable><?php esc_html_e( 'Jump to this week', 'ttcc-zmanim' ); ?></button>
+				</div>
+
+				<div class="tg-field">
+					<span class="tg-label"><?php esc_html_e( 'Weeks on the sheet', 'ttcc-zmanim' ); ?></span>
+					<div class="tg-seg tg-seg-weeks" role="group" aria-label="<?php esc_attr_e( 'Number of weeks', 'ttcc-zmanim' ); ?>">
+						<?php for ( $i = 1; $i <= self::MAX_WEEKS; $i++ ) : ?>
+							<button type="button" data-weeks="<?php echo esc_attr( $i ); ?>" data-busy-disable
+								aria-pressed="<?php echo $i === $weeks ? 'true' : 'false'; ?>"><?php echo esc_html( $i ); ?></button>
+						<?php endfor; ?>
+					</div>
+				</div>
+
+				<div class="tg-field">
+					<span class="tg-label"><?php esc_html_e( 'Sheet style', 'ttcc-zmanim' ); ?></span>
+					<div class="tg-seg" role="group" aria-label="<?php esc_attr_e( 'Sheet style', 'ttcc-zmanim' ); ?>">
+						<?php foreach ( array( 'classic' => __( 'Classic', 'ttcc-zmanim' ), 'modern' => __( 'Modern', 'ttcc-zmanim' ) ) as $style => $label ) : ?>
+							<button type="button" data-style="<?php echo esc_attr( $style ); ?>" data-busy-disable
+								aria-pressed="<?php echo $style === $cfg['template'] ? 'true' : 'false'; ?>"><?php echo esc_html( $label ); ?></button>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			</div>
+
+			<div class="tg-actions">
+				<button type="button" class="tg-primary" data-export="pdf" data-busy-disable><?php esc_html_e( 'Download PDF', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="tg-wa-btn" data-export="png" data-variant="square" data-busy-disable
+					title="<?php esc_attr_e( 'The sheet as printed, centred on a square 1:1 image (2160×2160) with a padded margin — the shape WhatsApp shows in full, in a chat or a status.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'WhatsApp image', 'ttcc-zmanim' ); ?></button>
+				<button type="button" class="tg-wa-btn" data-role="wa-show" data-busy-disable><?php esc_html_e( 'WhatsApp text', 'ttcc-zmanim' ); ?></button>
+				<button type="button" data-export="png" data-variant="portrait" data-busy-disable
+					title="<?php esc_attr_e( '3:4 portrait image (2160×2880) for a social post or a noticeboard screen.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall image', 'ttcc-zmanim' ); ?></button>
+				<button type="button" data-role="edit-toggle" aria-expanded="false"><?php esc_html_e( 'Add or adjust times', 'ttcc-zmanim' ); ?></button>
+				<span class="tg-spacer"></span>
+				<span class="tg-status" data-role="status" role="status" aria-live="polite"></span>
+			</div>
+
+			<p class="tg-hint-line" data-role="pages-note" hidden></p>
+			<p class="tg-alert" data-role="alert" role="alert" hidden></p>
+
 			<aside class="tg-editor" data-role="editor" hidden>
 				<div class="tg-editor-head">
 					<h3 class="tg-editor-title"><?php esc_html_e( 'Times on this sheet', 'ttcc-zmanim' ); ?></h3>
@@ -243,6 +245,8 @@ class TTCC_Zmanim_Generator {
 				<p class="tg-editor-hint"><?php esc_html_e( 'Change a minyan time, hide a line, or add your own. Astronomical times are calculated and cannot be edited. Changes apply to this sheet only — nothing is saved to the site.', 'ttcc-zmanim' ); ?></p>
 				<div class="tg-editor-body" data-role="editor-body"></div>
 			</aside>
+
+			</div><!-- /.tg-side -->
 
 			<div class="tg-preview-pane">
 				<div class="tg-preview-bar">
