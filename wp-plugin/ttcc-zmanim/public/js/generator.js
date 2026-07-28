@@ -20,11 +20,12 @@
 	var PAGE_W = 794;              // A4 width at 96dpi; the sheet HTML is fixed-width.
 	var FIT_MIN = 260, FIT_MAX = 900;
 	// "Fit" means the whole sheet on screen, so it is bounded by the window as
-	// well as by the pane. Everything above the preview bar (title, week picker,
-	// buttons) can be scrolled out of the way, so the sheet may have the viewport
-	// less that bar; FIT_SLACK keeps it off the very bottom edge, and FIT_MIN_H
-	// stops a short window shrinking it to nothing.
-	var FIT_SLACK = 24, FIT_MIN_H = 320;
+	// well as by the pane: the budget is the window less whatever card chrome sits
+	// above the sheet (its heading and the preview bar) and a little room at the
+	// foot. Measured against the card rather than the window, so it does not move
+	// with the scroll position. FIT_MIN_H stops a short window shrinking the sheet
+	// to nothing.
+	var FIT_SLACK = 28, FIT_MIN_H = 320;
 	var DEBOUNCE_MS = 400;
 
 	// Share-image canvases, in the service's own units (see service/raster.py —
@@ -100,6 +101,9 @@
 			image: q( '[data-role="image"]' ),
 			zoomVal: q( '[data-role="zoom-val"]' ),
 			previewBar: root.querySelector( '.tg-preview-bar' ),
+			card: root.querySelector( '.tg-card' ),
+			previewPane: root.querySelector( '.tg-preview-pane' ),
+			foot: root.querySelector( '.tg-foot' ),
 			engine: q( '[data-role="engine"]' ),
 			pagesNote: q( '[data-role="pages-note"]' ),
 			wa: q( '[data-role="wa"]' ),
@@ -321,14 +325,59 @@
 			// Never wider than the pane: on a phone the pane is narrower than
 			// FIT_MIN, and a floor there would clip the right edge.
 			var target = Math.min( avail, Math.max( FIT_MIN, Math.min( FIT_MAX, avail ) ) );
-			// ...nor taller than the window. Without this a wide pane scales an A4
-			// sheet up past the height of any laptop screen — 900px wide is 1236
-			// tall — and the foot of the sheet, which is where the Shabbos times
-			// are, could only be reached by scrolling.
+			var s = target / nat.w;
+			// ...and, on the wide layout, no taller than the window. There the
+			// controls sit beside the sheet and the whole card is meant to land
+			// inside the window; without this a wide pane scales an A4 sheet up
+			// past the height of any laptop screen (900px wide is 1236 tall) and
+			// the foot of the sheet, which is where the Shabbos times are, could
+			// only be reached by scrolling.
+			//
+			// Stacked (narrow) is deliberately left alone: there the page scrolls,
+			// fitting the width is the right answer, and ~640px of stacked chrome
+			// would otherwise squeeze the sheet down to a stamp. 901px matches the
+			// breakpoint in generator.css that turns the layout side-by-side.
 			var vh = document.documentElement.clientHeight || window.innerHeight || 0;
-			var bar = ui.previewBar ? ui.previewBar.offsetHeight : 0;
-			var room = vh ? Math.max( FIT_MIN_H, vh - bar - FIT_SLACK ) : nat.h;
-			return Math.max( 0.15, Math.min( target / nat.w, room / nat.h ) );
+			if ( vh && window.matchMedia && window.matchMedia( '(min-width: 901px)' ).matches ) {
+				var room = Math.max( FIT_MIN_H, vh - chromeAbove() - chromeBelow() );
+				s = Math.min( s, room / nat.h );
+			}
+			return Math.max( 0.15, s );
+		}
+
+		/**
+		 * Card chrome above the sheet, in px: the heading and the preview bar. Both
+		 * rects move together with the page, so the difference does not depend on
+		 * where the visitor has scrolled to — the fit is stable, and sizing against
+		 * it means the whole card lands inside the window rather than just the
+		 * sheet.
+		 */
+		function chromeAbove() {
+			var card = ui.card, frame = ui.frame;
+			if ( ! card || ! frame ) { return ui.previewBar ? ui.previewBar.offsetHeight : 0; }
+			return Math.max( 0, Math.round(
+				frame.getBoundingClientRect().top - card.getBoundingClientRect().top
+			) );
+		}
+
+		/**
+		 * And what sits below it: the preview pane's own bottom padding plus the
+		 * card's footnote.
+		 *
+		 * Deliberately NOT measured as card.bottom - frame.bottom. The sidebar is
+		 * often the taller of the two columns, so that difference includes its
+		 * overhang — which made the budget shrink the sheet, which did not shorten
+		 * the card at all (the sidebar still set its height), which shrank the
+		 * sheet again, down to the floor. These two are the only things the sheet
+		 * actually has to share its column with.
+		 */
+		function chromeBelow() {
+			var pad = 0, foot = 0;
+			if ( ui.previewPane ) {
+				pad = parseFloat( getComputedStyle( ui.previewPane ).paddingBottom ) || 0;
+			}
+			if ( ui.foot ) { foot = ui.foot.offsetHeight || 0; }
+			return Math.max( FIT_SLACK, Math.round( pad + foot + 8 ) );
 		}
 
 		function fit() {

@@ -85,11 +85,14 @@ uniformly — same fonts, same proportions — until it reaches the page. A pres
 saved in `Fixed size` mode would otherwise print at its base font size and end
 halfway down, which reads as dead paper on the PDF and a half-empty WhatsApp
 image. (The dashboard keeps its Fixed option for an operator who wants it.)
-The preview box also trims whatever paper is left, so it hugs the sheet and its
-border, and **Fit** means the whole sheet on screen — it is sized to the window
-as well as to the panel, so the foot of the sheet (where the Shabbos times are)
-is never below the fold. On a phone that works out to the width of the screen.
-Use &minus;/+ to go in closer and scroll.
+On a normal screen the controls sit in a column to the **left** of the sheet, so
+the whole thing — week picker, buttons and the entire sheet — lands inside the
+window with nothing below the fold. The preview box trims whatever paper is left
+so it hugs the sheet and its border, and **Fit** means the whole sheet on screen:
+it is sized to the window as well as to the panel, so the foot of the sheet
+(where the Shabbos times are) is never cut off. Use &minus;/+ to go in closer and
+scroll. On a phone everything stacks — controls, then the sheet at the width of
+the screen — and the page scrolls as usual.
 
 The page never writes to the archive: edits made there are for that one sheet
 and vanish on reload. Any corrections **you** saved in the dashboard for those

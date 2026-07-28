@@ -286,16 +286,16 @@
 }
 .ttcc-gen .tg-alert b { font-weight: 700; }
 
-/* --- body: editor + preview ---------------------------------------------- */
+/* --- body: controls + editor beside the sheet ----------------------------- */
 
+/* Stacked is the narrow-screen shape and the base: side above preview, with the
+   week picker and buttons in rows. Wide screens turn it on its side below. */
 .ttcc-gen .tg-body {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 0;
 	background: var(--tg-canvas);
 }
-
-.ttcc-gen.is-editing .tg-body { grid-template-columns: minmax(340px, 470px) 1fr; }
 
 .ttcc-gen .tg-editor {
 	background: var(--tg-surface);
@@ -308,6 +308,65 @@
 	position: sticky;
 	top: 14px;
 	align-self: start;
+}
+
+@media (min-width: 901px) {
+	/* Controls to the LEFT of the sheet rather than stacked above it. Stacked,
+	   the title, week picker and buttons ate ~350px of height before the sheet
+	   even started, which on a laptop left the foot of the sheet — where the
+	   Shabbos times are — below the fold. Beside it, that height goes to the
+	   preview instead: the whole card fits a laptop window, and the controls
+	   stay in view while you look at the sheet. */
+	.ttcc-gen .tg-body { grid-template-columns: minmax(250px, 310px) 1fr; }
+	.ttcc-gen.is-editing .tg-body { grid-template-columns: minmax(330px, 440px) 1fr; }
+
+	.ttcc-gen .tg-side {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		background: var(--tg-surface);
+		border-right: 1px solid var(--tg-line);
+		/* Its own scroll, so neither a long editor nor a short window stretches
+		   the card past the fold and undoes the point of the rearrangement. The
+		   130px is rough headroom for the card's heading and footnote; it only
+		   bites on windows under ~700px tall, where the controls alone are
+		   otherwise taller than the card is allowed to be. */
+		max-height: calc(100vh - 142px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		position: sticky;
+		top: 8px;
+		align-self: start;
+	}
+
+	/* One narrow column: fields and buttons stack and fill the width. */
+	.ttcc-gen .tg-side .tg-controls,
+	.ttcc-gen .tg-side .tg-actions {
+		flex-direction: column;
+		align-items: stretch;
+		padding: 16px 18px;
+	}
+	.ttcc-gen .tg-side .tg-controls { gap: 16px; }
+	.ttcc-gen .tg-side .tg-actions { gap: 8px; background: none; }
+	.ttcc-gen .tg-side .tg-actions .tg-spacer { display: none; }
+	.ttcc-gen .tg-side .tg-actions button { width: 100%; }
+	.ttcc-gen .tg-side .tg-seg { width: 100%; }
+	.ttcc-gen .tg-side .tg-seg button { flex: 1 1 0; min-width: 0; }
+	.ttcc-gen .tg-side .tg-weekpick input[type="date"] { flex: 1; min-width: 0; }
+	.ttcc-gen .tg-side .tg-hint-line,
+	.ttcc-gen .tg-side .tg-alert { padding-left: 18px; padding-right: 18px; }
+
+	/* Already inside the scrolling sidebar; a second sticky box within it just
+	   fights the first. */
+	.ttcc-gen .tg-side .tg-editor {
+		margin: 0;
+		border: 0;
+		border-top: 1px solid var(--tg-line-soft);
+		border-radius: 0;
+		position: static;
+		max-height: none;
+		overflow: visible;
+	}
 }
 
 .ttcc-gen .tg-editor-head {
@@ -594,13 +653,15 @@
 
 @media (max-width: 900px) {
 	.ttcc-gen.is-editing .tg-body { grid-template-columns: 1fr; }
+	/* Stacked, the controls read first and the sheet follows — DOM order, so no
+	   `order` juggling. (It used to hoist the preview above the editor, which
+	   now lives in the sidebar with the controls and would drag them below the
+	   sheet.) */
 	.ttcc-gen .tg-editor {
 		border-right: 0;
 		border-bottom: 1px solid var(--tg-line);
 		max-height: none;
-		order: 2;
 	}
-	.ttcc-gen .tg-preview-pane { order: 1; }
 	.ttcc-gen .tg-head { padding: 18px 18px 16px; }
 	.ttcc-gen .tg-summary { text-align: left; }
 	.ttcc-gen .tg-controls,
