@@ -311,7 +311,13 @@ def render_html(doc_data: dict) -> str:
         foot = "".join(f'<div class="foot">{_esc(n)}</div>'
                        for g in groups for n in g["week"].get("notes", []))
 
-    body = pages_html(paginate(cells), chrome=chrome, foot=foot)
+    # One week stays on one page in one column, however many cells it carries.
+    # A Tishrei week brings yom-tov day blocks with it, and letting the cell
+    # count decide would hand a lone week the two-column layout meant for a
+    # fortnight — half-width columns its own row labels do not fit in. Scaled to
+    # fit, a single column reads as the same sheet it always is.
+    pages = [("one", cells)] if len(groups) == 1 else paginate(cells)
+    body = pages_html(pages, chrome=chrome, foot=foot)
     return (f'<!doctype html><html><head><meta charset="utf-8">'
             f'<style>{page_css(12)}{_CSS}</style></head>'
             f'<body class="sheet">{body}{FIT_JS}</body></html>')

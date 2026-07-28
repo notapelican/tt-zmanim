@@ -499,7 +499,11 @@ def render_modern(doc_data: dict, *, variant: str = "print",
         f'<div class="addr fit-line">{_esc(_ADDR)}</div></div>'
         '<div class="bsd">בס״ד</div>'
         '</div>')
-    body = pages_html(paginate(cards), chrome=masthead,
+    # One week, one page, one column — see the same rule in render_html: a
+    # Tishrei week's yom-tov day blocks must not tip a lone week into the
+    # two-column layout meant for a fortnight.
+    pages = [("one", cards)] if len(groups) == 1 else paginate(cards)
+    body = pages_html(pages, chrome=masthead,
                       foot=_notes_html(shared_notes, "foot-notes"),
                       page_class="sheet", one_class="one", many_class="many")
     fit = 'fixed' if ( isinstance( theme, dict ) and theme.get( 'fit_mode' ) == 'fixed' ) else 'fill'

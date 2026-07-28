@@ -156,10 +156,20 @@ FIT_JS = """
     // scale can be bisected for. (Iterating s = H/scrollHeight instead — the
     // obvious fixed point — oscillates on a tall or narrow box and can settle
     // well below the true fit.)
+    // Each column is checked in its own right, not just the page as a whole: a
+    // row spilling out of the left-hand cell of a two-column page lands on top
+    // of the right-hand one WITHOUT making the page any wider, so the page's own
+    // scrollWidth says everything is fine while the two columns overprint.
+    var cells = page.querySelectorAll('.page-cells > .cell');
     function fits(v) {
       c.style.width = (W / v) + 'px';
       c.style.transform = 'scale(' + v + ')';
-      return c.scrollHeight * v <= H + 0.5 && c.scrollWidth <= c.clientWidth + 0.5;
+      if (c.scrollHeight * v > H + 0.5) { return false; }
+      if (c.scrollWidth > c.clientWidth + 0.5) { return false; }
+      for (var j = 0; j < cells.length; j++) {
+        if (cells[j].scrollWidth > cells[j].clientWidth + 0.5) { return false; }
+      }
+      return true;
     }
     // 'fixed' sizing never magnifies: the base size is the operator's choice, so
     // 1 is the ceiling and the search only ever shrinks to prevent overflow.
