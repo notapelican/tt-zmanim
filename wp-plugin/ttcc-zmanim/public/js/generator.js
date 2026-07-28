@@ -339,7 +339,9 @@
 			// breakpoint in generator.css that turns the layout side-by-side.
 			var vh = document.documentElement.clientHeight || window.innerHeight || 0;
 			if ( vh && window.matchMedia && window.matchMedia( '(min-width: 901px)' ).matches ) {
-				var room = Math.max( FIT_MIN_H, vh - chromeAbove() - chromeBelow() );
+				var room = Math.max(
+					FIT_MIN_H, vh - siteAbove( vh ) - chromeAbove() - chromeBelow()
+				);
 				s = Math.min( s, room / nat.h );
 			}
 			return Math.max( 0.15, s );
@@ -358,6 +360,27 @@
 			return Math.max( 0, Math.round(
 				frame.getBoundingClientRect().top - card.getBoundingClientRect().top
 			) );
+		}
+
+		/**
+		 * And what the SITE puts above the card — the admin bar, the theme's header,
+		 * whatever the page has before the shortcode. Measured from the top of the
+		 * document, not the window, so it does not change as the visitor scrolls.
+		 *
+		 * Without this the sheet is sized to the window but then pushed down the
+		 * page by the header, and the foot of it lands just past the bottom edge —
+		 * which is exactly what the site header did on ttcc.org.au: the sheet fitted
+		 * on paper and still had its last line cut off on screen.
+		 *
+		 * Capped, because a theme with a full-height hero would otherwise starve the
+		 * sheet: past that point the page simply has to scroll a little.
+		 */
+		function siteAbove( vh ) {
+			var card = ui.card;
+			if ( ! card ) { return 0; }
+			var scrolled = window.pageYOffset || document.documentElement.scrollTop || 0;
+			var top = card.getBoundingClientRect().top + scrolled;
+			return Math.max( 0, Math.min( Math.round( top ), Math.round( vh * 0.35 ) ) );
 		}
 
 		/**
