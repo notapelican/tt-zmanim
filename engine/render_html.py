@@ -201,8 +201,52 @@ def _item_html(it: tuple) -> str:
     return ""
 
 
+def week_group_items(group: dict, *, notes_inline: bool) -> list[tuple]:
+    """A week's items with its yom-tov / chol-hamoed days folded in where they
+    actually fall in the calendar.
+
+    The days arrive from the engine as their own blocks, and appending them after
+    the whole week put the Shabbos section — always the last day of the week —
+    above a yom tov or chol hamoed that falls earlier in it. So the days that
+    come before Shabbos go before the Shabbos bar, and a day that IS the Shabbos
+    follows it: the Shabbos section opens with candle lighting and the erev
+    Shabbos times, which belong to the Friday before.
+
+    Shared by the classic and modern renderers so both read in the same order.
+    """
+    week = group["week"]
+    items = week_items(week, notes_inline=notes_inline)
+    days = sorted(group.get("days", []), key=lambda d: d.get("date", ""))
+    if not days:
+        return items
+
+    # The purple bar opens the Shabbos section; ISO dates compare lexically.
+    shabbos = week.get("civil_end", "")
+    cut = len(items)
+    for i, it in enumerate(items):
+        if it[0] == "bar" and len(it) > 2 and it[2] == "purple":
+            cut = i
+            break
+
+    out = list(items[:cut])
+    for day in days:
+        if day.get("date", "") < shabbos:
+            out += day_items(day)
+    out += items[cut:]
+    for day in days:
+        if day.get("date", "") >= shabbos:
+            out += day_items(day)
+    return out
+
+
 def _week_cell_html(week: dict, *, notes_inline: bool) -> str:
     body = "".join(_item_html(it) for it in week_items(week, notes_inline=notes_inline))
+    return f'<div class="week">{body}</div>'
+
+
+def _week_group_cell_html(group: dict, *, notes_inline: bool) -> str:
+    body = "".join(_item_html(it)
+                   for it in week_group_items(group, notes_inline=notes_inline))
     return f'<div class="week">{body}</div>'
 
 
@@ -277,8 +321,7 @@ def render_html(doc_data: dict) -> str:
     from .page_layout import FIT_JS, page_css, paginate, pages_html
     from .render_docx import _group_blocks
     groups = _group_blocks(doc_data["blocks"])
-    n_cells = sum(1 + len(g["days"]) for g in groups)
-    multi = n_cells > 1  # multiple blocks share pages (grid/columns)
+    multi = len(groups) > 1  # several weeks share pages (grid/columns)
 
     # Hoist notes common to every week to a single last-page footer.
     shared_notes: list[str] = []
@@ -289,11 +332,10 @@ def render_html(doc_data: dict) -> str:
             g["week"] = dict(g["week"],
                              notes=[n for n in g["week"]["notes"] if n not in common])
 
-    cells: list[str] = []
-    for g in groups:
-        cells.append(_week_cell_html(g["week"], notes_inline=multi))
-        for day in g["days"]:
-            cells.append(_day_cell_html(day))
+    # One cell per week, its yom-tov days folded in at their calendar position.
+    # That is also what keeps a lone week on one page in one column: it is a
+    # single cell however much Tishrei it carries.
+    cells: list[str] = [_week_group_cell_html(g, notes_inline=multi) for g in groups]
 
     # One header for every layout; name and location are single lines by
     # contract (.fit-line + nowrap — the fit script shrinks them to fit).
@@ -311,13 +353,7 @@ def render_html(doc_data: dict) -> str:
         foot = "".join(f'<div class="foot">{_esc(n)}</div>'
                        for g in groups for n in g["week"].get("notes", []))
 
-    # One week stays on one page in one column, however many cells it carries.
-    # A Tishrei week brings yom-tov day blocks with it, and letting the cell
-    # count decide would hand a lone week the two-column layout meant for a
-    # fortnight — half-width columns its own row labels do not fit in. Scaled to
-    # fit, a single column reads as the same sheet it always is.
-    pages = [("one", cells)] if len(groups) == 1 else paginate(cells)
-    body = pages_html(pages, chrome=chrome, foot=foot)
+    body = pages_html(paginate(cells), chrome=chrome, foot=foot)
     return (f'<!doctype html><html><head><meta charset="utf-8">'
             f'<style>{page_css(12)}{_CSS}</style></head>'
             f'<body class="sheet">{body}{FIT_JS}</body></html>')

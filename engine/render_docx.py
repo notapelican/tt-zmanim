@@ -390,7 +390,10 @@ def _partition_week_entries(entries):
 
 
 def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
-                     notes_inline=False) -> None:
+                     notes_inline=False, before_shabbos=None) -> None:
+    """``before_shabbos``, if given, is called once immediately before the
+    "Shabbos kodesh" bar — the hook _render_group uses to place the week's
+    yom-tov days that fall earlier in the calendar above it."""
     title_size = Pt(size.pt + 2.5)
     _para(container, block["title"], bold=True, color=BLUE, size=title_size,
           space_after=Pt(0))
@@ -416,6 +419,8 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
         nonlocal shabbos_bar_done
         if shabbos_bar_done:
             return
+        if before_shabbos is not None:
+            before_shabbos()
         labels = ", ".join([block["parsha"]] + block["shabbos_labels"])
         _bar(container, f"Shabbos kodesh: {labels}", width, purple=True, size=size)
         shabbos_bar_done = True
@@ -515,11 +520,23 @@ def _group_blocks(blocks: list[dict]) -> list[dict]:
 
 
 def _render_group(container, group, width, *, size=BODY_SIZE, notes_inline=False):
+    # Calendar order: the week's yom-tov / chol-hamoed days go where they fall,
+    # so a Shabbos at the end of the week no longer prints above a yom tov
+    # earlier in it. Same rule as the HTML sheets — see
+    # engine.render_html.week_group_items.
+    days = sorted(group["days"], key=lambda d: d.get("date", ""))
+    shabbos = group["week"].get("civil_end", "")   # ISO dates compare lexically
+
+    def emit(seq):
+        for day in seq:
+            render_day_into(container, day, width, size=size)
+            _para(container, " ", space_after=Pt(0), size=Pt(4))
+
+    before = [d for d in days if d.get("date", "") < shabbos]
     render_week_into(container, group["week"], width, size=size,
-                     notes_inline=notes_inline)
-    for day in group["days"]:
-        render_day_into(container, day, width, size=size)
-        _para(container, " ", space_after=Pt(0), size=Pt(4))
+                     notes_inline=notes_inline,
+                     before_shabbos=(lambda: emit(before)) if before else None)
+    emit([d for d in days if d.get("date", "") >= shabbos])
 
 
 def _week_separator(container):
