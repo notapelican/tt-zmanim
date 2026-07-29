@@ -25,7 +25,7 @@ import re
 
 from engine.page_layout import FIT_JS, page_css, paginate, pages_html
 from engine.render_docx import _group_blocks
-from engine.render_html import day_items, week_items
+from engine.render_html import day_items, week_group_items, week_items
 
 _NAME = "Tzemach Tzedek Community Centre"
 _ADDR = "1 Penkivil St, Bondi NSW · www.ttcc.org.au · PO Box 477 Waverley NSW 2024"
@@ -432,8 +432,11 @@ def _notes_html(notes, cls: str = "notes") -> str:
     return f'<div class="{cls}">{body}</div>'
 
 
-def _week_html(block: dict) -> str:
-    items = week_items(block, notes_inline=False)
+def _week_html(group: dict) -> str:
+    """One card per week, its yom-tov days folded in where they fall in the
+    calendar (engine.render_html.week_group_items — same order as classic)."""
+    block = group["week"]
+    items = week_group_items(group, notes_inline=False)
     title = next((it[1] for it in items if it[0] == "title"), block.get("title", ""))
     subtitle = next((it[1] for it in items if it[0] == "subtitle"), "")
     sb = _SectionBuilder()
@@ -445,17 +448,6 @@ def _week_html(block: dict) -> str:
         f'{sb.html()}{_notes_html(block.get("notes", []))}'
         '</section>')
 
-
-def _day_html(day: dict) -> str:
-    items = day_items(day)
-    heading = items[0][1] if items and items[0][0] == "bar" else (day.get("title") or "")
-    sb = _SectionBuilder()
-    sb.feed(items[1:])  # the leading bar becomes the card header
-    return (
-        '<section class="wk">'
-        f'<header class="wk-h"><h2>{_esc(heading)}</h2></header>'
-        f'{sb.html()}'
-        '</section>')
 
 
 def _logo_html(logo_url: str | None) -> str:
@@ -486,11 +478,7 @@ def render_modern(doc_data: dict, *, variant: str = "print",
             g["week"] = dict(g["week"],
                              notes=[n for n in g["week"].get("notes", []) if n not in common])
 
-    cards: list[str] = []
-    for g in groups:
-        cards.append(_week_html(g["week"]))
-        for day in g.get("days", []):
-            cards.append(_day_html(day))
+    cards: list[str] = [_week_html(g) for g in groups]
 
     masthead = (
         '<div class="masthead">'
