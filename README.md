@@ -42,7 +42,16 @@ See `WARPLAN.md` for the full plan and phase gates.
 - `engine/` — Phase 1+ code:
   - `solar.py` — NOAA solar calculator (KosherJava-compatible).
   - `zmanim.py` — zmanim engine (Baal HaTanya definitions, explicit rounding policies).
-  - `hebcal.py` — Hebrew calendar core (year arithmetic, Hebrew↔civil, molad).
+  - `hebcal.py` — Hebrew calendar core (year arithmetic, Hebrew↔civil, molad),
+    plus Hebrew-letter rendering (gematria numerals, Chabad month names,
+    Adar I/II) for the display screens — `hebrew_date_letters()` gives
+    `ה׳ מנחם־אב תשפ״ו`.
+  - `chabad.py` — the canonical Chabad-days table (25 dates: the Rebbeim's
+    yahrtzeits and birthdays, the liberations, Didan Notzach, Chai Elul …) with a
+    **source per date** and Adar dates resolving to Adar II in a leap year.
+    Deliberately separate from `luach.holidays()`, which feeds the printed
+    sheets: the sheets mark only five of these, and folding twenty more labels
+    into `holidays()` would silently change what prints.
   - `luach.py` — luach layer: diaspora parsha cycle (doubled sedras, Chazak),
     special Shabbosos, yomim tovim, fasts (with commencement kinds), Rosh Chodesh
     & molad announcements, Omer, Pirkei Avos (Chabad cycle), DST detection,
@@ -57,9 +66,18 @@ See `WARPLAN.md` for the full plan and phase gates.
     Shabbos/YT ends, fast begin/end) extracted from the assembled blocks for the
     public banner widget and the piSignage Shabbos screen; served by the
     service's `/highlights` endpoint.
-  - `validate.py` / `validate_luach.py` / `validate_rules.py` — golden regressions
+  - `dayview.py` — per-day payload for the display screens (zmanim + luach +
+    Hebrew date + Chabad days), served by `/day`. Neutral, not display-shaped;
+    the screens compose their own panes. Two deliberate omissions: candle
+    lighting (ask `/highlights`, so one number has one source) and mincha gedola
+    (no such zman exists in the engine — adding one is a halachic decision, not a
+    formatting one). Publishes `chatzos` as **`chatzos_halayla`**, since in this
+    engine it is halachic midnight, and lists which zmanim fall on the next civil
+    date — which side of midnight chatzos halayla lands on is seasonal.
+  - `validate.py` / `validate_luach.py` / `validate_rules.py` /
+    `validate_dayview.py` — golden regressions
     against all 27 fixtures (Phase 1 zmanim: 782/895 exact with every residual
-    triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 777/861 with every
+    triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 778/861 with every
     residual triaged, incl. seasonal-profile switching 59/62).
   - `render_html.py` — **primary renderer.** Turns `assemble.generate()`
     block data into self-contained HTML/CSS matching the house style (בס״ד
@@ -93,4 +111,5 @@ See `WARPLAN.md` for the full plan and phase gates.
 python3 engine/validate.py         # zmanim engine; exits nonzero on regression
 python3 engine/validate_luach.py   # luach layer; exits nonzero on regression
 python3 engine/validate_rules.py   # schedule rules + profiles; exits nonzero on regression
+python3 engine/validate_dayview.py # display layer: hebrew letters, chabad days, /day payload
 ```

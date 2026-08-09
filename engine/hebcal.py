@@ -135,6 +135,102 @@ def to_hebrew(d: date) -> HDate:
     raise AssertionError("date beyond year end")
 
 
+# --- Hebrew-letter rendering (gematria) ---
+#
+# For the display screens: the sheets are fully transliterated, but a screen
+# shows the Hebrew date in letters beside the transliteration. Lives here rather
+# than in the plugin so the printed sheets can use it too, and so there is one
+# place where "how do we write a Hebrew date" is decided.
+
+_NUM_ONES = ("", "א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט")
+_NUM_TENS = ("", "י", "כ", "ל", "מ", "נ", "ס", "ע", "פ", "צ")
+_NUM_HUNDREDS = ("", "ק", "ר", "ש", "ת")
+
+GERESH = "׳"      # ׳  single letter
+GERSHAYIM = "״"   # ״  before the last letter of a multi-letter numeral
+
+# Hebrew month names. Chabad usage, and deliberately not a mechanical
+# transliteration of the English names above: Marcheshvan is מרחשון, and Av is
+# written מנחם־אב.
+_HEB_MONTHS = {
+    "Tishrei": "תשרי",
+    "Marcheshvan": "מרחשון",
+    "Kislev": "כסלו",
+    "Teves": "טבת",
+    "Shevat": "שבט",
+    "Adar": "אדר",
+    "Adar I": "אדר א" + GERESH,
+    "Adar II": "אדר ב" + GERESH,
+    "Nisan": "ניסן",
+    "Iyar": "אייר",
+    "Sivan": "סיון",
+    "Tammuz": "תמוז",
+    "Av": "מנחם־אב",
+    "Elul": "אלול",
+}
+
+
+def _numeral_body(n: int) -> str:
+    """Hebrew numeral letters for 1..999, unpunctuated."""
+    if n < 1 or n > 999:
+        raise ValueError(f"out of range for a Hebrew numeral: {n}")
+    out = []
+    hundreds, rem = divmod(n, 100)
+    # 400 is the largest single letter (ת), so 500..900 repeat it.
+    while hundreds > 4:
+        out.append(_NUM_HUNDREDS[4])
+        hundreds -= 4
+    out.append(_NUM_HUNDREDS[hundreds])
+    if rem in (15, 16):
+        # Never write יה or יו — those spell divine names. 15 is טו, 16 is טז.
+        out.append("ט" + _NUM_ONES[rem - 9])
+    else:
+        tens, ones = divmod(rem, 10)
+        out.append(_NUM_TENS[tens])
+        out.append(_NUM_ONES[ones])
+    return "".join(out)
+
+
+def hebrew_numeral(n: int, *, punctuate: bool = True) -> str:
+    """A number in Hebrew letters, e.g. 24 -> כ״ד, 10 -> י׳."""
+    body = _numeral_body(n)
+    if not punctuate:
+        return body
+    if len(body) == 1:
+        return body + GERESH
+    return body[:-1] + GERSHAYIM + body[-1]
+
+
+def hebrew_month_letters(year: int, month: int) -> str:
+    """Hebrew-letter month name for a civil-order month index."""
+    return _HEB_MONTHS[month_names(year)[month - 1]]
+
+
+def hebrew_year_letters(year: int, *, with_thousands: bool = False) -> str:
+    """5786 -> תשפ״ו, or ה׳תשפ״ו with the thousands prefix."""
+    thousands, rem = divmod(year, 1000)
+    if rem == 0:
+        raise ValueError(f"cannot render year {year} in letters")
+    body = hebrew_numeral(rem)
+    if with_thousands and thousands:
+        return _NUM_ONES[thousands] + GERESH + body
+    return body
+
+
+def hebrew_date_letters(d: date, *, with_thousands: bool = False) -> str:
+    """A civil date as a Hebrew date in letters, e.g. 'ה׳ מנחם־אב תשפ״ו'.
+
+    Note the day is a *Hebrew* day number, so this is only meaningful for the
+    Hebrew date containing `d` — which begins the evening before. Callers that
+    care (the screens roll over at tzeis, not midnight) must pass the date they
+    have already resolved.
+    """
+    h = to_hebrew(d)
+    return (f"{hebrew_numeral(h.day)} "
+            f"{hebrew_month_letters(h.year, h.month)} "
+            f"{hebrew_year_letters(h.year, with_thousands=with_thousands)}")
+
+
 # --- Molad ---
 
 def molad(year: int, month: int) -> tuple[int, int]:
