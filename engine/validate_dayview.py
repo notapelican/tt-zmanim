@@ -16,7 +16,7 @@ Two things are checked that matter more than the rest:
 from __future__ import annotations
 
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from . import chabad, hebcal
 from .dayview import day_view, day_views
@@ -189,6 +189,18 @@ def check_dayview(sc: Score):
                 want = f"{dt.hour:02d}:{dt.minute:02d}"
                 sc.add("dayview_zmanim", v["zmanim"].get(key) == want,
                        f"{d} {key}: {v['zmanim'].get(key)} != {want}")
+
+            # Every display string must have a matching absolute instant, and the
+            # two must describe the same moment. Consumers compare with the
+            # instant and print the string, so a drift between them would put a
+            # screen a timezone out with nothing on it looking wrong.
+            for key, shown in v["zmanim"].items():
+                iso = v["zmanim_iso"].get(key)
+                ok = False
+                if iso:
+                    parsed = datetime.fromisoformat(iso)
+                    ok = f"{parsed.hour:02d}:{parsed.minute:02d}" == shown
+                sc.add("dayview_zmanim_iso", ok, f"{d} {key}: shown {shown}, iso {iso}")
 
             # Which side of midnight chatzos halayla falls on is seasonal, not
             # fixed: under DST solar noon is ~12:45–13:15 so chatzos lands after

@@ -105,6 +105,13 @@ def day_view(d: date, *, engine: ZmanimEngine | None = None) -> dict:
     eng = engine or ZmanimEngine()
 
     zmanim: dict[str, str] = {}
+    # The same times as absolute, offset-bearing instants.
+    #
+    # Not redundant: `zmanim` is the display string and stays authoritative for
+    # what a screen prints, but a *comparison* ("are we past shkia yet?") made
+    # from "20:03" plus a date has to assume a timezone, and a signage player is
+    # quite likely to be running UTC. Publishing the instant removes the guess.
+    zmanim_iso: dict[str, str] = {}
     # Zmanim whose clock time falls on the *following* civil date — chatzos
     # halayla always, and anything else the solver puts past midnight. Published
     # explicitly so a caller comparing "is it past this time yet" cannot get the
@@ -119,6 +126,7 @@ def day_view(d: date, *, engine: ZmanimEngine | None = None) -> dict:
             # row they have no time for.
             continue
         zmanim[key] = _fmt(dt)
+        zmanim_iso[key] = dt.isoformat()
         if dt.date() != d:
             next_day.append(key)
 
@@ -130,6 +138,7 @@ def day_view(d: date, *, engine: ZmanimEngine | None = None) -> dict:
         "weekday": _weekday_name(d),
         "hebrew": _hebrew_block(d),
         "zmanim": zmanim,
+        "zmanim_iso": zmanim_iso,
         "zmanim_next_day": next_day,
         "labels": labels,
         "chabad": chabad.for_date(d),
