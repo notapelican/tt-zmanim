@@ -17,6 +17,7 @@ All require `Authorization: Bearer <TTCC_SERVICE_TOKEN>` except `/health`.
 | GET | `/health` | — | `{status, engine_version, chromium}` |
 | POST | `/generate` | `{start, end, profiles?, notes?, overrides?}` | block dict + `engine_version` |
 | POST | `/highlights` | same as `/generate` | `{weeks:[…], engine_version}` — per-week Shabbos/YT headline times (candles, ends, fasts) for the public widget & Shabbos signage screen |
+| POST | `/day` | `{start, end}` | `{days:[…], engine_version}` — per-day zmanim, luach labels, Hebrew date (words **and** letters) and Chabad days, for the display screens. Neutral, not display-shaped. Each zman comes as a display string (`zmanim`) **and** an offset-bearing instant (`zmanim_iso`), because a signage player may not run the shul's timezone |
 | POST | `/render/html` | `{start,end,…}` **or** `{doc}` (+`variant?`) | `{html, engine_version}` |
 | POST | `/render/pdf` | same as render/html | `application/pdf` |
 | POST | `/render/png` | same (+`variant:"portrait"\|"square"`) | `image/png` — the sheet centred on a 3:4 social canvas (2160×2880), or laid out on a square page for a 1:1 WhatsApp canvas (2160×2160) |

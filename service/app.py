@@ -206,6 +206,29 @@ def post_highlights(req: GenerateRequest) -> dict:
     return {**doc, "engine_version": engine_version()}
 
 
+@app.post("/day", dependencies=[Depends(require_auth)])
+def post_day(req: GenerateRequest) -> dict:
+    """Per-day zmanim, luach labels, Hebrew date (in letters) and Chabad days
+    for every day in range — the data behind the display screens' zmanim and
+    date panes.
+
+    Neutral, not display-shaped: the screen composes its own panes. Same
+    pass-through contract as /generate and /highlights — the engine computes and
+    rounds everything (see engine/dayview.py), and note what that module
+    deliberately does not return: candle lighting (ask /highlights, so one number
+    has one source) and mincha gedola (no such zman exists in the engine).
+
+    Takes no `profiles`/`notes`/`overrides`: there are no minyan lines here, only
+    zmanim and luach. Minyan times on a screen would have to come from the same
+    profile set the printed sheets use or the two could disagree, and that is a
+    decision about where the profile set lives, not a formatting choice."""
+    from engine.dayview import day_views
+
+    s, e = _parse_range(req.start, req.end)
+    doc = day_views(s, e)
+    return {**doc, "engine_version": engine_version()}
+
+
 @app.post("/render/html", dependencies=[Depends(require_auth)])
 def post_render_html(req: RenderHtmlRequest) -> dict:
     doc = _resolve_doc(req)
