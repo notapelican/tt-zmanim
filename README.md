@@ -74,8 +74,17 @@ See `WARPLAN.md` for the full plan and phase gates.
     formatting one). Publishes `chatzos` as **`chatzos_halayla`**, since in this
     engine it is halachic midnight, and lists which zmanim fall on the next civil
     date — which side of midnight chatzos halayla lands on is seasonal.
+  - `day_minyanim()` in `assemble.py` — minyan lines for one civil date,
+    resolved by the *same* rules engine and profile set `generate()` uses for
+    the printed sheets (served by `/davening`), so the display screens' davening
+    pane can never disagree with the sheet beside it. Reads a week's own
+    `friday`/`shabbos` dates to place Shabbos-day and Erev Shabbos lines, rather
+    than trusting each entry to carry its own date — several of those rules
+    (Tehillim, Chassidus, Shabbos Shacharis) carry neither a `date` nor a
+    `day_spec`, only a section, and a first attempt that filtered on
+    entry-level fields silently dropped all of them.
   - `validate.py` / `validate_luach.py` / `validate_rules.py` /
-    `validate_dayview.py` — golden regressions
+    `validate_dayview.py` / `validate_davening.py` — golden regressions
     against all 27 fixtures (Phase 1 zmanim: 782/895 exact with every residual
     triaged; Phase 2 luach: 352/352; Phase 3 schedule lines: 778/861 with every
     residual triaged, incl. seasonal-profile switching 59/62).
@@ -111,7 +120,12 @@ See `WARPLAN.md` for the full plan and phase gates.
 python3 engine/validate.py         # zmanim engine; exits nonzero on regression
 python3 engine/validate_luach.py   # luach layer; exits nonzero on regression
 python3 engine/validate_rules.py   # schedule rules + profiles; exits nonzero on regression
-python3 engine/validate_dayview.py # display layer: hebrew letters, chabad days, /day payload
+python3 -m engine.validate_dayview  # display layer: hebrew letters, chabad days, /day payload
+python3 -m engine.validate_davening # per-day minyan resolution behind /davening
+
+# validate_dayview.py and validate_davening.py use package-relative imports, so
+# they need `-m engine.<name>` (run from the repo root); the -py invocation
+# above will fail with "attempted relative import with no known parent package".
 ```
 
 ---
@@ -141,7 +155,8 @@ Adding an endpoint or changing a zman means a service deploy. There is only ever
 ```sh
 git checkout main && git pull                  # 1. get the merged code
 python3 engine/validate.py && python3 engine/validate_luach.py \
-  && python3 engine/validate_rules.py && python3 engine/validate_dayview.py   # 2. must pass
+  && python3 engine/validate_rules.py && python3 -m engine.validate_dayview \
+  && python3 -m engine.validate_davening                                     # 2. must pass
 gcloud run services list                       # 3. find your region if unsure
 gcloud run deploy ttcc-sheet-service --source . --region <region> \
   --allow-unauthenticated --memory 2Gi --cpu 1 --concurrency 4 \

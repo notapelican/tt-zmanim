@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import hmac
 import sys
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -227,6 +227,37 @@ def post_day(req: GenerateRequest) -> dict:
     s, e = _parse_range(req.start, req.end)
     doc = day_views(s, e)
     return {**doc, "engine_version": engine_version()}
+
+
+@app.post("/davening", dependencies=[Depends(require_auth)])
+def post_davening(req: GenerateRequest) -> dict:
+    """Minyan lines for each day in range, resolved by the SAME rules engine
+    and profile set /generate uses for the printed sheets (see
+    engine/assemble.day_minyanim) — deliberately separate from /day, which has
+    no notion of the shul's editable schedule at all.
+
+    `profiles` is accepted (the same shape /generate takes) and should be the
+    caller's active profile set — a screen calling this without one gets the
+    engine's *default* profiles, which will not match a shul that has ever
+    edited its schedule. A caller with no profile set of its own should not
+    call this endpoint at all, rather than silently show the wrong minyan
+    times."""
+    from engine.assemble import day_minyanim
+    from engine.rules import DEFAULT_PROFILES
+    from engine.zmanim import ZmanimEngine
+
+    s, e = _parse_range(req.start, req.end)
+    profiles = _deserialize_profiles(req.profiles)
+    if profiles is None:
+        profiles = DEFAULT_PROFILES
+
+    engine = ZmanimEngine()
+    days = []
+    d = s
+    while d <= e:
+        days.append({"date": d.isoformat(), "entries": day_minyanim(d, engine=engine, profiles=profiles)})
+        d += timedelta(days=1)
+    return {"days": days, "engine_version": engine_version()}
 
 
 @app.post("/render/html", dependencies=[Depends(require_auth)])

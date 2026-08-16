@@ -74,6 +74,111 @@ def format_day_spec(days: list[date]) -> str | None:
     return ", ".join(parts)
 
 
+# Sunday-first order, matching format_day_spec's own run construction
+# (`sorted(days, key=lambda d: (d.weekday() + 1) % 7)`).
+_SUN_FIRST_ABBR = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Shabbos"]
+
+
+def day_spec_includes(day_spec: str | None, d: date) -> bool:
+    """Inverse of `format_day_spec`: does the printed day_spec text cover civil
+    date `d`? Exact inverse of that function's own grammar (comma-separated
+    parts, each a single abbreviation, an "A & B" pair, or an "A–B" run) —
+    lives beside the encoder so a grammar change updates both, rather than a
+    second parser elsewhere silently drifting out of sync.
+
+    Used by `day_minyanim` to pick out, from a week's ranged weekday lines
+    (one line covering several days), which lines actually apply to one
+    civil date — without re-deriving the shul's schedule logic, just reading
+    back what the rules engine already decided for this specific week.
+    """
+    if not day_spec:
+        return False
+    abbr = _WD_ABBR[d.weekday()]
+    for part in day_spec.split(", "):
+        if " & " in part:
+            a, b = part.split(" & ")
+            if abbr in (a, b):
+                return True
+        elif "–" in part:
+            a, b = part.split("–")
+            i, j = _SUN_FIRST_ABBR.index(a), _SUN_FIRST_ABBR.index(b)
+            if abbr in _SUN_FIRST_ABBR[i:j + 1]:
+                return True
+        elif abbr == part:
+            return True
+    return False
+
+
+def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
+                 profiles=DEFAULT_PROFILES) -> list[dict]:
+    """Minyan lines applicable to civil date `d`, resolved by the exact same
+    rules engine and profile set `generate()` uses for the printed sheets —
+    so a screen can never disagree with the sheet on the wall beside it
+    (this is the reason this function calls `generate`, rather than
+    `davening_lines` directly: every public-holiday swap, mevorchim
+    condition, fast-day Mincha split and other special-day mutation is
+    already handled there, and duplicating any of that here would be a
+    second place for the shul's schedule to silently drift from the sheets').
+
+    Every returned entry carries `date` = d.isoformat() and a `time_iso`
+    absolute instant (a signage player may not run the shul's timezone — see
+    dayview.py's `zmanim_iso` for the same reasoning), even for lines that
+    print as a range on the sheet (one "Mincha Sun.–Thurs." line becomes,
+    for one specific `d`, one dated entry).
+
+    Erev Yom Tov days can legitimately carry two lines for the same tefilla
+    (e.g. two Minchas) when the printed sheet does: the week's ranged
+    weekday line, whose range happens to include that day, plus the
+    Yom-Tov-specific line from that day's own day-block. That duplication is
+    not a bug here — it is what the sheet itself prints, and hiding it would
+    be this function deciding the sheet is wrong.
+    """
+    engine = engine or ZmanimEngine()
+    doc = generate(d, d, engine=engine, profiles=profiles)
+    weekday_title = SECTION_TITLES[WEEKDAY]
+
+    out: list[dict] = []
+    for block in doc["blocks"]:
+        if block["type"] == "day":
+            if block["date"] == d.isoformat():
+                out.extend(dict(e, date=d.isoformat())
+                           for e in block["entries"] if e["kind"] == "minyan")
+            continue
+
+        # "week": every non-weekday section belongs to exactly one day of
+        # this block (its Friday or its Shabbos), whether or not the
+        # individual entry happens to carry its own `date` — a Shabbos-day
+        # rule built on a FixedTime (Tehillim, Chassidus, Shabbos Shacharis)
+        # carries neither `date` nor `day_spec`, since those only exist for
+        # ZmanAnchored/ranged-weekday lines. Reading the *section* against
+        # the block's own friday/shabbos is what actually holds for every
+        # rule shape, rather than one that works only for some of them.
+        friday = block.get("friday")
+        shabbos = block.get("shabbos")
+        for e in block["entries"]:
+            if e["kind"] != "minyan":
+                continue
+            if e["section"] == weekday_title:
+                if day_spec_includes(e.get("day_spec"), d):
+                    out.append(dict(e, date=d.isoformat()))
+            elif e["section"] == SECTION_TITLES[SHABBOS_DAY]:
+                if shabbos == d.isoformat():
+                    out.append(dict(e, date=d.isoformat()))
+            else:
+                # Both Erev Shabbos section titles (early and regular) map to
+                # the block's Friday.
+                if friday == d.isoformat():
+                    out.append(dict(e, date=d.isoformat()))
+
+    for e in out:
+        hh, mm = (int(p) for p in e["time"].split(":"))
+        e["time_iso"] = datetime(d.year, d.month, d.day, hh, mm,
+                                 tzinfo=engine.loc.tz).isoformat()
+
+    out.sort(key=lambda e: e["time"])
+    return out
+
+
 def _zman_line(label: str, time_s: str, section: str | None, *, kind: str = "zman",
                day_spec: str | None = None, qualifier: str | None = None,
                date_iso: str | None = None, rule_id: str | None = None,
