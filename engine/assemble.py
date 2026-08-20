@@ -14,7 +14,7 @@ from typing import Any
 
 from . import luach
 from . import special_days
-from .hebcal import to_hebrew
+from .hebcal import molad_announcement, to_hebrew
 from .rules import (DEFAULT_NOTES, DEFAULT_PROFILES, EREV_SHABBOS,
                     EREV_SHABBOS_EARLY, SHABBOS_DAY, WEEKDAY, WeekContext,
                     active_profiles, apply_overrides, davening_lines)
@@ -188,7 +188,21 @@ def _zman_line(label: str, time_s: str, section: str | None, *, kind: str = "zma
             "qualifier": qualifier, "source": source}
 
 
+_WD_FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Shabbos"]
+
+
 def molad_text(shabbos: date) -> str | None:
+    if luach.is_selichos_shabbos(shabbos):
+        # The Shabbos before Rosh Hashana announces Tishrei's molad, but
+        # Tishrei is never "benched" (no Rosh Chodesh clause, no announcement
+        # framing) — the Alter Rebbe's teaching in special_days/week_notes
+        # covers why.
+        hy = to_hebrew(shabbos).year
+        m = molad_announcement(hy + 1, 1)
+        unit = "chelek" if m["chalakim"] == 1 else "chalakim"
+        return (f"Molad for Tishrei {hy + 1}: {_WD_FULL[m['weekday']]} "
+                f"{m['hour']}:{m['minute']:02d}{m['ampm']} and {m['chalakim']} {unit} "
+                "(Jerusalem time)")
     ann = luach.rosh_chodesh_announcement(shabbos)
     if ann is None:
         return None
@@ -227,6 +241,14 @@ def week_notes(sunday: date, shabbos: date, engine: ZmanimEngine,
             # Deliberately unnamed (just "a public holiday") per shul preference.
             out.append(f"{_WD_ABBR[d.weekday()]} {d.day} {d:%b} is a public holiday: "
                        "Shacharis follows the Sunday schedule.")
+    if luach.is_selichos_shabbos(shabbos):
+        out.append(
+            "We do not bench the incoming month of Tishrei. The Alter Rebbe "
+            "said in the name of the Baal Shem Tov, “Tishrei is blessed "
+            "by the Holy One, blessed be He, Himself. And with the power of "
+            "that blessing, the Jews bless the other eleven months of the "
+            "year.”")
+        out.append("For an entry in the Goral, contact Yitzchok Barber on 0411 422 770")
     return out
 
 
@@ -277,6 +299,7 @@ def build_week_context(sunday: date, engine: ZmanimEngine | None = None) -> Week
         shabbos=shabbos,
         weekdays=weekdays,
         mevorchim=luach.mevorchim_month(shabbos) is not None,
+        selichos_shabbos=luach.is_selichos_shabbos(shabbos),
         engine=engine)
 
 
@@ -371,6 +394,24 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
             else:
                 l["label"] = "Mincha followed by Seder Nigunim"
 
+    # Erev Shabbos that is also Erev Rosh Hashana (Rosh Hashana falls on
+    # Shabbos): the regular candle+8 Mincha reverts to the early weekday
+    # Mincha slot (extra prep time before Yom Tov) followed by Tehillim, and
+    # Kabbolas Shabbos/Maariv moves from tzeis-10 to tzeis itself (no early
+    # Kabbolas Shabbos when bringing in Yom Tov). Confirmed against the 2026
+    # sheet; the weekday Mincha/Maariv times themselves are unaffected.
+    friday_is_erev_rh = (ctx.friday is not None
+                        and "Erev Rosh Hashana" in luach.day_labels(ctx.friday))
+    if friday_is_erev_rh:
+        wk_mincha = next((l for l in lines if l["rule_id"] == "weekday_mincha"), None)
+        for l in lines:
+            if l["rule_id"] == "es_mincha" and wk_mincha:
+                l["label"] = "Mincha (the last one for the year) followed by Tehillim"
+                l["time"] = wk_mincha["time"]
+            elif l["rule_id"] == "es_kabbolas_shabbos":
+                l["label"] = "Kabbolas Shabbos (Mizmor l'Dovid…) & Maariv"
+                l["time"] = _fmt(engine.tzeis(friday, "ceil"))
+
     entries.extend(l for l in lines if l["section"] == WEEKDAY)
     if early_active:
         entries.extend(l for l in lines if l["section"] == EREV_SHABBOS_EARLY)
@@ -383,7 +424,9 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_shkia_fri"))
         entries.append(_zman_line("Tzeis hachochavim", _fmt(engine.tzeis(friday, "ceil")),
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_tzeis_fri"))
-        entries.append(_zman_line("Candle lighting", _fmt(engine.candle_lighting(friday)),
+        candle_label = ("Candle lighting (Shabbos Kodesh & Yom Hazikaron)"
+                       if friday_is_erev_rh else "Candle lighting")
+        entries.append(_zman_line(candle_label, _fmt(engine.candle_lighting(friday)),
                                   SECTION_TITLES[EREV_SHABBOS], date_iso=friday.isoformat(),
                                   rule_id="z_candles_fri"))
     entries.extend(l for l in lines if l["section"] == EREV_SHABBOS)

@@ -65,6 +65,7 @@ class WeekContext:
     shabbos: date | None
     weekdays: tuple[date, ...]
     mevorchim: bool = False
+    selichos_shabbos: bool = False
     engine: ZmanimEngine = field(default_factory=ZmanimEngine, compare=False)
 
     def zman(self, anchor: str, d: date, rounding: str | None = None) -> datetime:
@@ -158,7 +159,9 @@ class ScheduleRule:
         if self.when == "mevorchim":
             return ctx.mevorchim
         if self.when == "not_mevorchim":
-            return not ctx.mevorchim
+            return not ctx.mevorchim and not ctx.selichos_shabbos
+        if self.when == "selichos_shabbos":
+            return ctx.selichos_shabbos
         return True
 
     def resolve(self, ctx: WeekContext) -> dict | None:
@@ -356,6 +359,14 @@ _BASE_RULES = (
                  when="not_mevorchim"),
     ScheduleRule("shab_shacharis", SHABBOS_DAY, "Shacharis (followed by Musaf)",
                  FixedTime("10:00"), when="not_mevorchim"),
+    # Last Shabbos of Elul (Selichos begin that night): never technically
+    # Mevorchim (Tishrei isn't blessed), but given the same Tehillim/Shacharis
+    # pair as a Mevorchim Shabbos.
+    ScheduleRule("shab_tehillim_selichos", SHABBOS_DAY, "Tehillim", FixedTime("08:15"),
+                 when="selichos_shabbos"),
+    ScheduleRule("shab_shacharis_selichos", SHABBOS_DAY,
+                 "Shacharis (Kiddush & farbrengen after Musaf)", FixedTime("10:10"),
+                 when="selichos_shabbos"),
     # Shabbos Mincha: shkia - 18 snapped to the nearest 5-minute mark. The
     # assembler appends ", Pirkei Avos N" / ", Seder Nigunim" decorations.
     ScheduleRule("shab_mincha", SHABBOS_DAY, "Mincha",
@@ -366,6 +377,14 @@ _BASE_RULES = (
     ScheduleRule("motzaei_maariv", SHABBOS_DAY, "Motzaei Shabbos, Maariv",
                  ZmanAnchored("tzeis_shabbos", "shabbos", 0, rounding="nearest"),
                  bound=Bound("tzeis_shabbos", "not_before")),
+    # Selichos night: farbrengen leading up to the first Selichos, then
+    # Selichos followed by the Goral to the Rebbe.
+    ScheduleRule("selichos_farbrengen", SHABBOS_DAY,
+                 "Farbrengen leading up to Selichos", FixedTime("23:00"),
+                 when="selichos_shabbos"),
+    ScheduleRule("selichos_goral", SHABBOS_DAY,
+                 "Selichos followed by Goral to the Rebbe", FixedTime("23:55"),
+                 when="selichos_shabbos"),
 )
 
 # Early Erev Shabbos minyan + Shabbos-afternoon halacha shiur: run while

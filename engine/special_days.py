@@ -216,6 +216,46 @@ def _elul(notes, sunday, shabbos):
         "say Tehillim 4–6 and so on.)")
 
 
+def _selichos_season(entries, notes, sunday, shabbos, engine, week_days):
+    """Rule 8b/8d: weekday Selichos before Rosh Hashana. From the day after
+    Selichos Shabbos through Erev Rosh Hashana, each Shacharis is preceded by
+    a Selichos line; the first day (Sunday, Selichos already said Motzaei
+    Shabbos) and Erev Rosh Hashana (earlier first Selichos + Hatoras Nedarim)
+    are their own cases. Shacharis times themselves never change."""
+    from engine.assemble import format_day_spec
+    selichos_days = [d for d in week_days if luach.is_selichos_weekday(d)]
+    if not selichos_days:
+        return
+    first_day = min(selichos_days)
+    erev_rh = next((d for d in week_days
+                    if "Erev Rosh Hashana" in luach.day_labels(d)), None)
+    regular = [d for d in selichos_days if d != first_day and d != erev_rh]
+
+    before_1, before_2 = [], []  # spliced immediately before each Shacharis
+    if regular:
+        spec = format_day_spec(regular)
+        before_1.append(_line("Selichos", "05:50", day_spec=spec, rule_id="sd_selichos_1"))
+        before_2.append(_line("Selichos", "07:00", day_spec=spec, rule_id="sd_selichos_2"))
+    if erev_rh is not None and erev_rh != first_day:
+        wd = _WD[erev_rh.weekday()]
+        before_1.append(_line("Selichos", "05:30", day_spec=wd,
+                              date_iso=erev_rh.isoformat(), rule_id="sd_selichos_erev_rh_1"))
+        before_2.append(_line("Selichos", "06:30", day_spec=wd,
+                              date_iso=erev_rh.isoformat(), rule_id="sd_selichos_erev_rh_2"))
+
+    # Splice before shacharis_wk_2 first: it sits later in `entries` than
+    # shacharis_wk_1, so this insertion cannot shift that earlier index.
+    idx2 = _find(entries, "shacharis_wk_2")
+    if idx2 is not None and before_2:
+        entries[idx2:idx2] = before_2
+    idx1 = _find(entries, "shacharis_wk_1")
+    if idx1 is not None and before_1:
+        entries[idx1:idx1] = before_1
+
+    if erev_rh is not None:
+        notes.append("Hatoras Nedarim after each Shacharis on Erev Rosh Hashana.")
+
+
 def _rosh_chodesh_span(notes, sunday, shabbos):
     """Rule 12i: 'Rosh Chodesh: from X night to Y afternoon.'.
 
@@ -271,6 +311,7 @@ def apply_special_days(entries: list[dict], sunday: date, shabbos: date,
     _minor_fast_mincha(entries, notes, sunday, shabbos, engine, week_days)
     _av9(entries, notes, sunday, shabbos, engine, week_days)
     _elul(notes, sunday, shabbos)
+    _selichos_season(entries, notes, sunday, shabbos, engine, week_days)
     _rosh_chodesh_span(notes, sunday, shabbos)
     _december_notes(notes, sunday, shabbos, engine)
     return notes

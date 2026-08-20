@@ -200,6 +200,32 @@ def mevorchim_month(d: date) -> str | None:
     return names[h.month]  # next month's name
 
 
+def elul_selichos_shabbos(hy: int) -> date:
+    """The last Shabbos of Elul `hy` — the Shabbos immediately preceding Rosh
+    Hashana of `hy` + 1, when Selichos begin that night. Never technically
+    Mevorchim (Tishrei is not blessed), but the sheets give it the Mevorchim-
+    style Shabbos-morning schedule anyway."""
+    d = rosh_hashanah(hy + 1) - timedelta(days=1)
+    while d.weekday() != SATURDAY:
+        d -= timedelta(days=1)
+    return d
+
+
+def is_selichos_shabbos(d: date) -> bool:
+    """Shabbos `d` is the last Shabbos of Elul (Selichos begin Motzaei
+    Shabbos `d`)."""
+    return d.weekday() == SATURDAY and d == elul_selichos_shabbos(to_hebrew(d).year)
+
+
+def is_selichos_weekday(d: date) -> bool:
+    """Civil date `d` falls in the weekday Selichos season: after Selichos
+    Shabbos, before Rosh Hashana."""
+    if d.weekday() == SATURDAY:
+        return False
+    hy = to_hebrew(d).year
+    return elul_selichos_shabbos(hy) < d < rosh_hashanah(hy + 1)
+
+
 def rosh_chodesh_announcement(d: date) -> dict | None:
     """Molad + RC-days info announced on Shabbos Mevorchim `d`."""
     month = mevorchim_month(d)
