@@ -70,14 +70,22 @@ _EREV_SHABBOS_SLOT = 5
 # either (Tehillim/Chassidus prints before Morning Shema; Halacha shiur
 # prints before Mincha/Motzaei). Recovered from the historical sheets.
 _SHABBOS_DAY_RULE_PRIORITY = {
-    "shab_tehillim": 0, "shab_chassidus": 0,
+    "shab_tehillim": 0, "shab_chassidus": 0, "shab_tehillim_selichos": 0,
     "z_shema_shab": 1,
-    "shab_shacharis_mev": 2, "shab_shacharis": 2,
+    "shab_shacharis_mev": 2, "shab_shacharis": 2, "shab_shacharis_selichos": 2,
     # molad paragraph (not a LINE) is inserted right after slot 2
     "shab_halacha_shiur": 3,
     "shab_mincha": 4,
     "motzaei_maariv": 5,
+    # Selichos night runs after Shabbos goes out, so it follows Motzaei Maariv.
+    "selichos_farbrengen": 6,
+    "selichos_goral": 7,
 }
+
+# Shabbos-morning Shacharis rules; the molad paragraph is printed straight
+# after whichever of them the week uses.
+_SHABBOS_SHACHARIS_RULES = ("shab_shacharis_mev", "shab_shacharis",
+                            "shab_shacharis_selichos")
 
 
 def _fmt_ampm(hhmm: str) -> str:
@@ -421,7 +429,10 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
             return
         if before_shabbos is not None:
             before_shabbos()
-        labels = ", ".join([block["parsha"]] + block["shabbos_labels"])
+        # A Yom Tov Shabbos is named by the Yom Tov, not the parsha (`.get`:
+        # sheets archived before the field existed fall back to the parsha).
+        lead = block.get("shabbos_yom_tov") or [block["parsha"]]
+        labels = ", ".join(lead + block["shabbos_labels"])
         _bar(container, f"Shabbos kodesh: {labels}", width, purple=True, size=size)
         shabbos_bar_done = True
 
@@ -462,7 +473,7 @@ def _render_shabbos_day(container, entries, width, molad, *, size=BODY_SIZE):
         return
     split = None
     for idx, e in enumerate(ordered_entries):
-        if e["rule_id"] in ("shab_shacharis_mev", "shab_shacharis"):
+        if e["rule_id"] in _SHABBOS_SHACHARIS_RULES:
             split = idx + 1
             break
     if split is None:

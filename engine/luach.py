@@ -248,7 +248,9 @@ def shabbos_labels(d: date) -> list[str]:
         labels.append("Mevorchim")
     if is_chazak(d):
         labels.append("Chazak")
-    if h.day in (1, 30):
+    # 1 Tishrei is Rosh Hashana, never announced as Shabbos Rosh Chodesh.
+    # (30 Tishrei is genuinely Rosh Chodesh Cheshvan and stays labelled.)
+    if h.day in (1, 30) and not (h.day == 1 and h.month == 1):
         labels.append("Rosh Chodesh")
     adar = _adar(hy)
     # Four parshiyos

@@ -19,7 +19,8 @@ import html as _html
 from datetime import date as _date
 
 from .render_docx import (EARLY_ES, KEY_TIMES, SHABBOS_DAY,
-                          _SHABBOS_DAY_RULE_PRIORITY, WEEKDAY, _fast_box_text,
+                          _SHABBOS_DAY_RULE_PRIORITY, _SHABBOS_SHACHARIS_RULES,
+                          WEEKDAY, _fast_box_text,
                           _fmt_ampm, _fmt_civil_date, _fmt_civil_range,
                           _join_dayspec_group, _partition_week_entries)
 
@@ -114,7 +115,10 @@ def week_items(block: dict, *, notes_inline: bool) -> list[tuple]:
         nonlocal shabbos_done
         if shabbos_done:
             return
-        labels = ", ".join([block["parsha"]] + block["shabbos_labels"])
+        # A Yom Tov Shabbos is named by the Yom Tov, not the parsha (`.get`:
+        # sheets archived before the field existed fall back to the parsha).
+        lead = block.get("shabbos_yom_tov") or [block["parsha"]]
+        labels = ", ".join(lead + block["shabbos_labels"])
         items.append(("bar", f"Shabbos kodesh: {labels}", "purple"))
         shabbos_done = True
 
@@ -144,7 +148,7 @@ def _shabbos_day_items(items, entries, molad):
     ents = [e for _, e in ordered]
     split = None
     for idx, e in enumerate(ents):
-        if e["rule_id"] in ("shab_shacharis_mev", "shab_shacharis"):
+        if e["rule_id"] in _SHABBOS_SHACHARIS_RULES:
             split = idx + 1
             break
     if molad and split is not None:
