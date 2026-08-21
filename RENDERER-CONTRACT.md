@@ -40,6 +40,7 @@ weeks in a two-column layout; day blocks render as boxed day-by-day schedules
 | `title` | string | Printed heading, e.g. `"The week of Parshas Vayeishev:"` |
 | `parsha` | string | Parsha name alone (doubled sedras use an en dash: `"Matos–Masei"`) |
 | `shabbos_labels` | string[] | Extra labels for the **"Shabbos kodesh:"** line, in print order: `Mevorchim`, `Chazak`, `Rosh Chodesh`, `Shekalim`/`Zachor`/`Parah`/`HaChodesh`, `Shira`, `HaGadol`, `Chazon`, `Nachamu`, `Shuva`, … Render as `"Shabbos kodesh: <parsha>, <label1>, <label2>"` |
+| `shabbos_yom_tov` | string[] | Yom Tov falling on this week's Shabbos (e.g. `["Rosh Hashana Day 1"]`), else `[]`. When non-empty it **replaces the parsha** as the name on the "Shabbos kodesh:" line — the sedra is not read on a Yom Tov Shabbos, and `title` already names the deferred one. The Shabbos-day section is omitted from `entries` in this case (that day davens off its own day block); read with a default, since sheets archived before this field existed lack it |
 | `hebrew_dates` | string | e.g. `"17–23 Kislev 5786"` — print under the title |
 | `civil_start`/`civil_end` | ISO date | Sunday / Shabbos of the week |
 | `friday`/`shabbos` | ISO date | convenience anchors |

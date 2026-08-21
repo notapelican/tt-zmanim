@@ -385,8 +385,12 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     early_active = any(l["section"] == EREV_SHABBOS_EARLY for l in lines)
 
     # Public holidays: Mon-Fri holidays use the Sunday Shacharis schedule.
+    # Sunday itself drops out when it is Yom Tov (e.g. 2nd day Succos): that
+    # day davens off its own day block, so keeping it here would print a
+    # weekday Shacharis contradicting the Yom Tov one on the same sheet.
     hols = luach.nsw_public_holidays(sunday.year) | luach.nsw_public_holidays(shabbos.year)
-    sunday_like = [sunday] + [d for d in week_days[1:] if d in hols and not _is_yom_tov(d)]
+    sunday_like = ([] if _is_yom_tov(sunday) else [sunday]) \
+        + [d for d in week_days[1:] if d in hols and not _is_yom_tov(d)]
     plain_weekdays = [d for d in week_days[1:] if d not in sunday_like and not _is_yom_tov(d)]
     for l in lines:
         if l["rule_id"].startswith("shacharis_sun"):
@@ -395,6 +399,12 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
             l["day_spec"] = format_day_spec(plain_weekdays)
         elif l["section"] == WEEKDAY and l["day_spec"] == "Sun.–Thurs.":
             l["day_spec"] = format_day_spec(sun_thu)
+    # A ranged weekday line whose every day was excluded above (yom tov ate
+    # the whole range) has no days left to print: format_day_spec returned
+    # None, and keeping the line would print a bare time with no day
+    # qualifier, read as applying to the whole week.
+    lines = [l for l in lines
+             if not (l["section"] == WEEKDAY and l["day_spec"] is None)]
 
     # Pirkei Avos / Seder Nigunim decoration on the Shabbos Mincha line.
     pa = luach.pirkei_avos(shabbos)
@@ -406,18 +416,21 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
             else:
                 l["label"] = "Mincha followed by Seder Nigunim"
 
-    # Erev Shabbos that is also Erev Rosh Hashana (Rosh Hashana falls on
-    # Shabbos): the regular candle+8 Mincha reverts to the early weekday
-    # Mincha slot (extra prep time before Yom Tov) followed by Tehillim, and
-    # Kabbolas Shabbos/Maariv moves from tzeis-10 to tzeis itself (no early
-    # Kabbolas Shabbos when bringing in Yom Tov). Confirmed against the 2026
-    # sheet; the weekday Mincha/Maariv times themselves are unaffected.
+    # Friday night that brings in Yom Tov together with Shabbos: Kabbolas
+    # Shabbos is cut to Mizmor l'Dovid, so it starts at tzeis rather than the
+    # usual tzeis-10 that leaves room for the full Kabbolas Shabbos — the
+    # Maariv after it still lands at tzeis either way. This Friday gets no
+    # erev-yom-tov day block of its own (see generate()), so these lines are
+    # the sheet's only word on the subject and must carry the Yom Tov timing.
+    yt_on_shabbos = _yom_tov_name(shabbos)
+    # Erev Rosh Hashana additionally pulls Mincha back to the early weekday
+    # slot (extra prep time before Yom Tov) and names it as the year's last.
     friday_is_erev_rh = (ctx.friday is not None
                         and "Erev Rosh Hashana" in luach.day_labels(ctx.friday))
-    if friday_is_erev_rh:
+    if ctx.friday is not None and yt_on_shabbos:
         wk_mincha = next((l for l in lines if l["rule_id"] == "weekday_mincha"), None)
         for l in lines:
-            if l["rule_id"] == "es_mincha" and wk_mincha:
+            if l["rule_id"] == "es_mincha" and friday_is_erev_rh and wk_mincha:
                 l["label"] = "Mincha (the last one for the year) followed by Tehillim"
                 l["time"] = wk_mincha["time"]
             elif l["rule_id"] == "es_kabbolas_shabbos":
@@ -436,8 +449,13 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_shkia_fri"))
         entries.append(_zman_line("Tzeis hachochavim", _fmt(engine.tzeis(friday, "ceil")),
                                   KEY_TIMES, date_iso=friday.isoformat(), rule_id="z_tzeis_fri"))
-        candle_label = ("Candle lighting (Shabbos Kodesh & Yom Hazikaron)"
-                       if friday_is_erev_rh else "Candle lighting")
+        if friday_is_erev_rh:
+            # Rosh Hashana's candles are lit for "Yom Hazikaron" by name.
+            candle_label = "Candle lighting (Shabbos Kodesh & Yom Hazikaron)"
+        elif yt_on_shabbos:
+            candle_label = f"Candle lighting (Shabbos Kodesh & {yt_on_shabbos})"
+        else:
+            candle_label = "Candle lighting"
         entries.append(_zman_line(candle_label, _fmt(engine.candle_lighting(friday)),
                                   SECTION_TITLES[EREV_SHABBOS], date_iso=friday.isoformat(),
                                   rule_id="z_candles_fri"))
@@ -468,9 +486,8 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     # when the early minyan runs, or when Friday night brings in a Yom Tov
     # along with Shabbos (e.g. "Erev Shabbos & Rosh Hashana candle lighting &
     # davening") — that takes precedence, since the two are the same davening.
-    yt_name = _yom_tov_name(shabbos)
-    if yt_name:
-        es_title = f"Erev Shabbos & {yt_name} candle lighting & davening"
+    if yt_on_shabbos:
+        es_title = f"Erev Shabbos & {yt_on_shabbos} candle lighting & davening"
     elif early_active:
         es_title = "Erev Shabbos regular times: candle lighting and davening"
     else:
@@ -490,6 +507,10 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
         "title": f"The week of Parshas {parsha}:",
         "parsha": parsha,
         "shabbos_labels": luach.shabbos_labels(shabbos),
+        # Yom Tov falling on the week's Shabbos. The Shabbos is named by it
+        # rather than by the parsha (the sedra is not read on a Yom Tov
+        # Shabbos, and the week title already carries the deferred one).
+        "shabbos_yom_tov": [l for l in luach.day_labels(shabbos) if l in _YOM_TOV],
         "hebrew_dates": luach.hebrew_date_range(sunday, shabbos),
         "civil_start": sunday.isoformat(),
         "civil_end": shabbos.isoformat(),
@@ -588,17 +609,16 @@ def generate(start: date, end: date, *, engine: ZmanimEngine | None = None,
             d = sunday + timedelta(days=i)
             if not start <= d <= end:
                 continue
-            # Erev Rosh Hashana that falls on Friday (Rosh Hashana on Shabbos)
-            # would normally get its own generic "erev yom tov" day-block, but
+            # A Friday that brings in Yom Tov together with Shabbos would
+            # normally also get its own generic "erev yom tov" day-block, but
             # the week block's own Erev Shabbos section already carries the
             # combined candle-lighting/Mincha/Kabbolas Shabbos treatment for
-            # it (see assemble_week's `friday_is_erev_rh` handling) — a
-            # separate day-block here would just duplicate it with different,
-            # uncoordinated times. Scoped to Rosh Hashana specifically: other
-            # Yom Tov openers falling on Shabbos have no such week-block
-            # handling (yet) and still want their own day-block.
+            # that evening (see assemble_week's `yt_on_shabbos` handling) — a
+            # separate day-block would just repeat it with different,
+            # uncoordinated times (a plain "Maariv (Yom Tov)" at tzeis beside
+            # the week block's Kabbolas Shabbos, and candle lighting twice).
             if (not _is_yom_tov(d) and d.weekday() == 4
-                    and "Erev Rosh Hashana" in luach.day_labels(d)):
+                    and _is_yom_tov(d + timedelta(days=1))):
                 continue
             if _is_yom_tov(d) or (_is_yom_tov(d + timedelta(days=1)) and not _is_yom_tov(d)):
                 blocks.append(assemble_day(d, engine=engine, overrides=overrides))
