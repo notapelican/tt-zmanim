@@ -30,11 +30,19 @@ SECTION_TITLES = {
 KEY_TIMES = "Erev Shabbos key times"
 
 # Days on which melacha is prohibited (full yom tov); these leave the weekday
-# davening lines and get their own day blocks.
-_YOM_TOV = {"Rosh Hashana Day 1", "Rosh Hashana Day 2", "Yom Kippur",
-            "Succos day 1", "Succos day 2", "Shemini Atzeres", "Simchas Torah",
-            "Pesach day 1", "Pesach day 2", "Shevi'i Shel Pesach",
-            "Acharon Shel Pesach", "Shavuos day 1", "Shavuos day 2"}
+# davening lines and get their own day blocks. Values are the short name used
+# when this Yom Tov coincides with Shabbos (e.g. the Erev Shabbos section
+# title becomes "Erev Shabbos & Rosh Hashana candle lighting & davening").
+_YOM_TOV = {
+    "Rosh Hashana Day 1": "Rosh Hashana", "Rosh Hashana Day 2": "Rosh Hashana",
+    "Yom Kippur": "Yom Kippur",
+    "Succos day 1": "Succos", "Succos day 2": "Succos",
+    "Shemini Atzeres": "Shemini Atzeres", "Simchas Torah": "Simchas Torah",
+    "Pesach day 1": "Pesach", "Pesach day 2": "Pesach",
+    "Shevi'i Shel Pesach": "Shevi'i Shel Pesach",
+    "Acharon Shel Pesach": "Acharon Shel Pesach",
+    "Shavuos day 1": "Shavuos", "Shavuos day 2": "Shavuos",
+}
 
 _WD_ABBR = ["Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Shabbos", "Sun."]
 _YOM_NAMES = ["yom sheini", "yom shlishi", "yom revi'i", "yom chamishi",
@@ -47,6 +55,10 @@ def _fmt(dt: datetime) -> str:
 
 def _is_yom_tov(d: date) -> bool:
     return any(l in _YOM_TOV for l in luach.day_labels(d))
+
+
+def _yom_tov_name(d: date) -> str | None:
+    return next((_YOM_TOV[l] for l in luach.day_labels(d) if l in _YOM_TOV), None)
 
 
 def format_day_spec(days: list[date]) -> str | None:
@@ -432,10 +444,17 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     entries.extend(l for l in lines if l["section"] == EREV_SHABBOS)
 
     # --- Shabbos day ---
-    entries.append(_zman_line("Morning Shema", _fmt(engine.sof_zman_shema(shabbos, "floor")),
-                              SECTION_TITLES[SHABBOS_DAY], date_iso=shabbos.isoformat(),
-                              qualifier="finish by", rule_id="z_shema_shab"))
-    entries.extend(l for l in lines if l["section"] == SHABBOS_DAY)
+    # When Shabbos itself is Yom Tov (e.g. Rosh Hashana day 1), the regular
+    # Chassidus/Shacharis/Mincha/Motzaei-Maariv lines are wrong for the day
+    # and would just duplicate the actual Yom Tov day-block below with
+    # conflicting content — that block is the single source of truth for the
+    # day, so this section (and its own Morning Shema line, which the day
+    # block carries instead) is skipped entirely.
+    if not _is_yom_tov(shabbos):
+        entries.append(_zman_line("Morning Shema", _fmt(engine.sof_zman_shema(shabbos, "floor")),
+                                  SECTION_TITLES[SHABBOS_DAY], date_iso=shabbos.isoformat(),
+                                  qualifier="finish by", rule_id="z_shema_shab"))
+        entries.extend(l for l in lines if l["section"] == SHABBOS_DAY)
 
     # --- fasts in the week ---
     entries.extend(_fast_entries(sunday, shabbos, engine))
@@ -446,9 +465,16 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     sd_notes = special_days.apply_special_days(entries, sunday, shabbos, engine)
 
     # Map rule-section keys to printed headings; regular ES section is renamed
-    # when the early minyan runs.
-    es_title = ("Erev Shabbos regular times: candle lighting and davening"
-                if early_active else SECTION_TITLES[EREV_SHABBOS])
+    # when the early minyan runs, or when Friday night brings in a Yom Tov
+    # along with Shabbos (e.g. "Erev Shabbos & Rosh Hashana candle lighting &
+    # davening") — that takes precedence, since the two are the same davening.
+    yt_name = _yom_tov_name(shabbos)
+    if yt_name:
+        es_title = f"Erev Shabbos & {yt_name} candle lighting & davening"
+    elif early_active:
+        es_title = "Erev Shabbos regular times: candle lighting and davening"
+    else:
+        es_title = SECTION_TITLES[EREV_SHABBOS]
     for l in entries:
         if l["section"] in SECTION_TITLES:
             l["section"] = SECTION_TITLES[l["section"]]
@@ -497,6 +523,8 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
                                   source="rule" if kind == "minyan" else "zmanim"))
 
     if is_yt:
+        add("Morning Shema", engine.sof_zman_shema(d, "floor"),
+            qualifier="finish by", rule_id="yt_shema")
         add("Shacharis", datetime(d.year, d.month, d.day, 10, 0), kind="minyan",
             rule_id="yt_shacharis")
         add("Mincha", engine.shkia(d, "nearest") - timedelta(minutes=10),
