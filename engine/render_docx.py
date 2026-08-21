@@ -277,6 +277,79 @@ def _join_dayspec_group(entries):
     return "".join(parts)
 
 
+# --- Selichos-season day-major pivot ---------------------------------------
+#
+# The weekday Selichos season is the one place on the sheet where several
+# minyanim — each a Selichos followed by its own Shacharis — differ from day to
+# day. Set label-major like every other line, the pairing is lost: "Selichos
+# Mon.–Thurs. 5:50am; Fri. 5:30am" above "Shacharis Mon.–Fri. 6:15am & 7:30am"
+# never says which Selichos belongs to which Shacharis, and the two lines'
+# day ranges do not even agree. So this block alone pivots to day-major — the
+# day leads and its minyanim follow as pairs, one row per day — which is how
+# the shul sets it by hand.
+#
+# Presentation only: the underlying entries are untouched, so every time stays
+# individually editable by rule_id (a line covering Mon.–Fri. lands in two of
+# these rows, which is exactly why this is not done to the entries themselves).
+PIVOT_LABELS = ("Selichos", "Shacharis")
+SELICHOS_SUBHEAD = "Selichos & Shacharis"
+
+
+def _pivot_value(prog) -> str:
+    """One day's programme as printed: "Selichos 5:50am, Shacharis 6:15am;
+    Selichos 7:00am, Shacharis 7:30am" — pairs joined by "; ", each Selichos
+    with the Shacharis that follows it. A day with no Selichos at all (Sunday)
+    is not a sequence of pairs, so its times read as one group instead:
+    "Shacharis 8:00am & 9:15am"."""
+    if not any(label == "Selichos" for label, _ in prog):
+        return f"{prog[0][0]} " + " & ".join(_fmt_ampm(t) for _, t in prog)
+    pairs, cur = [], []
+    for label, t in prog:
+        cur.append(f"{label} {_fmt_ampm(t)}")
+        if label == "Shacharis":
+            pairs.append(", ".join(cur))
+            cur = []
+    if cur:                      # a trailing Selichos with no Shacharis after it
+        pairs.append(", ".join(cur))
+    return "; ".join(pairs)
+
+
+def selichos_pivot(entries):
+    """Split a WEEKDAY section into day-major Selichos/Shacharis rows plus the
+    rest. Returns ``(rows, rest)`` where rows is ``[(day_label, value)]`` ready
+    to print as dotted lines, or ``(None, entries)`` when this is not a
+    Selichos week — every other week keeps the normal label-major layout."""
+    from .assemble import collapse_day_names, expand_day_spec
+
+    pivot_idx = {i for i, e in enumerate(entries)
+                 if e["label"] in PIVOT_LABELS and e.get("day_spec")
+                 and e.get("kind") != "freetext"}
+    # Shacharis alone is the year-round weekday line; only Selichos beside it
+    # marks the season this layout exists for.
+    if not any(entries[i]["label"] == "Selichos" for i in pivot_idx):
+        return None, entries
+    rest = [e for i, e in enumerate(entries) if i not in pivot_idx]
+
+    by_day: dict[str, list[dict]] = {}
+    for i in sorted(pivot_idx):
+        for day in expand_day_spec(entries[i]["day_spec"]):
+            by_day.setdefault(day, []).append(entries[i])
+    # Days whose programme is identical share a row, so the printed ranges fall
+    # out of the times themselves (Sun. / Mon.–Thurs. / Fri.) rather than being
+    # inherited from day_specs that disagree with each other.
+    progs: dict[tuple, list[str]] = {}
+    for day, es in by_day.items():
+        key = tuple((e["label"], e["time"]) for e in sorted(es, key=lambda e: e["time"]))
+        progs.setdefault(key, []).append(day)
+
+    from .assemble import _SUN_FIRST_ABBR
+    rows = [(collapse_day_names(days), _pivot_value(prog))
+            for prog, days in sorted(
+                progs.items(),
+                key=lambda kv: min(_SUN_FIRST_ABBR.index(d) for d in kv[1]))]
+    return rows, rest
+
+
 def _render_label_run(container, run, width, *, dayspec_before_leader, size=BODY_SIZE, bullet=False):
     """Render one run of consecutive entries sharing (section, label)."""
     label = run[0]["label"]
@@ -440,6 +513,12 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
         section_entries = named[section]
         if section == WEEKDAY:
             _bar(container, section, width, size=size)
+            pivot_rows, section_entries = selichos_pivot(section_entries)
+            if pivot_rows:
+                # Same bold sub-heading treatment as "Erev Shabbos key times".
+                _para(container, SELICHOS_SUBHEAD, bold=True, space_after=Pt(2), size=size)
+                for day_label, value in pivot_rows:
+                    _dotted_line(container, day_label, value, width, size=size)
             _render_entry_group(container, section_entries, width, size=size)
             continue
         # everything Friday/Shabbos-related is introduced by the "Shabbos
