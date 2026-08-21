@@ -91,6 +91,53 @@ def format_day_spec(days: list[date]) -> str | None:
 _SUN_FIRST_ABBR = ["Sun.", "Mon.", "Tues.", "Wed.", "Thurs.", "Fri.", "Shabbos"]
 
 
+def expand_day_spec(day_spec: str | None) -> list[str]:
+    """Every day abbreviation a printed day_spec covers, Sunday-first.
+
+    The enumerating counterpart to `day_spec_includes` (which answers the same
+    question for one date), kept beside `format_day_spec` for the same reason:
+    one place decides the day_spec grammar. Used by the renderers to regroup a
+    week's ranged weekday lines BY DAY — a line covering Mon.–Fri. belongs to
+    more than one such group, which is why this returns the days rather than a
+    yes/no.
+    """
+    if not day_spec:
+        return []
+    out: list[str] = []
+    for part in day_spec.split(", "):
+        if " & " in part:
+            out += [p for p in part.split(" & ") if p in _SUN_FIRST_ABBR]
+        elif "–" in part:
+            a, b = part.split("–")
+            if a in _SUN_FIRST_ABBR and b in _SUN_FIRST_ABBR:
+                i, j = _SUN_FIRST_ABBR.index(a), _SUN_FIRST_ABBR.index(b)
+                out += _SUN_FIRST_ABBR[i:j + 1]
+        elif part in _SUN_FIRST_ABBR:
+            out.append(part)
+    return out
+
+
+def collapse_day_names(names) -> str | None:
+    """`format_day_spec`'s grammar, driven by day ABBREVIATIONS rather than
+    dates — for callers that only have printed day names to put back together
+    (see `expand_day_spec`). Duplicates and order in `names` do not matter."""
+    idx = sorted({_SUN_FIRST_ABBR.index(n) for n in names if n in _SUN_FIRST_ABBR})
+    if not idx:
+        return None
+    runs: list[list[int]] = [[idx[0]]]
+    for i in idx[1:]:
+        if i == runs[-1][-1] + 1:
+            runs[-1].append(i)
+        else:
+            runs.append([i])
+    parts = []
+    for run in runs:
+        a, b = _SUN_FIRST_ABBR[run[0]], _SUN_FIRST_ABBR[run[-1]]
+        parts.append(a if len(run) == 1
+                     else (f"{a} & {b}" if len(run) == 2 else f"{a}–{b}"))
+    return ", ".join(parts)
+
+
 def day_spec_includes(day_spec: str | None, d: date) -> bool:
     """Inverse of `format_day_spec`: does the printed day_spec text cover civil
     date `d`? Exact inverse of that function's own grammar (comma-separated

@@ -19,8 +19,9 @@ import html as _html
 from datetime import date as _date
 
 from .render_docx import (EARLY_ES, KEY_TIMES, SHABBOS_DAY,
-                          _SHABBOS_DAY_RULE_PRIORITY, _SHABBOS_SHACHARIS_RULES,
-                          WEEKDAY, _fast_box_text,
+                          SELICHOS_SUBHEAD, _SHABBOS_DAY_RULE_PRIORITY,
+                          _SHABBOS_SHACHARIS_RULES, WEEKDAY, _fast_box_text,
+                          selichos_pivot,
                           _fmt_ampm, _fmt_civil_date, _fmt_civil_range,
                           _join_dayspec_group, _partition_week_entries)
 
@@ -126,6 +127,11 @@ def week_items(block: dict, *, notes_inline: bool) -> list[tuple]:
         ents = named[section]
         if section == WEEKDAY:
             items.append(("bar", section, "blue"))
+            pivot_rows, ents = selichos_pivot(ents)
+            if pivot_rows:
+                items.append(("subhead", SELICHOS_SUBHEAD))
+                for day_label, value in pivot_rows:
+                    items.append(("line", day_label, value, False))
             _emit_lines(items, ents)
             continue
         shabbos_bar()
