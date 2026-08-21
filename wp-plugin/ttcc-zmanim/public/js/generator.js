@@ -28,6 +28,13 @@
 	var FIT_SLACK = 28, FIT_MIN_H = 320;
 	var DEBOUNCE_MS = 400;
 
+	// Which preview the generator opens on. The tall 3:4 share image is what
+	// most sheets are actually sent as, so it is the default rather than the
+	// printed A4 sheet; the "Sheet" button is one click away and is still what
+	// the PDF download gives. Keep in step with the aria-pressed default in
+	// class-ttcc-generator.php's preview bar.
+	var DEFAULT_VIEW = 'portrait';
+
 	// Share-image canvases, in the service's own units (see service/raster.py —
 	// _SQUARE and _PORTRAIT_W/H). Only used to reserve the right aspect box while
 	// the picture loads; the picture itself is the service's real render.
@@ -80,7 +87,7 @@
 			doc: null,
 			busy: 0,
 			editing: false,
-			view: 'sheet',       // 'sheet' | 'square' | 'portrait'
+			view: DEFAULT_VIEW,  // 'sheet' | 'square' | 'portrait'
 			images: {},          // cache key -> object URL of a rendered share image
 			zoom: { mode: 'fit', scale: 1 }
 		};
@@ -422,24 +429,35 @@
 			ui.zoomVal.textContent = Math.round( s * 100 ) + '%';
 		}
 
+		/**
+		 * The sheet's own fit-to-page script settles asynchronously — after web
+		 * fonts load, and again whenever the iframe changes size, which includes
+		 * it being shown after a share-image view (0x0 -> full size). Re-measure
+		 * once it flags data-ttcc-fitted. No-op unless the sheet is the view on
+		 * show: parked at display:none it measures nothing and never flags.
+		 */
+		function settleSheet() {
+			if ( 'sheet' !== state.view ) { return; }
+			var tries = 0;
+			( function settle() {
+				if ( 'sheet' !== state.view ) { return; }
+				var doc = frameDoc();
+				if ( doc && doc.documentElement && '1' === doc.documentElement.getAttribute( 'data-ttcc-fitted' ) ) {
+					decorate();
+					fit();
+				} else if ( tries++ < 40 ) {
+					setTimeout( settle, 100 );
+				}
+			} )();
+		}
+
 		function showHtml( html ) {
 			ui.preview.setAttribute( 'scrolling', 'no' );
 			ui.preview.onload = function () {
 				decorate();
 				fit();
 				updatePagesNote();
-				// The sheet's own fit-to-page script settles after web fonts load
-				// and flags data-ttcc-fitted; re-measure once it does.
-				var tries = 0;
-				( function settle() {
-					var doc = frameDoc();
-					if ( doc && doc.documentElement && '1' === doc.documentElement.getAttribute( 'data-ttcc-fitted' ) ) {
-						decorate();
-						fit();
-					} else if ( tries++ < 40 ) {
-						setTimeout( settle, 100 );
-					}
-				} )();
+				settleSheet();
 			};
 			ui.preview.srcdoc = html;
 		}
@@ -485,6 +503,7 @@
 			var key = imageKey( variant );
 			if ( state.images[ key ] ) {
 				ui.image.src = state.images[ key ];
+				ui.image.hidden = false;
 				fit();
 				return;
 			}
@@ -510,6 +529,7 @@
 					if ( state.view !== variant ) { return; }   // switched away meanwhile
 					state.images[ key ] = URL.createObjectURL( blob );
 					ui.image.src = state.images[ key ];
+					ui.image.hidden = false;
 					clearFail();
 					fit();
 				} )
@@ -520,15 +540,34 @@
 				} );
 		}
 
+		/**
+		 * Button and panel state for the CURRENT view, with no fetching — so it
+		 * is safe to run at boot, before any preview or render exists, to apply
+		 * the default view to markup that was served pressed on something else.
+		 */
+		function syncViewChrome() {
+			qa( '[data-view]' ).forEach( function ( b ) {
+				b.setAttribute( 'aria-pressed', String( b.dataset.view === state.view ) );
+			} );
+			var sheet = ( 'sheet' === state.view );
+			ui.preview.hidden = ! sheet;
+			// Hold the <img> back until it actually has a render, so opening on an
+			// image view shows blank-and-busy rather than a flash of alt text.
+			ui.image.hidden = sheet || ! ui.image.getAttribute( 'src' );
+		}
+
 		function setView( view ) {
 			state.view = view;
-			qa( '[data-view]' ).forEach( function ( b ) {
-				b.setAttribute( 'aria-pressed', String( b.dataset.view === view ) );
-			} );
-			var sheet = ( 'sheet' === view );
-			ui.preview.hidden = ! sheet;
-			ui.image.hidden = sheet;
-			if ( ! sheet ) { showImage( view ); } else { ui.image.removeAttribute( 'src' ); }
+			syncViewChrome();
+			if ( 'sheet' !== view ) {
+				showImage( view );
+			} else {
+				ui.image.removeAttribute( 'src' );
+				// Coming back from an image view, the iframe has just gone from
+				// display:none to full size, so its fit script is re-running on
+				// that resize — wait for it instead of measuring a stale layout.
+				settleSheet();
+			}
 			fit();
 		}
 
@@ -1171,6 +1210,7 @@
 			if ( 'Escape' === e.key && ! ui.wa.hidden ) { ui.wa.hidden = true; }
 		} );
 
+		syncViewChrome();
 		syncControls();
 		refresh( false );
 	}
