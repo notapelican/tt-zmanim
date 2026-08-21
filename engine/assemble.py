@@ -558,8 +558,21 @@ def generate(start: date, end: date, *, engine: ZmanimEngine | None = None,
                                     notes=notes, overrides=overrides))
         for i in range(7):
             d = sunday + timedelta(days=i)
-            if start <= d <= end and (_is_yom_tov(d) or
-                                      (_is_yom_tov(d + timedelta(days=1)) and not _is_yom_tov(d))):
+            if not start <= d <= end:
+                continue
+            # Erev Rosh Hashana that falls on Friday (Rosh Hashana on Shabbos)
+            # would normally get its own generic "erev yom tov" day-block, but
+            # the week block's own Erev Shabbos section already carries the
+            # combined candle-lighting/Mincha/Kabbolas Shabbos treatment for
+            # it (see assemble_week's `friday_is_erev_rh` handling) — a
+            # separate day-block here would just duplicate it with different,
+            # uncoordinated times. Scoped to Rosh Hashana specifically: other
+            # Yom Tov openers falling on Shabbos have no such week-block
+            # handling (yet) and still want their own day-block.
+            if (not _is_yom_tov(d) and d.weekday() == 4
+                    and "Erev Rosh Hashana" in luach.day_labels(d)):
+                continue
+            if _is_yom_tov(d) or (_is_yom_tov(d + timedelta(days=1)) and not _is_yom_tov(d)):
                 blocks.append(assemble_day(d, engine=engine, overrides=overrides))
         sunday += timedelta(days=7)
     return {"format": "weekly", "start": start.isoformat(), "end": end.isoformat(),
