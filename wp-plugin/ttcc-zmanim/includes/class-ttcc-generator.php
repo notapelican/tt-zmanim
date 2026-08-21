@@ -251,11 +251,13 @@ class TTCC_Zmanim_Generator {
 			<div class="tg-preview-pane">
 				<div class="tg-preview-bar">
 					<span class="tg-seg tg-seg-view" role="group" aria-label="<?php esc_attr_e( 'What to preview', 'ttcc-zmanim' ); ?>">
-						<button type="button" data-view="sheet" aria-pressed="true"><?php esc_html_e( 'Sheet', 'ttcc-zmanim' ); ?></button>
+						<?php // Default view: the tall 3:4 share image (see DEFAULT_VIEW in public/js/generator.js). ?>
+						<button type="button" data-view="portrait" aria-pressed="true"
+							title="<?php esc_attr_e( 'The tall 3:4 image, exactly as it will be sent', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall 3:4', 'ttcc-zmanim' ); ?></button>
 						<button type="button" data-view="square" aria-pressed="false"
 							title="<?php esc_attr_e( 'The square 1:1 image, exactly as it will be sent', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Square 1:1', 'ttcc-zmanim' ); ?></button>
-						<button type="button" data-view="portrait" aria-pressed="false"
-							title="<?php esc_attr_e( 'The tall 3:4 image, exactly as it will be sent', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Tall 3:4', 'ttcc-zmanim' ); ?></button>
+						<button type="button" data-view="sheet" aria-pressed="false"
+							title="<?php esc_attr_e( 'The printed A4 sheet, as the PDF download gives it', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Sheet', 'ttcc-zmanim' ); ?></button>
 					</span>
 					<span class="tg-engine" data-role="engine"></span>
 					<span class="tg-zoom">

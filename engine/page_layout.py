@@ -132,12 +132,13 @@ FIT_JS = """
     var t = Math.max(0, Math.min(slack / 2, room));
     c.style.transform = ( t > 1 ? 'translateY(' + t + 'px) ' : '' ) + 'scale(' + s + ')';
   }
+  // Returns true when the page had a measurable box and was actually scaled.
   function fitPage(page) {
     var m = page.querySelector('.page-margin');
     var c = page.querySelector('.page-content');
-    if (!m || !c) { return; }
+    if (!m || !c) { return false; }
     var W = m.clientWidth, H = m.clientHeight;
-    if (!W || !H) { return; }
+    if (!W || !H) { return false; }
     // The .fit-line headers are nowrap and are shrunk to fit AFTERWARDS, by
     // fitLines — so mid-search they legitimately stick out past the content
     // width. Clip them to their own box (which is the printable width, where
@@ -161,10 +162,24 @@ FIT_JS = """
     // of the right-hand one WITHOUT making the page any wider, so the page's own
     // scrollWidth says everything is fine while the two columns overprint.
     var cells = page.querySelectorAll('.page-cells > .cell');
+    // Screen px per design px for this page. A share-image canvas scales the
+    // whole .page (service/raster.py), so a fractional rect measured off
+    // .page-content has to come back through this to be comparable with H.
+    // .page-margin is inside that same transform but is never scaled by v,
+    // so it reads the ancestor scale on its own.
+    var mrect = m.getBoundingClientRect();
+    var anc = (m.clientHeight && mrect.height) ? mrect.height / m.clientHeight : 1;
     function fits(v) {
       c.style.width = (W / v) + 'px';
       c.style.transform = 'scale(' + v + ')';
-      if (c.scrollHeight * v > H + 0.5) { return false; }
+      // scrollHeight is integer-rounded and so under-reports the true content
+      // height by up to a pixel; v multiplies that error (share images fit up
+      // to 4x) and .page-margin clips the difference off whatever ends the
+      // flow — in practice the foot notes, losing their descenders. Measure
+      // fractionally as well, and hold a half-pixel back rather than allowing
+      // a half-pixel over: any overflow at all is a clipped line of text.
+      var h = Math.max(c.scrollHeight, c.getBoundingClientRect().height / (v * anc));
+      if (h * v > H - 0.5) { return false; }
       if (c.scrollWidth > c.clientWidth + 0.5) { return false; }
       for (var j = 0; j < cells.length; j++) {
         if (cells[j].scrollWidth > cells[j].clientWidth + 0.5) { return false; }
@@ -185,6 +200,7 @@ FIT_JS = """
       fits(s);                             // re-apply: the last probe was `hi`
     }
     centreY(c, H, s);
+    return true;
   }
   function fitViewport() {
     // Narrow viewports (public embeds on phones): shrink whole pages to the
@@ -196,14 +212,41 @@ FIT_JS = """
     else { document.body.style.zoom = ''; }
   }
   function fitAll() {
-    var pages = document.querySelectorAll('.page'), i;
+    var pages = document.querySelectorAll('.page'), i, done = false;
     // fitPage first so .fit-line headers are measured at the page's final
     // content width; shrinking them afterwards only reduces height.
-    for (i = 0; i < pages.length; i++) { fitPage(pages[i]); fitLines(pages[i]); }
+    for (i = 0; i < pages.length; i++) {
+      if (fitPage(pages[i])) { done = true; }
+      fitLines(pages[i]);
+    }
     fitViewport();
-    document.documentElement.setAttribute('data-ttcc-fitted', '1');
+    // Only claim a settled layout once a page could actually be measured. In a
+    // display:none iframe every box measures zero and nothing is scaled — the
+    // generator parks its sheet preview like that while a share-image view is
+    // showing — and flagging THAT as fitted would leave the sheet unscaled the
+    // moment it was shown, with no further event to correct it.
+    if (done) { document.documentElement.setAttribute('data-ttcc-fitted', '1'); }
+    else { document.documentElement.removeAttribute('data-ttcc-fitted'); }
   }
-  window.addEventListener('resize', fitViewport);
+  // Re-fit whenever the viewport actually changes size — a window resize, or an
+  // iframe going from hidden (0x0) to visible. Guarded on a real change, and
+  // coalesced to a frame, so content-driven reflow can never feed itself.
+  var lastW = -1, lastH = -1, pending = 0;
+  function onViewportResize() {
+    var w = document.documentElement.clientWidth,
+        h = document.documentElement.clientHeight;
+    if (w === lastW && h === lastH) { return; }
+    lastW = w; lastH = h;
+    if (pending) { return; }
+    pending = 1;
+    var go = function () { pending = 0; fitAll(); };
+    if (window.requestAnimationFrame) { requestAnimationFrame(go); } else { setTimeout(go, 0); }
+  }
+  window.addEventListener('resize', onViewportResize);
+  if (window.ResizeObserver) {
+    try { new ResizeObserver(onViewportResize).observe(document.documentElement); }
+    catch (e) { /* older engine: the resize listener still covers the window */ }
+  }
   function run() {
     if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
       document.fonts.ready.then(fitAll, fitAll);
