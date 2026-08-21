@@ -432,10 +432,17 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     entries.extend(l for l in lines if l["section"] == EREV_SHABBOS)
 
     # --- Shabbos day ---
-    entries.append(_zman_line("Morning Shema", _fmt(engine.sof_zman_shema(shabbos, "floor")),
-                              SECTION_TITLES[SHABBOS_DAY], date_iso=shabbos.isoformat(),
-                              qualifier="finish by", rule_id="z_shema_shab"))
-    entries.extend(l for l in lines if l["section"] == SHABBOS_DAY)
+    # When Shabbos itself is Yom Tov (e.g. Rosh Hashana day 1), the regular
+    # Chassidus/Shacharis/Mincha/Motzaei-Maariv lines are wrong for the day
+    # and would just duplicate the actual Yom Tov day-block below with
+    # conflicting content — that block is the single source of truth for the
+    # day, so this section (and its own Morning Shema line, which the day
+    # block carries instead) is skipped entirely.
+    if not _is_yom_tov(shabbos):
+        entries.append(_zman_line("Morning Shema", _fmt(engine.sof_zman_shema(shabbos, "floor")),
+                                  SECTION_TITLES[SHABBOS_DAY], date_iso=shabbos.isoformat(),
+                                  qualifier="finish by", rule_id="z_shema_shab"))
+        entries.extend(l for l in lines if l["section"] == SHABBOS_DAY)
 
     # --- fasts in the week ---
     entries.extend(_fast_entries(sunday, shabbos, engine))
@@ -497,6 +504,8 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
                                   source="rule" if kind == "minyan" else "zmanim"))
 
     if is_yt:
+        add("Morning Shema", engine.sof_zman_shema(d, "floor"),
+            qualifier="finish by", rule_id="yt_shema")
         add("Shacharis", datetime(d.year, d.month, d.day, 10, 0), kind="minyan",
             rule_id="yt_shacharis")
         add("Mincha", engine.shkia(d, "nearest") - timedelta(minutes=10),
