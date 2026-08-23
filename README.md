@@ -153,21 +153,50 @@ Adding an endpoint or changing a zman means a service deploy. There is only ever
 **one** service; you are replacing its code, never creating a second one.
 
 ```sh
-git checkout main && git pull                  # 1. get the merged code
-python3 engine/validate.py && python3 engine/validate_luach.py \
-  && python3 engine/validate_rules.py && python3 -m engine.validate_dayview \
-  && python3 -m engine.validate_davening                                     # 2. must pass
-gcloud run services list                       # 3. find your region if unsure
-gcloud run deploy ttcc-sheet-service --source . --region <region> \
-  --allow-unauthenticated --memory 2Gi --cpu 1 --concurrency 4 \
-  --min-instances 0 --max-instances 2 --timeout 120
+git checkout main && git pull    # 1. get the merged code
+./deploy-service.sh              # 2. runs the regressions, deploys, verifies /health
 ```
 
-**Do not pass `--set-env-vars` on a redeploy.** On an existing service that flag
-*replaces* the whole environment, so it would wipe or rotate
-`TTCC_SERVICE_TOKEN` and break both plugins until you updated their settings.
-Leaving it off keeps the existing values. Only include it when you genuinely mean
-to change the token — and then update both plugins' settings pages.
+`deploy-service.sh` is the supported way in. It runs the five golden
+regressions, deploys with the flags below, and then checks `/health` actually
+answers — so a broken deploy fails in front of you instead of silently taking
+the plugin offline. `--skip-tests` skips step one; `SERVICE=` / `REGION=`
+override the defaults (`ttcc-sheet-service`, `australia-southeast1`).
+
+It exists because two silent traps have taken this service down in production,
+and the script makes both impossible:
+
+- **Deploying from the wrong directory.** `--source .` uploads the current
+  directory, and Cloud Shell's `~ (tt-zmanim)` prompt shows the GCP *project*,
+  not a folder — so it is easy to deploy an empty home directory. gcloud finds
+  no Dockerfile, silently falls back to Buildpacks, and ships a static file
+  server that answers every path with `404 File not found.`. The symptom is the
+  plugin reporting "Sheet service: OFFLINE — HTTP 404" with nothing wrong in
+  the code. Tell the two apart in the build log: it must say **"Building using
+  Dockerfile"**, never "Building using Buildpacks".
+- **Forgetting `--clear-base-image`.** After a Buildpacks deploy the service
+  carries automatic base-image tracking, which a Dockerfile build rejects, and
+  every later deploy fails until the flag clears it.
+
+**Never pass `--set-env-vars` on a redeploy** (the script does not). On an
+existing service that flag *replaces* the whole environment, so it would wipe or
+rotate `TTCC_SERVICE_TOKEN` and break both plugins until you updated their
+settings. Only set it when you genuinely mean to change the token — and then
+update both plugins' settings pages.
+
+<details><summary>The equivalent by hand</summary>
+
+```sh
+cd /path/to/tt-zmanim                          # NOT your home directory
+python3 engine/validate.py && python3 engine/validate_luach.py \
+  && python3 engine/validate_rules.py && python3 -m engine.validate_dayview \
+  && python3 -m engine.validate_davening                                     # must pass
+gcloud run services list                       # find your region if unsure
+gcloud run deploy ttcc-sheet-service --source . --region <region> \
+  --allow-unauthenticated --memory 2Gi --cpu 1 --concurrency 4 \
+  --min-instances 0 --max-instances 2 --timeout 120 --clear-base-image
+```
+</details>
 
 Check it worked:
 
