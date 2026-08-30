@@ -515,6 +515,14 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
                                   SECTION_TITLES[EREV_SHABBOS], date_iso=friday.isoformat(),
                                   rule_id="z_candles_fri"))
     entries.extend(l for l in lines if l["section"] == EREV_SHABBOS)
+    # Hoshana Rabbah on a Friday has no day block of its own (its evening is
+    # this section), so its customs are added here instead.
+    if ctx.friday is not None and "Hoshana Rabbah" in luach.day_labels(ctx.friday):
+        hr = hoshana_rabbah_lines(ctx.friday, engine, EREV_SHABBOS)
+        es_names = (EREV_SHABBOS, SECTION_TITLES[EREV_SHABBOS])
+        entries.insert(next((i for i, e in enumerate(entries)
+                             if e["section"] in es_names), len(entries)), hr[0])
+        entries.append(hr[1])
 
     # --- Shabbos day ---
     # When Shabbos itself is Yom Tov (e.g. Rosh Hashana day 1), the regular
@@ -577,6 +585,29 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
         "notes": week_notes(sunday, shabbos, engine, notes) + sd_notes,
     }
     return block
+
+
+def hoshana_rabbah_lines(d: date, engine: ZmanimEngine, section: str | None = None) -> list[dict]:
+    """The two Hoshana Rabbah customs the sheets print: Tehillim with apple &
+    honey from chatzos halayla the night before, and the Kiddush in the sukkah
+    with Hakafos after Maariv.
+
+    Shared, because Hoshana Rabbah gets a day block of its own in most years
+    but on a Friday is folded into the week's Erev Shabbos section instead
+    (that Friday's day block is suppressed — see generate()), and the lines
+    have to reach the sheet either way.
+    """
+    eve = d - timedelta(days=1)
+    chatzos = engine.chatzos(eve, "nearest")
+    return [
+        _zman_line("Tehillim, apple & honey (from chatzos halayla)",
+                   _fmt(chatzos), section, kind="minyan",
+                   day_spec=_WD_ABBR[chatzos.weekday()],
+                   date_iso=eve.isoformat(), rule_id="hr_tehillim", source="rule"),
+        _zman_line("Kiddush in the sukkah, followed by Hakafos, after Maariv.",
+                   "", section, kind="freetext", date_iso=d.isoformat(),
+                   rule_id="hr_kiddush", source="rule"),
+    ]
 
 
 def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
@@ -674,18 +705,35 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
             if succos1:
                 add("Mincha Gedolah (earliest time for Mincha)", mincha_gedola(),
                     rule_id="z_mincha_gedola")
-            add("Mincha", engine.shkia(d, "nearest") - timedelta(minutes=10),
+            mincha_label = "Mincha"
+            if shemini:
+                mincha_label = "Mincha followed by Tahalucha"
+            elif simchas_torah:
+                mincha_label = "Mincha followed by farbrengen & nigunim of the Rebbeim"
+            add(mincha_label, engine.shkia(d, "nearest") - timedelta(minutes=10),
                 kind="minyan", rule_id="yt_mincha")
+            if shemini:
+                # After Mincha: the day's lines print in time order.
+                add("Children's program including Hakofos (until 7:00pm)",
+                    datetime(d.year, d.month, d.day, 18, 0), kind="minyan",
+                    rule_id="yt_childrens_program")
         if rh and not next_yt:
             add("Nigunim of the Rebbeim",
                 engine.shkia(d, "nearest") - timedelta(minutes=10),
                 kind="minyan", rule_id="yt_nigunim")
         if next_yt:
-            add("Candle lighting", engine.tzeis_shabbos(d, "nearest"),
+            add("Candle lighting for Simchas Torah" if shemini else "Candle lighting",
+                engine.tzeis_shabbos(d, "nearest"),
                 qualifier="not before", rule_id="yt_candles_2nd")
-            add("Tehillim before Maariv, then Maariv" if rh else "Maariv",
-                engine.tzeis_shabbos(d, "nearest"), kind="minyan",
+            maariv_label = "Maariv"
+            if rh:
+                maariv_label = "Tehillim before Maariv, then Maariv"
+            elif shemini:
+                maariv_label = "Maariv followed by Hakofos"
+            add(maariv_label, engine.tzeis_shabbos(d, "nearest"), kind="minyan",
                 rule_id="yt_maariv_2nd")
+            if shemini:
+                free("Kiddush & farbrengen after Hakofos.", "yt_kiddush_farbrengen")
         elif next_shabbos:
             add("Candle lighting", engine.candle_lighting(d),
                 rule_id="yt_candles_shabbos")
@@ -716,12 +764,17 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
                 kind="minyan", rule_id="erev_yk_kol_nidrei")
             free("Maariv after the drosha.", "erev_yk_maariv")
         elif next_yt:
+            hr = "Hoshana Rabbah" in labels
+            if hr:
+                entries.append(hoshana_rabbah_lines(d, engine)[0])   # Tehillim
             add("Candle lighting", engine.candle_lighting(d), rule_id="erev_yt_candles")
             add("Mincha", engine.candle_lighting(d) + timedelta(minutes=8),
                 kind="minyan", rule_id="erev_yt_mincha")
             add("Shkia", engine.shkia(d, "nearest"), rule_id="erev_yt_shkia")
             add("Maariv (Yom Tov)", engine.tzeis(d, "ceil"), kind="minyan",
                 rule_id="erev_yt_maariv")
+            if hr:
+                entries.append(hoshana_rabbah_lines(d, engine)[1])   # Kiddush
 
     return apply_day_block(d, h, labels, entries, overrides)
 

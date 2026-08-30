@@ -84,12 +84,17 @@ html, body {{ margin:0; padding:0; }}
 .page-cells.flow {{ columns:2; column-gap:5mm; column-rule:1px solid #000; }}
 .page-cells.flow > .cell {{ break-inside:auto; }}
 .page-cells.flow .row, .page-cells.flow .zman, .page-cells.flow .fastbox,
-.page-cells.flow .genbox,
+.page-cells.flow .genbox, .page-cells.flow .dstbox,
 .page-cells.flow .note, .page-cells.flow .molad, .page-cells.flow .freeline,
 .page-cells.flow .title, .page-cells.flow .subtitle,
 .page-cells.flow .barwrap, .page-cells.flow .subhead {{ break-inside:avoid-column; }}
 .page-cells.flow .barwrap, .page-cells.flow .subhead,
 .page-cells.flow .title {{ break-after:avoid-column; }}
+/* A day block stays whole — see render_html._flow_blocks_html. The general
+   times box is left free to end a column: it carries its own date range, so
+   it still reads on its own, and pinning it to the week below it costs the
+   foot of a column and the type size the fit pass could have spent there. */
+.page-cells.flow .blk {{ break-inside:avoid-column; }}
 """
 
 
