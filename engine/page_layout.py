@@ -75,6 +75,20 @@ html, body {{ margin:0; padding:0; }}
 .page-cells.grid, .page-cells.two {{ display:grid; grid-template-columns:1fr 1fr; }}
 .page-cells.one {{ display:block; }}
 .page-cells > .cell {{ min-width:0; }}
+/* "flow": every block on ONE page as two newspaper columns with a vertical
+   rule between them — the Tishrei-sheet layout. Content flows from column to
+   column mid-cell (a Tishrei week-cell is taller than a column), but never
+   mid-row: each printed line, section bar, fast box and note is atomic, and a
+   bar or sub-heading is kept with the line that follows it so a column never
+   ends on a dangling heading. */
+.page-cells.flow {{ columns:2; column-gap:5mm; column-rule:1px solid #000; }}
+.page-cells.flow > .cell {{ break-inside:auto; }}
+.page-cells.flow .row, .page-cells.flow .zman, .page-cells.flow .fastbox,
+.page-cells.flow .note, .page-cells.flow .molad, .page-cells.flow .freeline,
+.page-cells.flow .title, .page-cells.flow .subtitle,
+.page-cells.flow .barwrap, .page-cells.flow .subhead {{ break-inside:avoid-column; }}
+.page-cells.flow .barwrap, .page-cells.flow .subhead,
+.page-cells.flow .title {{ break-after:avoid-column; }}
 """
 
 

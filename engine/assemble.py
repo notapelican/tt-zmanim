@@ -482,7 +482,11 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
                 l["time"] = wk_mincha["time"]
             elif l["rule_id"] == "es_kabbolas_shabbos":
                 l["label"] = "Kabbolas Shabbos (Mizmor l'Dovid…) & Maariv"
-                l["time"] = _fmt(engine.tzeis(friday, "ceil"))
+                # The minute AFTER the printed tzeis, not tzeis itself: the
+                # abbreviated Kabbolas Shabbos begins only once night has
+                # unambiguously arrived (shul's sheets print 6:10pm against a
+                # 6:09pm tzeis — 5787 Tishrei sheet and the submitted schedule).
+                l["time"] = _fmt(engine.tzeis(friday, "ceil") + timedelta(minutes=1))
 
     entries.extend(l for l in lines if l["section"] == WEEKDAY)
     if early_active:

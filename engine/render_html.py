@@ -327,11 +327,16 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 """
 
 
-def render_html(doc_data: dict) -> str:
+def render_html(doc_data: dict, *, page_layout: str | None = None) -> str:
+    """``page_layout="flow"`` puts every block on ONE page as two newspaper
+    columns with a vertical rule — the Tishrei-sheet layout. Anything else
+    uses the standard week-count pagination (see page_layout.paginate)."""
     from .page_layout import FIT_JS, page_css, paginate, pages_html
     from .render_docx import _group_blocks
     groups = _group_blocks(doc_data["blocks"])
-    multi = len(groups) > 1  # several weeks share pages (grid/columns)
+    flow = page_layout == "flow"
+    # flow uses the compact multi styles too: a whole-Tishrei page is dense.
+    multi = flow or len(groups) > 1  # several weeks share pages (grid/columns)
 
     # Hoist notes common to every week to a single last-page footer.
     shared_notes: list[str] = []
@@ -363,7 +368,8 @@ def render_html(doc_data: dict) -> str:
         foot = "".join(f'<div class="foot">{_esc(n)}</div>'
                        for g in groups for n in g["week"].get("notes", []))
 
-    body = pages_html(paginate(cells), chrome=chrome, foot=foot)
+    pages = [("flow", cells)] if flow else paginate(cells)
+    body = pages_html(pages, chrome=chrome, foot=foot)
     return (f'<!doctype html><html><head><meta charset="utf-8">'
             f'<style>{page_css(12)}{_CSS}</style></head>'
             f'<body class="sheet">{body}{FIT_JS}</body></html>')

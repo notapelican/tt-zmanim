@@ -77,6 +77,10 @@ class RenderHtmlRequest(GenerateRequest):
     referer: str | None = None       # Referer for the headless render, so a
                                      # domain-locked web-font kit (Adobe Fonts)
                                      # serves during PDF/PNG export
+    page_layout: str | None = None   # "flow" = everything on one page as two
+                                     # ruled newspaper columns (the Tishrei
+                                     # sheet). Classic renderer only: it forces
+                                     # the classic template.
 
 
 # --- helpers ----------------------------------------------------------------
@@ -145,7 +149,8 @@ def _render_html_str(req: RenderHtmlRequest, doc: dict) -> str:
     """Render the resolved doc to HTML with the requested template. The modern
     template is a service-side renderer; classic is the engine renderer. Both
     consume the identical doc — no time is recomputed."""
-    if req.template == "modern":
+    flow = req.page_layout == "flow"
+    if req.template == "modern" and not flow:
         from .render_modern import render_modern
 
         html = render_modern(
@@ -154,7 +159,10 @@ def _render_html_str(req: RenderHtmlRequest, doc: dict) -> str:
     else:
         from .render_modern import _webfont_links, classic_theme_css
 
-        html = render_html(doc)
+        # The one-page flow layout is implemented by the classic renderer
+        # only, so it wins over a modern template request rather than being
+        # silently dropped.
+        html = render_html(doc, page_layout="flow" if flow else None)
         # Classic typography theme (header/subheader/content fonts, sizes,
         # alignment) is injected here so the engine renderer stays pure.
         extra = _webfont_links(req.theme) + classic_theme_css(req.theme)

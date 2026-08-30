@@ -253,7 +253,18 @@ def _selichos_season(entries, notes, sunday, shabbos, engine, week_days):
         entries[idx1:idx1] = before_1
 
     if erev_rh is not None:
-        notes.append("Hatoras Nedarim after each Shacharis on Erev Rosh Hashana.")
+        # Printed inside the davening block, directly under the Shacharis
+        # lines it qualifies (the historical sheets set it right there —
+        # "Shacharis followed by Hatoras Nedorim" — not as a foot note).
+        # A freetext entry so every renderer places it in the section and the
+        # dashboard can still suppress/edit it by rule_id like any line.
+        idx2 = _find(entries, "shacharis_wk_2")
+        hn = _line("Hatoras Nedarim after each Shacharis on Erev Rosh Hashana.",
+                   "", rule_id="sd_hatoras_nedarim", kind="freetext")
+        if idx2 is None:
+            entries.append(hn)
+        else:
+            entries.insert(idx2 + 1, hn)
 
 
 def _rosh_chodesh_span(notes, sunday, shabbos):

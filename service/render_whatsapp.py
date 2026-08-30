@@ -98,6 +98,16 @@ def _week_message(block: dict) -> str:
             if it[1] == KEY_TIMES:
                 cat = "skip"           # drop Plag/Shkia/Tzeis
             continue
+        if kind == "freeline":
+            # A no-time text line (Hatoras Nedarim, a Kiddush notice): carried
+            # as (None, text) so the section loops emit it as a bare line.
+            if cat == "weekday":
+                weekday.append((None, it[1]))
+            elif cat == "erev":
+                erev.append((None, it[1]))
+            elif cat == "shab":
+                shab.append((None, it[1]))
+            continue
         if kind == "line":
             lbl, val = it[1], it[2]
             if _skip_line(lbl):
@@ -112,6 +122,9 @@ def _week_message(block: dict) -> str:
     out: list[str] = [f"*🕍 {SHORT_NAME} – {head} ({civ})*", ""]
 
     for lbl, val in weekday:
+        if lbl is None:
+            out.append(val)
+            continue
         out.append(f"*{_emoji(lbl)} {lbl.rstrip(':')}:*")
         out.extend(val.split("; "))
 
@@ -124,13 +137,13 @@ def _week_message(block: dict) -> str:
         out.append("")
         out.append(f"*Erev Shabbos (Fri {_fmt_civil_date(friday.isoformat())})*")
         for lbl, val in erev:
-            out.append(f"{_emoji(lbl)} {lbl} {val}")
+            out.append(val if lbl is None else f"{_emoji(lbl)} {lbl} {val}")
 
     if shab:
         out.append("")
         out.append("*🕍 Shabbos Day*")
         for lbl, val in shab:
-            out.append(f"{_emoji(lbl)} {lbl} {val}")
+            out.append(val if lbl is None else f"{_emoji(lbl)} {lbl} {val}")
 
     for n in block.get("notes", []):
         out.append("")
