@@ -628,9 +628,13 @@ def assemble_day(d: date, *, engine: ZmanimEngine | None = None,
 
 
 def apply_day_block(d, h, labels, entries, overrides):
+    # The generic "Erev Yom Tov" tag adds nothing to a heading that already
+    # names the day ("Erev Yom Kippur, Erev Yom Tov" -> "Erev Yom Kippur");
+    # it stays in `labels` for anything that filters on it.
+    named = [l for l in labels if l != "Erev Yom Tov"] or labels
     return {
         "type": "day",
-        "title": ", ".join(labels) or None,
+        "title": ", ".join(named) or None,
         "weekday": _WD_ABBR[d.weekday()],
         "hebrew_date": f"{h.day} {h.month_name}",
         "date": d.isoformat(),

@@ -167,6 +167,135 @@ def _shabbos_day_items(items, entries, molad):
             items.append(("molad", molad))
 
 
+# --- Tishrei (flow) composition ---------------------------------------------
+#
+# The one-page Tishrei sheet is navigated by DAY, not by week: every header
+# names the day or day-run it covers, stamped with its Hebrew and civil dates,
+# and Tishrei-specific names outrank the regular section headings ("Shabbos
+# Kodesh: Ha'azinu, Shuva: 8 Tishrei (19 Sept.)" rather than a generic
+# "Shabbos Day and Motzaei Shabbos"). The week's astronomical zmanim move out
+# of the line flow into a bordered "General times for the week" box, so the
+# minyanim read uninterrupted. This is a re-presentation of week_items'
+# stream — content and order come from there, so every line stays identical
+# to the weekly sheets'; only headers and grouping change.
+
+def _tishrei_chol_header(week: dict) -> str | None:
+    """'3–7 Tishrei (Mon.–Fri. 14–18 Sept.)' — the run of chol days the
+    weekday davening section actually covers (its own day_specs)."""
+    from datetime import date as _d, timedelta as _t
+    from .assemble import SECTION_TITLES, _SUN_FIRST_ABBR, expand_day_spec
+    from .hebcal import to_hebrew
+    from .rules import WEEKDAY
+    title = SECTION_TITLES[WEEKDAY]
+    idxs = sorted({_SUN_FIRST_ABBR.index(day)
+                   for e in week["entries"] if e.get("section") == title
+                   for day in expand_day_spec(e.get("day_spec"))})
+    if not idxs:
+        return None
+    sunday = _d.fromisoformat(week["civil_start"])
+    d1, d2 = sunday + _t(days=idxs[0]), sunday + _t(days=idxs[-1])
+    h1, h2 = to_hebrew(d1), to_hebrew(d2)
+    if (h1.year, h1.month) == (h2.year, h2.month):
+        heb = f"{h1.day} {h1.month_name}" if h1.day == h2.day else f"{h1.day}–{h2.day} {h1.month_name}"
+    else:
+        heb = f"{h1.day} {h1.month_name} – {h2.day} {h2.month_name}"
+    wd = (_SUN_FIRST_ABBR[idxs[0]] if idxs[0] == idxs[-1]
+          else f"{_SUN_FIRST_ABBR[idxs[0]]}–{_SUN_FIRST_ABBR[idxs[-1]]}")
+    civ = (_fmt_civil_date(d1.isoformat()) if d1 == d2
+           else _fmt_civil_range(d1.isoformat(), d2.isoformat()))
+    return f"{heb} ({wd} {civ})"
+
+
+def _tishrei_es_header(week: dict, es_bar_text: str) -> str:
+    """'Erev Shabbos & Rosh Hashana: 29 Elul (Fri. 11 Sept.)' — the section
+    bar's own name (which already carries a coinciding Yom Tov), date-stamped,
+    prefixed with the Friday's specific day name (e.g. Hoshana Rabbah) when it
+    has one. A calendar-label lookup, not a time computation."""
+    from datetime import date as _d
+    from . import luach
+    from .hebcal import to_hebrew
+    base = es_bar_text
+    for suffix in (" candle lighting & davening", " candle lighting and davening"):
+        base = base.replace(suffix, "")
+    base = base.replace(" regular times:", "")
+    friday = week.get("friday")
+    if not friday:
+        return base
+    d = _d.fromisoformat(friday)
+    h = to_hebrew(d)
+    generic = {"Erev Yom Tov", "Erev Shabbos"}
+    # Drop a label the header already carries: "Erev Succos" adds nothing to
+    # "Erev Shabbos & Succos" (the base names the Yom Tov the evening brings in).
+    extra = [l for l in luach.day_labels(d)
+             if l not in generic and l not in base
+             and l.replace("Erev ", "") not in base]
+    if extra:
+        base = f"{', '.join(extra)}, {base}"
+    return f"{base}: {h.day} {h.month_name} (Fri. {_fmt_civil_date(friday)})"
+
+
+def _tishrei_shabbos_header(week: dict) -> str:
+    """'Shabbos Kodesh: Ha'azinu, Shuva: 8 Tishrei (19 Sept.)' — special
+    Shabbos names lead, then the parsha."""
+    from datetime import date as _d
+    from .hebcal import to_hebrew
+    names = (week.get("shabbos_yom_tov")
+             or (list(week.get("shabbos_labels") or []) + [week["parsha"]]))
+    shabbos = week["shabbos"]
+    h = to_hebrew(_d.fromisoformat(shabbos))
+    return (f"Shabbos Kodesh: {', '.join(names)}: "
+            f"{h.day} {h.month_name} ({_fmt_civil_date(shabbos)})")
+
+
+def tishrei_week_items(group: dict) -> list[tuple]:
+    """week_group_items re-headed for the one-page Tishrei sheet (see the
+    section comment above). Same lines, same order — only the framing moves:
+    the top zmanim into a ("genbox", header, [(lbl, val)…]) item, and the
+    generic week/section headings into date-stamped day headers."""
+    from .render_docx import EARLY_ES
+    week = group["week"]
+    items = week_group_items(group, notes_inline=True)
+    gen: list[tuple] = []
+    out: list[tuple] = []
+    es_done = False
+    for it in items:
+        kind = it[0]
+        if kind in ("title", "subtitle"):
+            continue                       # headers carry the dates instead
+        if kind == "zman":
+            gen.append((it[1], it[2]))
+            continue
+        if kind == "subhead" and it[1] == KEY_TIMES:
+            # The key times open the Erev Shabbos block under ITS header.
+            es_bar = next((i[1] for i in items if i[0] == "bar"
+                           and i[1].startswith("Erev Shabbos") and i[1] != EARLY_ES),
+                          "Erev Shabbos")
+            out.append(("bar", _tishrei_es_header(week, es_bar), "blue"))
+            es_done = True
+            continue
+        if kind == "bar":
+            if it[1] == WEEKDAY:
+                out.append(("bar", _tishrei_chol_header(week) or it[1], "blue"))
+                continue
+            if len(it) > 2 and it[2] == "purple" and it[1].startswith("Shabbos kodesh"):
+                continue                   # replaced by the specific headers
+            if it[1].startswith("Erev Shabbos") and it[1] != EARLY_ES:
+                if es_done:
+                    continue               # merged under the key-times header
+                out.append(("bar", _tishrei_es_header(week, it[1]), "blue"))
+                es_done = True
+                continue
+            if it[1] == SHABBOS_DAY:
+                out.append(("bar", _tishrei_shabbos_header(week), "purple"))
+                continue
+        out.append(it)
+    if gen:
+        header = (f"General times for the week: {week['hebrew_dates']} "
+                  f"({_fmt_civil_range(week['civil_start'], week['civil_end'])})")
+        out.insert(0, ("genbox", header, gen))
+    return out
+
+
 def day_items(block: dict) -> list[tuple]:
     title = block["title"] or ", ".join(block["labels"])
     heading = (f"{title}: {block['hebrew_date']} "
@@ -206,6 +335,9 @@ def _item_html(it: tuple) -> str:
         return f'<div class="molad">{_esc(it[1])}</div>'
     if kind == "subhead":
         return f'<div class="subhead">{_esc(it[1])}</div>'
+    if kind == "genbox":
+        lines = "".join(f'<div class="gb-l">{_esc(l)} {_esc(v)}</div>' for l, v in it[2])
+        return f'<div class="genbox"><div class="gb-h">{_esc(it[1])}</div>{lines}</div>'
     if kind == "bar":
         return f'<div class="barwrap"><span class="bar {it[2]}">{_esc(it[1])}</span></div>'
     return ""
@@ -297,6 +429,10 @@ body { font-family: "Times New Roman", Times, serif; color:#000; margin:0; }
 .note { font-style:italic; margin:1px 0; }
 /* free-text (no-time) line, e.g. a Kiddush notice placed within a section */
 .freeline { margin:1px 0; font-weight:bold; }
+.genbox { border:1.5px solid #223; background:#eef2fa; padding:2px 8px 3px; margin:5px 0; }
+.genbox .gb-h { font-weight:bold; font-style:italic; }
+.genbox .gb-l { font-style:italic; }
+.flow-title { text-align:center; font-weight:bold; font-size:13.5pt; margin:0 0 3px; }
 .molad { font-style:italic; margin:1px 0 1px 4mm; }
 .fastbox { border:2px solid #ee0000; background:#fff2cc; text-align:center;
            font-style:italic; font-weight:bold; padding:4px 8px; margin:6px auto; width:88%; }
@@ -350,7 +486,13 @@ def render_html(doc_data: dict, *, page_layout: str | None = None) -> str:
     # One cell per week, its yom-tov days folded in at their calendar position.
     # That is also what keeps a lone week on one page in one column: it is a
     # single cell however much Tishrei it carries.
-    cells: list[str] = [_week_group_cell_html(g, notes_inline=multi) for g in groups]
+    if flow:
+        # Day-headed Tishrei composition (see tishrei_week_items).
+        cells: list[str] = ['<div class="week">'
+                            + "".join(_item_html(it) for it in tishrei_week_items(g))
+                            + '</div>' for g in groups]
+    else:
+        cells = [_week_group_cell_html(g, notes_inline=multi) for g in groups]
 
     # One header for every layout; name and location are single lines by
     # contract (.fit-line + nowrap — the fit script shrinks them to fit).
@@ -368,6 +510,15 @@ def render_html(doc_data: dict, *, page_layout: str | None = None) -> str:
         foot = "".join(f'<div class="foot">{_esc(n)}</div>'
                        for g in groups for n in g["week"].get("notes", []))
 
+    if flow:
+        # Name the sheet by the Hebrew month most of the range sits in.
+        from datetime import date as _d
+        from .hebcal import to_hebrew
+        a, b = _d.fromisoformat(doc_data["start"]), _d.fromisoformat(doc_data["end"])
+        h = to_hebrew(a + (b - a) / 2)
+        civ = str(a.year) if a.year == b.year else f"{a.year}\u2013{b.year}"
+        chrome += (f'<div class="flow-title">Times for {h.month_name} {h.year} '
+                   f'({civ})</div>')
     pages = [("flow", cells)] if flow else paginate(cells)
     body = pages_html(pages, chrome=chrome, foot=foot)
     return (f'<!doctype html><html><head><meta charset="utf-8">'
