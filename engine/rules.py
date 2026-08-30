@@ -159,7 +159,7 @@ class ScheduleRule:
         if self.when == "mevorchim":
             return ctx.mevorchim
         if self.when == "not_mevorchim":
-            return not ctx.mevorchim and not ctx.selichos_shabbos
+            return not ctx.mevorchim
         if self.when == "selichos_shabbos":
             return ctx.selichos_shabbos
         return True
@@ -484,11 +484,21 @@ def davening_lines(ctx: WeekContext,
     """Resolve every active profile's rules for the week and apply manual
     overrides (which always win). Returns plain line dicts; ordering within a
     section follows rule declaration order, profiles in declaration order."""
-    lines = []
+    resolved: list[tuple[dict, ScheduleRule]] = []
     for p in active_profiles(ctx, profiles):
         for rule in p.rules:
             line = rule.resolve(ctx)
             if line is not None:
                 line["profile_id"] = p.id
-                lines.append(line)
-    return apply_overrides(lines, overrides or {})
+                resolved.append((line, rule))
+    # The Selichos-Shabbos morning (Tehillim + the 10:10 Shacharis) stands in
+    # for the ordinary one — but only when it is actually present. Those
+    # replacement rules live in the profile SET, which operators edit and the
+    # plugin stores, so a set saved before they existed would otherwise lose
+    # BOTH halves and print a Shabbos morning with no Shacharis at all. The
+    # decision is made here, against the resolved set, because a per-rule
+    # `when` cannot see whether its own replacement is in the profile set.
+    if any(r.when == "selichos_shabbos" for _, r in resolved):
+        resolved = [(l, r) for l, r in resolved
+                    if not (r.when == "not_mevorchim" and r.section == SHABBOS_DAY)]
+    return apply_overrides([l for l, _ in resolved], overrides or {})
