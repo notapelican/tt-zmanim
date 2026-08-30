@@ -331,9 +331,14 @@ def selichos_pivot(entries):
     rest = [e for i, e in enumerate(entries) if i not in pivot_idx]
 
     by_day: dict[str, list[dict]] = {}
+    erev_rh_days: set[str] = set()
     for i in sorted(pivot_idx):
         for day in expand_day_spec(entries[i]["day_spec"]):
             by_day.setdefault(day, []).append(entries[i])
+            # The Erev Rosh Hashana Selichos carry their own rule_ids; the day
+            # they land on is named on the sheet ("Fri. (Erev Rosh Hashana)").
+            if str(entries[i].get("rule_id") or "").startswith("sd_selichos_erev_rh"):
+                erev_rh_days.add(day)
     # Days whose programme is identical share a row, so the printed ranges fall
     # out of the times themselves (Sun. / Mon.–Thurs. / Fri.) rather than being
     # inherited from day_specs that disagree with each other.
@@ -343,10 +348,13 @@ def selichos_pivot(entries):
         progs.setdefault(key, []).append(day)
 
     from .assemble import _SUN_FIRST_ABBR
-    rows = [(collapse_day_names(days), _pivot_value(prog))
-            for prog, days in sorted(
-                progs.items(),
-                key=lambda kv: min(_SUN_FIRST_ABBR.index(d) for d in kv[1]))]
+    rows = []
+    for prog, days in sorted(progs.items(),
+                             key=lambda kv: min(_SUN_FIRST_ABBR.index(d) for d in kv[1])):
+        label = collapse_day_names(days)
+        if erev_rh_days and set(days) <= erev_rh_days:
+            label = f"{label} (Erev Rosh Hashana)"
+        rows.append((label, _pivot_value(prog)))
     return rows, rest
 
 
@@ -400,8 +408,15 @@ def _render_entry_group(container, entries, width, *, dayspec_before_leader=Fals
     # rule B: run of consecutive same-label entries (any day_spec)
     i = 0
     while i < len(merged):
+        # A no-time freetext line (a Kiddush notice, Hatoras Nedarim) renders
+        # in place as a plain bold paragraph — it has no time to merge or dot.
+        if merged[i].get("kind") == "freetext":
+            _para(container, merged[i]["label"], bold=True, size=size)
+            i += 1
+            continue
         j = i
-        while j + 1 < len(merged) and merged[j + 1]["label"] == merged[i]["label"]:
+        while (j + 1 < len(merged) and merged[j + 1]["label"] == merged[i]["label"]
+               and merged[j + 1].get("kind") != "freetext"):
             j += 1
         run = [g for m in merged[i:j + 1] for g in m["_group"]]
         _render_label_run(container, run, width, dayspec_before_leader=dayspec_before_leader, size=size, bullet=bullet)

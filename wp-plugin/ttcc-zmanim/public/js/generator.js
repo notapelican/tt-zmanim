@@ -79,8 +79,9 @@
 	function boot( root, cfg ) {
 		var state = {
 			start: sundayOf( cfg.sunday ) || currentSunday(),
-			weeks: Math.max( 1, Math.min( 4, parseInt( cfg.weeks, 10 ) || 1 ) ),
+			weeks: Math.max( 1, Math.min( 6, parseInt( cfg.weeks, 10 ) || 1 ) ),  // keep in step with MAX_WEEKS
 			template: ( 'modern' === cfg.template ) ? 'modern' : 'classic',
+			layout: '',          // '' = weekly pages | 'flow' = one-page (Tishrei)
 			overrides: { lines: {}, notes: {} },
 			originalNotes: {},   // blockKey -> notes as the engine calculated them
 			hiddenLines: {},     // override key -> the entry that was hidden (so it can come back)
@@ -159,6 +160,7 @@
 				start: state.start,
 				weeks: state.weeks,
 				template: state.template,
+				layout: state.layout,
 				overrides: { lines: state.overrides.lines, notes: notes }
 			};
 		}
@@ -224,6 +226,9 @@
 			} );
 			qa( '[data-style]' ).forEach( function ( b ) {
 				b.setAttribute( 'aria-pressed', String( b.dataset.style === state.template ) );
+			} );
+			qa( '[data-layout]' ).forEach( function ( b ) {
+				b.setAttribute( 'aria-pressed', String( b.dataset.layout === state.layout ) );
 			} );
 			ui.editToggle.setAttribute( 'aria-expanded', String( state.editing ) );
 			ui.editToggle.textContent = state.editing ? cfg.i18n.hideEditor : cfg.i18n.showEditor;
@@ -492,6 +497,7 @@
 				start: state.start,
 				weeks: String( state.weeks ),
 				template: state.template,
+				layout: state.layout,
 				overrides: JSON.stringify( payload().overrides )
 			};
 			if ( inline ) { fields.inline = '1'; }
@@ -1155,6 +1161,15 @@
 			b.addEventListener( 'click', function () {
 				if ( b.dataset.style === state.template ) { return; }
 				state.template = b.dataset.style;
+				syncControls();
+				refresh( false );
+			} );
+		} );
+
+		qa( '[data-layout]' ).forEach( function ( b ) {
+			b.addEventListener( 'click', function () {
+				if ( b.dataset.layout === state.layout ) { return; }
+				state.layout = b.dataset.layout;
 				syncControls();
 				refresh( false );
 			} );

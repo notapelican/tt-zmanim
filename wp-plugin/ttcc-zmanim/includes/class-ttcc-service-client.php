@@ -147,11 +147,15 @@ class TTCC_Zmanim_Service_Client {
 	 * array: {template, logo, ...theme fields}. docx has no modern renderer, so
 	 * it always renders classic.
 	 */
-	private static function render_payload( $doc, $variant, $design, $allow_modern = true ) {
+	private static function render_payload( $doc, $variant, $design, $allow_modern = true, $page_layout = '' ) {
 		$payload = array( 'doc' => $doc, 'variant' => $variant );
 		$design  = is_array( $design ) ? $design : array();
 		$template = ( $allow_modern && isset( $design['template'] ) && 'modern' === $design['template'] ) ? 'modern' : 'classic';
 		$payload['template'] = $template;
+		if ( 'flow' === $page_layout ) {
+			// One-page Tishrei layout (classic-only; the service forces classic).
+			$payload['page_layout'] = 'flow';
+		}
 
 		// Typography theme travels with BOTH templates (the service themes the
 		// classic sheet too); the masthead logo is modern-only.
@@ -199,15 +203,15 @@ class TTCC_Zmanim_Service_Client {
 	}
 
 	/** POST /render/html with a pre-generated doc. Returns array{html, engine_version} or WP_Error. */
-	public static function render_html_doc( $doc, $variant = 'print', $design = null ) {
-		return self::post_json( '/render/html', self::render_payload( $doc, $variant, $design ) );
+	public static function render_html_doc( $doc, $variant = 'print', $design = null, $page_layout = '' ) {
+		return self::post_json( '/render/html', self::render_payload( $doc, $variant, $design, true, $page_layout ) );
 	}
 
 	/** POST /render/{pdf|png|docx} with a pre-generated doc. Returns binary array or WP_Error. */
-	public static function render_binary( $kind, $doc, $variant = 'print', $design = null ) {
+	public static function render_binary( $kind, $doc, $variant = 'print', $design = null, $page_layout = '' ) {
 		$path    = '/render/' . $kind;
 		// The modern layout is HTML-based; .docx keeps the classic renderer.
-		$payload = self::render_payload( $doc, $variant, $design, 'docx' !== $kind );
+		$payload = self::render_payload( $doc, $variant, $design, 'docx' !== $kind, $page_layout );
 		// Exports match the preview's fit-to-page scaling unless the Settings
 		// override asks for natural (unscaled) output.
 		if ( 'natural' === TTCC_Zmanim_Settings::get( 'export_fit', 'fit' ) ) {

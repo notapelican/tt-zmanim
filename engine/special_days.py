@@ -91,16 +91,18 @@ def _find(entries: list, rule_id: str) -> int | None:
 
 def _exclude_days(entries: list, idx: int, excl: set[date],
                   week_days: list[date]) -> None:
-    """Remove the given days from an entry's day_spec, recomputed from the
-    standard uniform span it started as (Sun.-Thurs. / Mon.-Fri.). All
-    exclusions for one entry must arrive in a single call."""
-    from engine.assemble import format_day_spec, _is_yom_tov
+    """Remove the given days from an entry's day_spec.
+
+    Reads the days the spec CURRENTLY covers (expand_day_spec) rather than
+    re-deriving a standard span: by the time a fast split runs, yom tov may
+    already have reshaped the spec (a Sun.–Thurs. Mincha becomes Mon.–Thurs.
+    when Sunday is Yom Tov), and assuming Mon.–Fri. for anything not starting
+    with "Sun" put a phantom Friday Mincha on the 5787 Tzom Gedaliah week."""
+    from engine.assemble import _SUN_FIRST_ABBR, expand_day_spec, format_day_spec
     e = entries[idx]
-    spec = e.get("day_spec") or ""
-    if spec.startswith("Sun"):
-        days = [x for x in week_days[:5] if not _is_yom_tov(x)]
-    else:
-        days = [x for x in week_days[1:6] if not _is_yom_tov(x)]
+    days = [week_days[_SUN_FIRST_ABBR.index(a)]
+            for a in expand_day_spec(e.get("day_spec"))
+            if _SUN_FIRST_ABBR.index(a) < len(week_days)]
     e["day_spec"] = format_day_spec([x for x in days if x not in excl])
 
 
@@ -253,7 +255,75 @@ def _selichos_season(entries, notes, sunday, shabbos, engine, week_days):
         entries[idx1:idx1] = before_1
 
     if erev_rh is not None:
-        notes.append("Hatoras Nedarim after each Shacharis on Erev Rosh Hashana.")
+        # Printed inside the davening block, directly under the Shacharis
+        # lines it qualifies (the historical sheets set it right there —
+        # "Shacharis followed by Hatoras Nedorim" — not as a foot note).
+        # A freetext entry so every renderer places it in the section and the
+        # dashboard can still suppress/edit it by rule_id like any line.
+        idx2 = _find(entries, "shacharis_wk_2")
+        hn = _line("Hatoras Nedarim after each Shacharis on Erev Rosh Hashana.",
+                   "", rule_id="sd_hatoras_nedarim", kind="freetext")
+        if idx2 is None:
+            entries.append(hn)
+        else:
+            entries.insert(idx2 + 1, hn)
+
+
+def _tishrei_weekdays(entries, notes, sunday, shabbos, engine, week_days):
+    """Tishrei-season weekday adjustments (evidence: the 5785/5786 Tishrei
+    sheets and the shul-checked 5787 sheet):
+
+    - Tzom Gedaliah's Shacharis is its own earlier pair with Selichos
+      (5:55am & 7:00am), replacing the day's regular minyanim.
+    - 11–21 Tishrei (post-Yom-Kippur through Hoshana Rabbah) adds the
+      9:15am third weekday Shacharis, printed merged into the regular line
+      ("6:15am, 7:30am & 9:15am").
+    - Shabbos Shuva's Shacharis line carries the derasha.
+    """
+    hy = to_hebrew(shabbos).year
+    tishrei = month_number(hy, "Tishrei")
+
+    # Tzom Gedaliah: Shacharis with Selichos.
+    for f in _fasts_in(sunday, shabbos):
+        if f["name"] != "Tzom Gedaliah" or f["date"].weekday() == 5:
+            continue
+        d = f["date"]
+        for rid in ("shacharis_wk_1", "shacharis_wk_2"):
+            idx = _find(entries, rid)
+            if idx is not None:
+                _exclude_days(entries, idx, {d}, week_days)
+        idx = _find(entries, "shacharis_wk_2")
+        if idx is not None:
+            wd = _WD[d.weekday()]
+            _insert_after(entries, idx, [
+                _line("Shacharis with Selichos", "05:55", day_spec=wd,
+                      date_iso=d.isoformat(), rule_id="sd_tg_shacharis_1"),
+                _line("Shacharis with Selichos", "07:00", day_spec=wd,
+                      date_iso=d.isoformat(), rule_id="sd_tg_shacharis_2"),
+            ])
+
+    # 11-21 Tishrei: the 9:15am third Shacharis. Same day_spec as the regular
+    # weekday pair wherever they coincide, so the renderer merges it into one
+    # printed line.
+    from engine.assemble import _is_yom_tov, format_day_spec
+    third = [d for d in week_days[1:]           # Mon..Fri (Sun uses its own set)
+             if not _is_yom_tov(d)
+             and (lambda h: h.month == tishrei and 11 <= h.day <= 21)(to_hebrew(d))]
+    if third:
+        idx = _find(entries, "shacharis_wk_2")
+        if idx is not None:
+            _insert_after(entries, idx, [
+                _line("Shacharis", "09:15", day_spec=format_day_spec(third),
+                      rule_id="sd_tishrei_shacharis_3"),
+            ])
+
+    # Shabbos Shuva: the derasha on the Shacharis line.
+    if "Shuva" in luach.shabbos_labels(shabbos):
+        for rid in ("shab_shacharis", "shab_shacharis_mev", "shab_shacharis_selichos"):
+            idx = _find(entries, rid)
+            if idx is not None:
+                entries[idx]["label"] = ("Shacharis "
+                                         "(Shabbos Shuva derasha before Krias Hatorah)")
 
 
 def _rosh_chodesh_span(notes, sunday, shabbos):
@@ -312,6 +382,7 @@ def apply_special_days(entries: list[dict], sunday: date, shabbos: date,
     _av9(entries, notes, sunday, shabbos, engine, week_days)
     _elul(notes, sunday, shabbos)
     _selichos_season(entries, notes, sunday, shabbos, engine, week_days)
+    _tishrei_weekdays(entries, notes, sunday, shabbos, engine, week_days)
     _rosh_chodesh_span(notes, sunday, shabbos)
     _december_notes(notes, sunday, shabbos, engine)
     return notes
