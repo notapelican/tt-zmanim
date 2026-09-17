@@ -31,6 +31,11 @@ class TTCC_Zmanim_Public {
 	}
 
 	public static function add_rewrite_rules() {
+		// The preview must register before BOTH slug rules: 'preview' would
+		// otherwise be captured as a slug by the generic rule and 404 against
+		// the real one. (A slug is a 20-character generated token, so this
+		// cannot take a live screen's URL away from it.)
+		add_rewrite_rule( '^ttcc-signage/preview/?$', 'index.php?ttcc_signage=1&ttcc_view=preview', 'top' );
 		// The /shabbos variant must register before the generic slug rule.
 		add_rewrite_rule( '^ttcc-signage/([^/]+)/shabbos/?$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=shabbos', 'top' );
 		add_rewrite_rule( '^ttcc-signage/([^/]+)/?$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]', 'top' );
@@ -73,8 +78,16 @@ class TTCC_Zmanim_Public {
 	 * page load instead of waiting out the cache TTL.
 	 *
 	 * Returns HTML string, or '' if nothing (not even last-good) is available.
+	 *
+	 * $persist false is the preview's mode: the rendered week is still cached
+	 * (stepping through a Yom Tov should not re-render the same week each time)
+	 * but it never becomes the persistent last-good copy, and a failure is not
+	 * papered over with one. A preview of some other week must not be what a
+	 * screen falls back to during an outage, and a preview that quietly showed
+	 * last-good under a date box saying otherwise would be worse than one that
+	 * says it could not render.
 	 */
-	public static function cached_html( $start, $end, $context = 'week', $inject_css = '' ) {
+	public static function cached_html( $start, $end, $context = 'week', $inject_css = '', $persist = true ) {
 		$sheet     = TTCC_Zmanim_Storage::find_overlapping( $start, $end );
 		$overrides = ( $sheet && is_array( $sheet['overrides'] ) ) ? $sheet['overrides'] : array();
 		$stamp     = $sheet ? $sheet['id'] . '|' . $sheet['updated_at'] : 'none';
@@ -88,11 +101,17 @@ class TTCC_Zmanim_Public {
 
 		$built = TTCC_Zmanim_Sheet::build( $start, $end, $overrides );
 		if ( is_wp_error( $built ) ) {
+			if ( ! $persist ) {
+				return '';
+			}
 			$lastgood = get_option( $stable, '' );
 			return $lastgood ? $lastgood : '';
 		}
 		$res = TTCC_Zmanim_Service_Client::render_html_doc( $built['doc'] );
 		if ( is_wp_error( $res ) ) {
+			if ( ! $persist ) {
+				return '';
+			}
 			$lastgood = get_option( $stable, '' );
 			return $lastgood ? $lastgood : '';
 		}
@@ -101,7 +120,9 @@ class TTCC_Zmanim_Public {
 			$html = self::inject_head( $html, $inject_css );
 		}
 		set_transient( $key, $html, self::CACHE_TTL );
-		update_option( $stable, $html, false ); // persistent last-good (stable key).
+		if ( $persist ) {
+			update_option( $stable, $html, false ); // persistent last-good (stable key).
+		}
 		return $html;
 	}
 
@@ -155,10 +176,128 @@ class TTCC_Zmanim_Public {
 
 	// --- piSignage ----------------------------------------------------------
 
+	// --- preview ------------------------------------------------------------
+
+	/** Nonce action guarding the signage preview route. */
+	const PREVIEW_NONCE = 'ttcc_signage_preview';
+
+	/**
+	 * URL of the signage preview for a given moment.
+	 *
+	 * Public so the display plugin's preview page can offer these screens
+	 * alongside its own, the same way it reads this plugin's profile set for
+	 * minyan times: one implementation of each screen, wherever it is viewed
+	 * from. `$at` is a DateTimeInterface in the site timezone; `$view` is
+	 * 'sheet' (the week's sheet, laid out to fill the panel) or 'shabbos'.
+	 */
+	public static function preview_url( $at, $view = 'sheet' ) {
+		return add_query_arg(
+			array(
+				'at'       => $at->format( 'Y-m-d\TH:i' ),
+				'view'     => ( 'shabbos' === $view ) ? 'shabbos' : 'sheet',
+				'_wpnonce' => wp_create_nonce( self::PREVIEW_NONCE ),
+			),
+			home_url( '/ttcc-signage/preview/' )
+		);
+	}
+
+	/**
+	 * Parse an `at` parameter ("YYYY-MM-DDTHH:MM", site timezone). Returns null
+	 * when missing or malformed, so the caller decides what that means rather
+	 * than silently previewing now.
+	 */
+	public static function parse_at( $raw ) {
+		$raw = is_string( $raw ) ? trim( $raw ) : '';
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $raw ) ) {
+			return null;
+		}
+		$at = DateTimeImmutable::createFromFormat( 'Y-m-d\TH:i', $raw, wp_timezone() );
+		if ( ! $at ) {
+			return null;
+		}
+		// createFromFormat takes the unspecified seconds from the current clock,
+		// which would make two previews of the same moment differ.
+		return $at->setTime( (int) $at->format( 'H' ), (int) $at->format( 'i' ), 0 );
+	}
+
+	/**
+	 * Either signage screen, rendered for an arbitrary week.
+	 *
+	 * Admin-only, by capability and nonce. Not for secrecy — these times are on
+	 * a wall and published on the site — but each preview is a server-side
+	 * render of a week through the engine, and an open URL is a way to make the
+	 * site render a year of them one request at a time. It also keeps the
+	 * screens' own slug URLs the only public way in, so previewing a date can
+	 * never hand one out.
+	 *
+	 * Deliberately the same renderers the screens use, with the week (and, for
+	 * the Shabbos board, the clock) handed to them: a preview drawn by separate
+	 * code could only ever show what that separate code does.
+	 */
+	private static function render_preview() {
+		nocache_headers();
+		header( 'X-Robots-Tag: noindex, nofollow', true );
+
+		if ( ! current_user_can( TTCC_ZMANIM_CAP ) ) {
+			status_header( 403 );
+			wp_die(
+				esc_html__( 'You do not have permission to preview the screens.', 'ttcc-zmanim' ),
+				'',
+				array( 'response' => 403 )
+			);
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified on the next line.
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, self::PREVIEW_NONCE ) ) {
+			status_header( 403 );
+			wp_die(
+				esc_html__( 'This preview link has expired. Reload the page you opened it from.', 'ttcc-zmanim' ),
+				'',
+				array( 'response' => 403 )
+			);
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce verified above.
+		$at = self::parse_at( isset( $_GET['at'] ) ? wp_unslash( $_GET['at'] ) : '' );
+		if ( null === $at ) {
+			$at = current_datetime();
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce verified above.
+		$view   = ( isset( $_GET['view'] ) && 'shabbos' === $_GET['view'] ) ? 'shabbos' : 'sheet';
+		$sunday = TTCC_Zmanim_Shabbos::sunday_of( $at->format( 'Y-m-d' ) );
+
+		header( 'Content-Type: text/html; charset=utf-8' );
+
+		if ( 'shabbos' === $view ) {
+			TTCC_Zmanim_Shabbos::render_signage_screen( $sunday, $at );
+			exit;
+		}
+
+		$html = self::cached_html( $sunday, self::week_end( $sunday ), 'signage', self::signage_head(), false );
+		if ( '' === $html ) {
+			echo '<!doctype html><meta charset="utf-8"><body style="font:2.5vw sans-serif;text-align:center;padding:20vh;color:#444">'
+				. esc_html__( 'This week could not be rendered — the sheet service did not answer.', 'ttcc-zmanim' )
+				. '</body>';
+			exit;
+		}
+		// No meta-refresh, unlike the live screen: a preview that reloaded
+		// itself every half hour would jump back to whatever week the reloaded
+		// URL asks for while somebody is looking at it.
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- self-contained service HTML.
+		exit;
+	}
+
 	public function maybe_render_signage() {
 		if ( ! get_query_var( 'ttcc_signage' ) ) {
 			return;
 		}
+		// The preview is gated by capability and nonce rather than by the slug,
+		// so it is handled before the slug is looked at at all.
+		if ( 'preview' === (string) get_query_var( 'ttcc_view' ) ) {
+			self::render_preview();
+			exit;
+		}
+
 		$slug = (string) get_query_var( 'ttcc_slug' );
 		$want = TTCC_Zmanim_Settings::pisignage_slug();
 		if ( ! $want || ! hash_equals( $want, $slug ) ) {

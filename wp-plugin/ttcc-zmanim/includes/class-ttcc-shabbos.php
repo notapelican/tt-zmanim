@@ -361,15 +361,29 @@ JS;
 	 * retries every 5 minutes after a failure, keeps stale data offline).
 	 * Echoes a complete HTML document.
 	 */
-	public static function render_signage_screen() {
-		$sunday = TTCC_Zmanim_Public::current_sunday();
-		$week   = self::week_data( $sunday );
-		$cfg    = array(
+	/**
+	 * The Shabbos & Yom Tov board.
+	 *
+	 * $sunday and $at are the preview's: the week to show, and the moment to
+	 * hold the clock at. Both null is the live screen — this week, the real
+	 * clock, refreshing itself. In preview the screen must not refresh (it
+	 * would replace the previewed week with the current one under whoever is
+	 * looking at it) and must not tick (two previews of one moment should
+	 * render identically), so `preview` turns both off in the page's own JS.
+	 */
+	public static function render_signage_screen( $sunday = null, $at = null ) {
+		$preview = ( null !== $at );
+		$sunday  = $sunday ? $sunday : TTCC_Zmanim_Public::current_sunday();
+		$week    = self::week_data( $sunday );
+		$cfg     = array(
 			'rest'      => self::rest_endpoint(),
 			'initial'   => $week,
 			'refreshMs' => 3 * HOUR_IN_SECONDS * 1000,
 			'retryMs'   => 5 * MINUTE_IN_SECONDS * 1000,
 			'tz'        => wp_timezone_string(),
+			// ISO 8601 with the site's offset, so the page's clock reads the
+			// previewed moment in the shul's timezone whatever the browser's is.
+			'preview'   => $preview ? $at->format( 'c' ) : null,
 		);
 		$site  = wp_parse_url( home_url(), PHP_URL_HOST );
 		$title = get_bloginfo( 'name' );
@@ -546,16 +560,27 @@ JS;
 		timeFmt = new Intl.DateTimeFormat('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true });
 		dateFmt = new Intl.DateTimeFormat('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 	}
+	// Held at the previewed moment when previewing, live otherwise.
+	var previewNow = cfg.preview ? Date.parse(cfg.preview) : NaN;
 	function tickClock() {
-		var now = new Date();
+		var now = isNaN(previewNow) ? new Date() : new Date(previewNow);
 		els.clockTime.textContent = timeFmt.format(now).replace(/\s/g, '');
 		els.clockDate.textContent = dateFmt.format(now);
 	}
 
 	tickClock();
-	setInterval(tickClock, 1000);
-	if (cfg.initial) { render(cfg.initial); } else { load(); }
-	setInterval(load, cfg.refreshMs);
+	if (cfg.initial) { render(cfg.initial); }
+
+	// A preview is a page somebody is looking at for a minute, not a board left
+	// running for months: it holds the moment it was asked for and does nothing
+	// else. The live screen keeps its clock and its refresh loop.
+	if (!cfg.preview) {
+		setInterval(tickClock, 1000);
+		if (!cfg.initial) { load(); }
+		setInterval(load, cfg.refreshMs);
+	} else if (!cfg.initial) {
+		els.status.textContent = 'This week could not be loaded — the sheet service did not answer.';
+	}
 })();
 </script>
 </body>
