@@ -147,6 +147,22 @@ stops a dense two-column page from spilling a time off the edge of its column.)
   large-type Shabbos & Yom Tov board, self-refreshing. Built for the screen
   rather than derived from the sheet, so it sizes itself.
 
+### Checking a screen without waiting for the week
+
+Both signage screens can be previewed for any week at `/ttcc-signage/preview/`
+— the same renderers, handed a week instead of "now", so what you see is what
+will hang up. It is admin-only (the `manage_ttcc_timesheets` capability plus a
+nonce), so the link is not one you can paste to someone; open it from the
+display plugin's **Display → Preview** page, which offers both screens beside
+its own and gives you the date box, the panel orientation and the jump list of
+the coming yomim tovim.
+
+The sheet screen shows a week, so the time of day changes nothing on it; on the
+Shabbos board it sets the clock in the corner. Neither preview writes to the
+cache a live screen reads, and neither falls back to the last-good copy — a
+week that cannot be rendered says so rather than quietly showing you a
+different one.
+
 ## If the service is down
 
 The dashboard banner turns red and Generate/preview/export are disabled; edits
