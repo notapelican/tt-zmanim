@@ -34,7 +34,8 @@ class TTCC_Zmanim_Generator {
 	const EXPORT_NONCE  = 'ttcc_gen_export';
 
 	/** Hard caps on what a front-end visitor may ask the engine for. */
-	const MAX_WEEKS   = 4;
+	// 6 covers a whole Tishrei (Erev Rosh Hashana through Shabbos Bereishis).
+	const MAX_WEEKS   = 6;
 	const WINDOW_DAYS = 730;
 
 	/** Rendered-sheet cache (unedited sheets only). */
@@ -212,6 +213,15 @@ class TTCC_Zmanim_Generator {
 				</div>
 
 				<div class="tg-field">
+					<span class="tg-label"><?php esc_html_e( 'Pages', 'ttcc-zmanim' ); ?></span>
+					<div class="tg-seg" role="group" aria-label="<?php esc_attr_e( 'Page layout', 'ttcc-zmanim' ); ?>">
+						<button type="button" data-layout="" data-busy-disable aria-pressed="true"
+							title="<?php esc_attr_e( 'The normal sheets: one week per page (or 4-up for a run of weeks).', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'Weekly', 'ttcc-zmanim' ); ?></button>
+						<button type="button" data-layout="flow" data-busy-disable aria-pressed="false"
+							title="<?php esc_attr_e( 'Everything on a single page in two columns — the Tishrei sheet. Classic style only.', 'ttcc-zmanim' ); ?>"><?php esc_html_e( 'One page', 'ttcc-zmanim' ); ?></button>
+					</div>
+				</div>
+				<div class="tg-field">
 					<span class="tg-label"><?php esc_html_e( 'Sheet style', 'ttcc-zmanim' ); ?></span>
 					<div class="tg-seg" role="group" aria-label="<?php esc_attr_e( 'Sheet style', 'ttcc-zmanim' ); ?>">
 						<?php foreach ( array( 'classic' => __( 'Classic', 'ttcc-zmanim' ), 'modern' => __( 'Modern', 'ttcc-zmanim' ) ) as $style => $label ) : ?>
@@ -349,7 +359,12 @@ class TTCC_Zmanim_Generator {
 		if ( is_wp_error( $range ) ) {
 			return $range;
 		}
-		$result = self::preview( $range, self::sanitize_template( $req->get_param( 'template' ) ), self::sanitize_overrides( $req->get_param( 'overrides' ) ) );
+		$result = self::preview(
+			$range,
+			self::sanitize_template( $req->get_param( 'template' ) ),
+			self::sanitize_overrides( $req->get_param( 'overrides' ) ),
+			self::sanitize_layout( $req->get_param( 'layout' ) )
+		);
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
@@ -391,11 +406,11 @@ class TTCC_Zmanim_Generator {
 	 * Unedited sheets are served from (and stored in) a short-lived cache so
 	 * browsing weeks costs the service nothing.
 	 */
-	private static function preview( $range, $template, $overrides ) {
+	private static function preview( $range, $template, $overrides, $layout = '' ) {
 		$design = self::house_design( $template );
 		// The design is part of the bucket, so editing the house style (or the
 		// default preset) shows up on the next page load.
-		$cache_key = self::cache_key( 'preview:' . $template . ':' . md5( (string) wp_json_encode( $design ) ), $range, $overrides );
+		$cache_key = self::cache_key( 'preview:' . $template . ':' . $layout . ':' . md5( (string) wp_json_encode( $design ) ), $range, $overrides );
 		if ( $cache_key ) {
 			$hit = get_transient( $cache_key );
 			if ( is_array( $hit ) ) {
@@ -411,7 +426,7 @@ class TTCC_Zmanim_Generator {
 		if ( is_wp_error( $built ) ) {
 			return self::as_error( $built );
 		}
-		$html = TTCC_Zmanim_Service_Client::render_html_doc( $built['doc'], 'print', $design );
+		$html = TTCC_Zmanim_Service_Client::render_html_doc( $built['doc'], 'print', $design, $layout );
 		if ( is_wp_error( $html ) ) {
 			return self::as_error( $html );
 		}
@@ -468,6 +483,7 @@ class TTCC_Zmanim_Generator {
 		}
 
 		$template  = self::sanitize_template( isset( $_POST['template'] ) ? wp_unslash( $_POST['template'] ) : '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- whitelisted in sanitize_template().
+		$layout    = self::sanitize_layout( isset( $_POST['layout'] ) ? sanitize_key( wp_unslash( $_POST['layout'] ) ) : '' );
 		$decoded   = isset( $_POST['overrides'] ) ? json_decode( wp_unslash( $_POST['overrides'] ), true ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- sanitized field-by-field below.
 		$overrides = self::sanitize_overrides( $decoded );
 
@@ -486,7 +502,7 @@ class TTCC_Zmanim_Generator {
 		if ( is_wp_error( $built ) ) {
 			wp_die( esc_html( $built->get_error_message() ), '', array( 'response' => 503 ) );
 		}
-		$result = TTCC_Zmanim_Service_Client::render_binary( $kind, $built['doc'], $variant, self::house_design( $template ) );
+		$result = TTCC_Zmanim_Service_Client::render_binary( $kind, $built['doc'], $variant, self::house_design( $template ), $layout );
 		if ( is_wp_error( $result ) ) {
 			wp_die( esc_html( $result->get_error_message() ), '', array( 'response' => 503 ) );
 		}
@@ -621,6 +637,11 @@ class TTCC_Zmanim_Generator {
 
 	private static function sanitize_template( $template ) {
 		return ( 'modern' === $template ) ? 'modern' : 'classic';
+	}
+
+	/** '' = normal weekly pages; 'flow' = everything on one page (Tishrei). */
+	private static function sanitize_layout( $layout ) {
+		return ( 'flow' === $layout ) ? 'flow' : '';
 	}
 
 	/**
