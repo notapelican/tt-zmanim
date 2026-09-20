@@ -217,6 +217,11 @@ Either way the service account needs enough to run `gcloud run deploy --source`:
 
 - `roles/run.admin` — create the revision
 - `roles/cloudbuild.builds.editor` — `--source` builds through Cloud Build
+- `roles/storage.admin` — `--source` stages the upload in a GCS bucket
+  (`run-sources-<project>-<region>`) before Cloud Build sees it, and needs to
+  read the bucket itself, not just write objects. Missing this is the first
+  thing that bites: everything authenticates, the regressions pass, the build
+  says "Building using Dockerfile", and it fails on `storage.buckets.get`.
 - `roles/artifactregistry.writer` — the built image has to land somewhere
 - `roles/iam.serviceAccountUser` on the service's **runtime** service account
 
