@@ -1,0 +1,99 @@
+name: Deploy service
+
+# Deploy the Cloud Run sheet service from here, instead of from a terminal.
+#
+# It exists because the deploy is the one step in this project that needs a
+# shell with gcloud credentials, and whoever needs it is not always at one —
+# a Cloud Shell session on a phone, on erev Yom Kippur, with the engine fix
+# merged and undeployed, is what prompted it.
+#
+# Manual only, never on push: merging to main must not redeploy production by
+# itself. Releases are cut the same way (see release-plugin.yml).
+#
+# The deploy itself is `./deploy-service.sh`, not gcloud typed out again here.
+# That script carries the two traps that have taken this service down — the
+# wrong-directory Buildpacks build, and the missing --clear-base-image — plus
+# the /health verification, and a second copy of those flags in YAML is a
+# second place for them to drift.
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip the five golden regressions (only if they just passed on this commit)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write   # Workload Identity Federation; harmless with a key
+
+concurrency:
+  # One deploy at a time. Two overlapping `gcloud run deploy --source` runs race
+  # over the same service revision, and the loser's build is wasted at best.
+  group: deploy-service
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Fail with something readable rather than letting the auth action print
+      # a stack trace about an empty credential.
+      - name: Check the deploy credentials are configured
+        env:
+          WIF: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          KEY_SET: ${{ secrets.GCP_SA_KEY != '' }}
+        run: |
+          if [ -z "$WIF" ] && [ "$KEY_SET" != "true" ]; then
+            echo "::error::No Google Cloud credentials configured. Set either the"
+            echo "::error::GCP_WORKLOAD_IDENTITY_PROVIDER + GCP_SERVICE_ACCOUNT repo variables,"
+            echo "::error::or the GCP_SA_KEY secret. See README, 'Deploying from GitHub'."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'   # matches the Dockerfile's base image
+
+      # python-docx only: engine/render_html.py imports shared constants from
+      # render_docx at module load, so even the HTML path needs it, and the
+      # regressions below import the engine.
+      - name: Install engine dependencies
+        run: pip install -r requirements.txt
+
+      # Two ways in, so the shul can start with a key and move to keyless later
+      # without touching this file. Workload Identity Federation wins when it is
+      # configured, because then no long-lived credential exists to leak.
+      - name: Authenticate to Google Cloud (workload identity)
+        if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER != ''
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Authenticate to Google Cloud (service account key)
+        if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER == ''
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Deploy
+        env:
+          # Same defaults the script has; overridable per repo without editing it.
+          SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+          REGION: ${{ vars.CLOUD_RUN_REGION }}
+        # An unset repo variable renders as "", which the script's own
+        # ${SERVICE:-default} already treats as absent — no juggling needed.
+        run: |
+          if [ "${{ inputs.skip_tests }}" = "true" ]; then
+            ./deploy-service.sh --skip-tests
+          else
+            ./deploy-service.sh
+          fi

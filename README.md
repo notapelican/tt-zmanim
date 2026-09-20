@@ -184,6 +184,49 @@ rotate `TTCC_SERVICE_TOKEN` and break both plugins until you updated their
 settings. Only set it when you genuinely mean to change the token — and then
 update both plugins' settings pages.
 
+### Deploying from GitHub (no terminal)
+
+The deploy needs a shell with gcloud credentials, which is not always available
+— a phone, a Cloud Shell session that will not authorize, someone else covering.
+**Actions → Deploy service → Run workflow** does the same thing from a browser:
+it runs the same `deploy-service.sh`, so the same regressions, the same flags,
+the same `/health` check. Manual only; merging to `main` never deploys by itself.
+
+It needs credentials configuring once, either way below.
+
+**Keyless (preferred).** No long-lived secret exists to leak. Set the repo
+*variables* (Settings → Secrets and variables → Actions → Variables):
+
+| Variable | Value |
+|---|---|
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | `projects/<project-number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>` |
+| `GCP_SERVICE_ACCOUNT` | the deploy service account's email |
+| `GCP_PROJECT_ID` | e.g. `tt-zmanim` |
+
+Google's setup for the pool and provider is at
+<https://github.com/google-github-actions/auth#preferred-direct-workload-identity-federation>.
+Restrict the provider to this repository, or any repo could assume the account.
+
+**Service account key (simpler, and it is a real credential).** Console → IAM →
+Service Accounts → Keys → Add key → JSON, then paste the whole file into the
+`GCP_SA_KEY` repo *secret* and set `GCP_PROJECT_ID`. It can be created entirely
+in a browser, which is the point, but it is a standing key to a production
+deploy: restrict its roles, and rotate it if it is ever pasted anywhere else.
+
+Either way the service account needs enough to run `gcloud run deploy --source`:
+
+- `roles/run.admin` — create the revision
+- `roles/cloudbuild.builds.editor` — `--source` builds through Cloud Build
+- `roles/artifactregistry.writer` — the built image has to land somewhere
+- `roles/iam.serviceAccountUser` on the service's **runtime** service account
+
+`CLOUD_RUN_SERVICE` and `CLOUD_RUN_REGION` variables override the script's
+defaults (`ttcc-sheet-service`, `australia-southeast1`) if they ever change.
+
+**This does not change how the token is handled.** The workflow never passes
+`--set-env-vars`, exactly as the script never does, so `TTCC_SERVICE_TOKEN`
+survives a deploy from here the same as from a terminal.
+
 <details><summary>The equivalent by hand</summary>
 
 ```sh
