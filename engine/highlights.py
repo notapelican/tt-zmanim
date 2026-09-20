@@ -38,20 +38,22 @@ _ENDS_IDS = {"yt_ends"}
 _FAST_NAMES = {"Tzom Gedaliah", "Taanis Esther", "Taanis Bechorim"}
 
 
-def _is_fast_day(d: date) -> bool:
-    """True when `luach` marks this civil date a fast.
+def _is_yom_kippur(d: date) -> bool:
+    """True when this civil date is Yom Kippur.
 
-    Used for the one day that is both a Yom Tov and a fast — Yom Kippur —
-    whose ending is the end of the fast as well. The minor fasts never reach
-    here: their begin/end pair is assembled on the week block and handled
-    below.
+    Deliberately narrower than "is a fast". Yom Kippur is the only day that is
+    both a Yom Tov and a fast, the only one whose fast starts at candle
+    lighting and again, for men, at shkia, and the only one whose Yom Tov
+    ending is also the end of a fast. Testing for any fast gets Taanis
+    Bechorim — which falls on Erev Pesach — and would put a men's fast start on
+    an erev Yom Tov that has no such thing.
     """
     hy = hebcal.to_hebrew(d).year
     # The neighbouring years too: a civil date near Rosh Hashana can belong to
     # a fast listed under either Hebrew year (same guard as dayview._is_fast).
     for year in (hy, hy - 1, hy + 1):
         for f in luach.fasts(year):
-            if f["date"] == d:
+            if f["date"] == d and f.get("kind") == "yk":
                 return True
     return False
 
@@ -119,9 +121,22 @@ def week_highlights(sunday: date, *, engine: ZmanimEngine | None = None,
                 if qual == "not before":
                     memo = (f"{title} — from a pre-existing flame"
                             if title else "From a pre-existing flame")
-                items.append(_item("candles", "Candle lighting", d, time_s,
+                # On a fast day the sheet's own wording carries more than the
+                # time — "Candle lighting (Yom HaKippurim); Fast begins" — and
+                # the screen should say what the sheet says rather than a
+                # generic label that hides the fast starting.
+                label = (e.get("label") or "Candle lighting") \
+                    if _is_yom_kippur(d + timedelta(days=1)) else "Candle lighting"
+                items.append(_item("candles", label, d, time_s,
                                    memo=memo, qualifier=qual))
                 candle_dates.add(d.isoformat())
+            elif rid == "erev_yt_shkia" and _is_yom_kippur(d + timedelta(days=1)):
+                # Yom Kippur only: the men's fast starts at shkia, after candle
+                # lighting. Every other erev Yom Tov has a shkia line too, and
+                # it is an ordinary zman there with nothing for a headline
+                # screen to say.
+                items.append(_item("fast_begins", e.get("label") or "Shkia",
+                                   d, e["time"], memo=title))
             elif rid in _ENDS_IDS:
                 # What is ending at this one time, in reading order.
                 #
@@ -134,7 +149,7 @@ def week_highlights(sunday: date, *, engine: ZmanimEngine | None = None,
                 # ordinary chag ending. Same time either way; only what it is
                 # called and how it is marked. Yom Kippur can itself fall on
                 # Shabbos, hence three parts rather than a special case.
-                fast = _is_fast_day(d)
+                fast = _is_yom_kippur(d)
                 parts = (["Shabbos"] if d.weekday() == 5 else []) + ["Yom Tov"]
                 if fast:
                     parts.append("Fast")
