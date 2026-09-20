@@ -168,6 +168,39 @@ def day_spec_includes(day_spec: str | None, d: date) -> bool:
     return False
 
 
+# The three weekday tefillos a special day's own block can replace. Matched by
+# name inside the label, because a day-block line names what it is and then
+# says what is special about it — "Early Mincha followed by lekach", "Mincha
+# followed by a drosha", "Maariv and end of Fast".
+_TEFILLOS = ("Shacharis", "Mincha", "Maariv")
+
+
+def _overridden_by_day_block(entry: dict, day_lines: list[dict]) -> bool:
+    """True when this day's own block already provides the tefilla a ranged
+    weekday line would otherwise contribute.
+
+    Erev Yom Kippur is the case that forces this. It is a chol day, so the
+    week's "Mincha Sun.-Thurs. 5:40pm" range covers it, and it is also an erev
+    Yom Tov with its own block carrying "Early Mincha followed by lekach" at
+    3:15 — so the screen showed both, and the wall told people to come to a
+    Mincha the shul was not davening. The shul's own sheet prints the day's
+    Mincha only.
+
+    Deliberately per-tefilla rather than dropping the whole day from the
+    weekday ranges. Erev Yom Kippur's block has no Shacharis of its own: the
+    8:00 and 9:15 come from the weekday range and must stay. Excluding the day
+    wholesale removes them and leaves a screen with no Shacharis at all, which
+    is a worse wrong than the one being fixed.
+    """
+    label = entry.get("label") or ""
+    for tefilla in _TEFILLOS:
+        if tefilla not in label:
+            continue
+        if any(tefilla in (line.get("label") or "") for line in day_lines):
+            return True
+    return False
+
+
 def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
                  profiles=DEFAULT_PROFILES) -> list[dict]:
     """Minyan lines applicable to civil date `d`, resolved by the exact same
@@ -185,23 +218,38 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
     print as a range on the sheet (one "Mincha Sun.–Thurs." line becomes,
     for one specific `d`, one dated entry).
 
-    Erev Yom Tov days can legitimately carry two lines for the same tefilla
-    (e.g. two Minchas) when the printed sheet does: the week's ranged
-    weekday line, whose range happens to include that day, plus the
-    Yom-Tov-specific line from that day's own day-block. That duplication is
-    not a bug here — it is what the sheet itself prints, and hiding it would
-    be this function deciding the sheet is wrong.
+    Returns the day's own block whole — its zmanim and its timeless lines as
+    well as its minyanim — because on a day like Erev Yom Kippur those carry
+    most of what makes the day what it is: the candle lighting that is also
+    the fast beginning, the shkia that is the men's fast beginning, and
+    "Maariv after the drosha.", which has no time at all.
+
+    A ranged weekday line is dropped when the day's own block already provides
+    that tefilla (see `_overridden_by_day_block`). This function used to keep
+    both, on the reasoning that two Minchas on an Erev Yom Tov is what the
+    sheet itself prints and hiding one would be deciding the sheet is wrong.
+    The shul's Yom Kippur sheet settles it the other way: Erev Yom Kippur
+    prints its Early Mincha and no 5:40 weekday Mincha, and a wall telling
+    people to come to a minyan the shul is not davening is the more expensive
+    mistake.
     """
     engine = engine or ZmanimEngine()
     doc = generate(d, d, engine=engine, profiles=profiles)
     weekday_title = SECTION_TITLES[WEEKDAY]
 
-    out: list[dict] = []
+    # The day's own block is read FIRST, in its own pass: the week block can
+    # come before it in document order, and the weekday lines cannot be
+    # filtered against a day block that has not been seen yet.
+    day_lines: list[dict] = []
+    for block in doc["blocks"]:
+        if block["type"] == "day" and block["date"] == d.isoformat():
+            day_lines = [dict(e, date=d.isoformat()) for e in block["entries"]]
+
+    out: list[dict] = list(day_lines)
     for block in doc["blocks"]:
         if block["type"] == "day":
             if block["date"] == d.isoformat():
-                out.extend(dict(e, date=d.isoformat())
-                           for e in block["entries"] if e["kind"] == "minyan")
+                pass  # already collected above
             continue
 
         # "week": every non-weekday section belongs to exactly one day of
@@ -218,7 +266,8 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
             if e["kind"] != "minyan":
                 continue
             if e["section"] == weekday_title:
-                if day_spec_includes(e.get("day_spec"), d):
+                if day_spec_includes(e.get("day_spec"), d) \
+                        and not _overridden_by_day_block(e, day_lines):
                     out.append(dict(e, date=d.isoformat()))
             elif e["section"] == SECTION_TITLES[SHABBOS_DAY]:
                 if shabbos == d.isoformat():
@@ -230,11 +279,21 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
                     out.append(dict(e, date=d.isoformat()))
 
     for e in out:
+        if not e.get("time"):
+            continue  # freetext ("Maariv after the drosha.") has no time
         hh, mm = (int(p) for p in e["time"].split(":"))
         e["time_iso"] = datetime(d.year, d.month, d.day, hh, mm,
                                  tzinfo=engine.loc.tz).isoformat()
 
-    out.sort(key=lambda e: e["time"])
+    # A timeless line sorts with the line it follows on the sheet, which is the
+    # order the day block already gave us, so it keeps its neighbour's time as
+    # a sort key rather than sinking to the top.
+    last = ""
+    keys: dict[int, str] = {}
+    for e in out:
+        last = e.get("time") or last
+        keys[id(e)] = last
+    out.sort(key=lambda e: keys[id(e)])
     return out
 
 
