@@ -1,17 +1,30 @@
 name: Release plugin
 
-# Cut a plugin release by pushing a version tag, e.g.:
-#   git tag v0.2.0 && git push origin v0.2.0
-# This builds a plugin-only zip (just wp-plugin/ttcc-zmanim/, with the vendored
-# update checker) and attaches it to the GitHub release for that tag. The plugin
-# on the site then offers a one-click update (see includes/class-ttcc-updater.php).
-# Bump the Version header + TTCC_ZMANIM_VERSION in ttcc-zmanim.php to match the
-# tag before tagging, so the update actually registers as newer.
+# Cut a plugin release two ways:
+#
+#   git tag v0.7.1 && git push origin v0.7.1      # the usual way
+#
+# or run this workflow from the Actions tab (or the API) with the tag as its
+# input, which creates the tag from the default branch. The second exists
+# because pushing a tag needs a shell with push access, and the people cutting
+# a release are not always at one — and because an agent session may be able to
+# reach the GitHub API while its network blocks a tag push.
+#
+# Either way this builds a plugin-only zip (just wp-plugin/ttcc-zmanim/, with
+# the vendored update checker) and attaches it to the release for that tag. The
+# plugin on the site then offers a one-click update (see
+# includes/class-ttcc-updater.php).
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release, e.g. v0.7.1. Created from this branch if it does not exist.'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -21,6 +34,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # One name for the tag whichever way we got here: the pushed tag, or the
+      # typed input. Read through the environment rather than interpolated into
+      # the script, so the input cannot become shell.
+      - name: Resolve the tag being released
+        id: rel
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          TAG="${INPUT_TAG:-$GITHUB_REF_NAME}"
+          case "$TAG" in
+            v*) ;;
+            *) echo "::error::Tag '$TAG' must start with v, e.g. v0.7.1." ; exit 1 ;;
+          esac
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      # The guard that would have caught v0.4.0 in the sibling repo, which was
+      # tagged on a commit still declaring the previous version: the update
+      # checker reads the Version header out of the tagged plugin file and
+      # ignores the tag, so a mismatch does not fail — it silently reports "up
+      # to date" forever. A typed tag input makes that easier to get wrong, so
+      # it is checked before anything is built.
+      - name: Check the plugin version matches the tag
+        env:
+          TAG: ${{ steps.rel.outputs.tag }}
+        run: |
+          FILE=wp-plugin/ttcc-zmanim/ttcc-zmanim.php
+          WANT="${TAG#v}"
+          HEADER=$(sed -n 's/^ \* Version: *\(.*\)$/\1/p' "$FILE" | head -1 | tr -d '[:space:]')
+          CONST=$(sed -n "s/^define( 'TTCC_ZMANIM_VERSION', '\(.*\)' );.*$/\1/p" "$FILE" | head -1)
+          echo "tag=$WANT header=$HEADER constant=$CONST"
+          if [ "$HEADER" != "$WANT" ] || [ "$CONST" != "$WANT" ]; then
+            echo "::error::$FILE declares Version '$HEADER' and TTCC_ZMANIM_VERSION '$CONST', but the tag is '$TAG'. Bump both to $WANT and try again — a release whose plugin file disagrees with its tag is never offered as an update."
+            exit 1
+          fi
 
       - name: Build plugin zip
         run: |
@@ -38,6 +86,8 @@ jobs:
       - name: Draft the release with the plugin asset
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.rel.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           files: ttcc-zmanim.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
@@ -46,4 +96,5 @@ jobs:
       - name: Publish it, now that the asset is attached
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release edit "$GITHUB_REF_NAME" --draft=false --repo "$GITHUB_REPOSITORY"
+          TAG: ${{ steps.rel.outputs.tag }}
+        run: gh release edit "$TAG" --draft=false --repo "$GITHUB_REPOSITORY"
