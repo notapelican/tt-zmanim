@@ -126,6 +126,37 @@ class TTCC_Zmanim_Public {
 		return $html;
 	}
 
+	/**
+	 * Drop every cached sheet render and its last-good copy.
+	 *
+	 * Same reasoning as TTCC_Zmanim_Shabbos::flush(): these are keyed by date
+	 * range and never by engine version, so a service deploy leaves the public
+	 * pages and the piSignage sheet serving the times from before it.
+	 */
+	public static function flush() {
+		global $wpdb;
+		// Both live under LASTGOOD_KEY: the render is cached as the transient
+		// "<LASTGOOD_KEY><md5>_<md5>" and the last-good copy is the option
+		// "<LASTGOOD_KEY><md5>" (see cached_html), so one prefix finds both —
+		// the transients through their _transient_ row, the options directly.
+		$prefix = self::LASTGOOD_KEY;
+		foreach ( array( '_transient_' . $prefix, $prefix ) as $like_prefix ) {
+			$like = $wpdb->esc_like( $like_prefix ) . '%';
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- prefix sweep, no API for it.
+			$names = $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_name LIKE %s", $like ) );
+			foreach ( (array) $names as $name ) {
+				if ( 0 === strpos( $name, '_transient_timeout_' ) ) {
+					continue;  // swept with its value by delete_transient
+				}
+				if ( 0 === strpos( $name, '_transient_' ) ) {
+					delete_transient( substr( $name, strlen( '_transient_' ) ) );
+				} else {
+					delete_option( $name );
+				}
+			}
+		}
+	}
+
 	private static function inject_head( $html, $snippet ) {
 		$pos = stripos( $html, '</head>' );
 		if ( false === $pos ) {

@@ -78,6 +78,30 @@ class TTCC_Zmanim_Shabbos {
 		return $week;
 	}
 
+	/**
+	 * Drop every cached week, so the next request re-fetches.
+	 *
+	 * The caches exist so a shul wall is not one slow request away from blank,
+	 * and they are keyed by week rather than by anything the engine tells us —
+	 * which means a *service* deploy is invisible to them. Corrected zmanim sat
+	 * behind three-hour-old copies of themselves with no way to say "that data
+	 * is stale now", which is how a fix that is live reads as a fix that did
+	 * not ship.
+	 *
+	 * The last-good copy goes too: it is by definition the pre-deploy answer,
+	 * and keeping it would only re-serve the old times on the next outage.
+	 */
+	public static function flush() {
+		global $wpdb;
+		$like = $wpdb->esc_like( '_transient_ttcc_shabbos_' ) . '%';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- transient sweep, no API for prefix deletion.
+		$names = $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_name LIKE %s", $like ) );
+		foreach ( (array) $names as $name ) {
+			delete_transient( substr( $name, strlen( '_transient_' ) ) );
+		}
+		delete_option( self::LASTGOOD_KEY );
+	}
+
 	/** REST callback (public, read-only): GET ttcc/v1/shabbos-times[?week=YYYY-MM-DD]. */
 	public static function rest_week( $request ) {
 		$week = (string) $request->get_param( 'week' );
