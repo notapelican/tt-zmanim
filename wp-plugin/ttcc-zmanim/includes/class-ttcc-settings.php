@@ -290,6 +290,23 @@ class TTCC_Zmanim_Settings {
 				</table>
 				<?php submit_button(); ?>
 			</form>
+
+			<hr>
+			<h2><?php esc_html_e( 'Cached times', 'ttcc-zmanim' ); ?></h2>
+			<?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only notice. ?>
+			<?php if ( ! empty( $_GET['ttcc_flushed'] ) ) : ?>
+				<div class="notice notice-success inline"><p>
+					<?php esc_html_e( 'Cached times cleared. The next page load fetches fresh ones.', 'ttcc-zmanim' ); ?>
+				</p></div>
+			<?php endif; ?>
+			<p class="description">
+				<?php esc_html_e( 'Public pages, the piSignage sheet and the Shabbos board each keep a copy of their times for a few hours, so a slow service never leaves a screen blank. Those copies are keyed by date, not by engine version — which means they do not notice a service deploy. After deploying corrected zmanim, clear them here rather than waiting the few hours out.', 'ttcc-zmanim' ); ?>
+			</p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="ttcc_flush_cache">
+				<?php wp_nonce_field( 'ttcc_flush_cache' ); ?>
+				<?php submit_button( __( 'Clear cached times', 'ttcc-zmanim' ), 'secondary', 'submit', false ); ?>
+			</form>
 		</div>
 		<?php
 	}

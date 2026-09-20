@@ -15,6 +15,38 @@ class TTCC_Zmanim_Admin {
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'wp_ajax_ttcc_export', array( $this, 'export' ) );
+		add_action( 'admin_post_ttcc_flush_cache', array( $this, 'handle_flush_cache' ) );
+	}
+
+	/**
+	 * Drop every cached render and highlights week.
+	 *
+	 * Needed because the caches are keyed by date and never by engine version,
+	 * so a *service* deploy is invisible to them: corrected times sit behind
+	 * three-hour-old copies of themselves, and a fix that is live reads as a
+	 * fix that did not ship. Waiting it out works; being able to say "no,
+	 * now" is what was missing.
+	 */
+	public function handle_flush_cache() {
+		if ( ! current_user_can( TTCC_ZMANIM_CAP ) ) {
+			wp_die( esc_html__( 'You do not have permission to manage timesheets.', 'ttcc-zmanim' ) );
+		}
+		check_admin_referer( 'ttcc_flush_cache' );
+
+		TTCC_Zmanim_Public::flush();
+		TTCC_Zmanim_Shabbos::flush();
+		// The display plugin keeps its own copy of the same data when it is
+		// installed beside this one; clearing only half would leave the two
+		// screens disagreeing until the other aged out.
+		if ( class_exists( 'TTCC_Display_Data' ) && method_exists( 'TTCC_Display_Data', 'flush' ) ) {
+			TTCC_Display_Data::flush();
+		}
+
+		wp_safe_redirect( add_query_arg(
+			array( 'page' => 'ttcc-zmanim-settings', 'ttcc_flushed' => '1' ),
+			admin_url( 'admin.php' )
+		) );
+		exit;
 	}
 
 	public function menu() {
