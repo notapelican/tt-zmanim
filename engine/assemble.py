@@ -857,6 +857,79 @@ def apply_day_block(d, h, labels, entries, overrides):
     }
 
 
+def _rehome_weekday_lines(week_block: dict, day_blocks: list[dict]) -> None:
+    """Move a named day's weekday lines into that day's own block.
+
+    A chol day that carries its own block — Erev Yom Kippur, Erev Pesach — is
+    still an ordinary weekday as far as the ranged weekday lines are concerned,
+    so the sheet printed "Mincha Sun., Tues.-Thurs. 5:40pm" over a Sunday whose
+    own block davens Mincha at 3:15, and listed that day's Shacharis in a range
+    headed by a day the reader has already been told is Erev Yom Kippur. The
+    shul's own sheet does neither: the weekday block runs Tues.-Thurs., and the
+    day's Shacharis sits under its own heading.
+
+    So for each such day, every weekday line covering it either:
+
+      - is already answered by the day's block (it has a Mincha of its own) and
+        simply loses that day from its range; or
+      - is not, and moves into the day's block, keeping its time.
+
+    Per tefilla, not per day, for the reason `_overridden_by_day_block`
+    explains: Erev Yom Kippur has no Shacharis of its own, and dropping the day
+    wholesale leaves the sheet with none.
+
+    Yom Tov days need none of this — they are already out of every weekday
+    range — and the weekly ZMANIM lines are deliberately left alone: those are
+    astronomical, they legitimately span a Yom Tov, and the sheets print them
+    across the whole week (see the ranged-zmanim comment in assemble_week).
+    """
+    # Assembled entries carry the section TITLE, not the WEEKDAY constant the
+    # rules engine works in — the same distinction day_minyanim makes.
+    weekday_title = SECTION_TITLES[WEEKDAY]
+
+    for day_block in day_blocks:
+        d = date.fromisoformat(day_block["date"])
+        if _is_yom_tov(d):
+            continue
+
+        abbr = _WD_ABBR[d.weekday()]
+        moved: list[dict] = []
+        keep: list[dict] = []
+        for line in week_block["entries"]:
+            if line.get("section") != weekday_title \
+                    or not day_spec_includes(line.get("day_spec"), d):
+                keep.append(line)
+                continue
+
+            if not _overridden_by_day_block(line, day_block["entries"]):
+                moved.append(dict(line, day_spec=None, date=d.isoformat()))
+
+            # Either way the day leaves the range: it is spoken for by its own
+            # block now, whether by the line just moved there or by one that
+            # was already there.
+            remaining = [n for n in expand_day_spec(line.get("day_spec")) if n != abbr]
+            spec = collapse_day_names(remaining)
+            if spec is None:
+                continue  # nothing left to print; the line was only ever this day
+            keep.append(dict(line, day_spec=spec))
+
+        if not moved:
+            week_block["entries"] = keep
+            continue
+
+        week_block["entries"] = keep
+        # Stable sort by time, with a timeless line ("Maariv after the
+        # drosha.") holding the place its neighbour gives it rather than
+        # sinking to the top.
+        entries = day_block["entries"] + moved
+        last = ""
+        keys: dict[int, str] = {}
+        for e in entries:
+            last = e.get("time") or last
+            keys[id(e)] = last
+        day_block["entries"] = sorted(entries, key=lambda e: keys[id(e)])
+
+
 def generate(start: date, end: date, *, engine: ZmanimEngine | None = None,
              profiles=DEFAULT_PROFILES, notes=DEFAULT_NOTES,
              overrides: dict[str, dict] | None = None) -> dict:
@@ -869,8 +942,10 @@ def generate(start: date, end: date, *, engine: ZmanimEngine | None = None,
     # first Sunday on/before start
     sunday = start - timedelta(days=(start.weekday() + 1) % 7)
     while sunday <= end:
-        blocks.append(assemble_week(sunday, engine=engine, profiles=profiles,
-                                    notes=notes, overrides=overrides))
+        week_block = assemble_week(sunday, engine=engine, profiles=profiles,
+                                   notes=notes, overrides=overrides)
+        blocks.append(week_block)
+        week_day_blocks: list[dict] = []
         for i in range(7):
             d = sunday + timedelta(days=i)
             if not start <= d <= end:
@@ -887,7 +962,10 @@ def generate(start: date, end: date, *, engine: ZmanimEngine | None = None,
                     and _is_yom_tov(d + timedelta(days=1))):
                 continue
             if _is_yom_tov(d) or (_is_yom_tov(d + timedelta(days=1)) and not _is_yom_tov(d)):
-                blocks.append(assemble_day(d, engine=engine, overrides=overrides))
+                day_block = assemble_day(d, engine=engine, overrides=overrides)
+                blocks.append(day_block)
+                week_day_blocks.append(day_block)
+        _rehome_weekday_lines(week_block, week_day_blocks)
         sunday += timedelta(days=7)
     return {"format": "weekly", "start": start.isoformat(), "end": end.isoformat(),
             "blocks": blocks}
