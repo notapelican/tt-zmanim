@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-from . import luach
+from . import hebcal, luach
 from .assemble import _YOM_TOV, _is_yom_tov, assemble_day, assemble_week
 from .rules import DEFAULT_NOTES, DEFAULT_PROFILES
 from .zmanim import ZmanimEngine
@@ -36,6 +36,24 @@ _CANDLE_IDS = {"z_candles_fri", "erev_yt_candles", "yt_candles_2nd",
 _ENDS_IDS = {"yt_ends"}
 
 _FAST_NAMES = {"Tzom Gedaliah", "Taanis Esther", "Taanis Bechorim"}
+
+
+def _is_fast_day(d: date) -> bool:
+    """True when `luach` marks this civil date a fast.
+
+    Used for the one day that is both a Yom Tov and a fast — Yom Kippur —
+    whose ending is the end of the fast as well. The minor fasts never reach
+    here: their begin/end pair is assembled on the week block and handled
+    below.
+    """
+    hy = hebcal.to_hebrew(d).year
+    # The neighbouring years too: a civil date near Rosh Hashana can belong to
+    # a fast listed under either Hebrew year (same guard as dayview._is_fast).
+    for year in (hy, hy - 1, hy + 1):
+        for f in luach.fasts(year):
+            if f["date"] == d:
+                return True
+    return False
 
 
 def _day_display(d: date) -> str:
@@ -105,9 +123,25 @@ def week_highlights(sunday: date, *, engine: ZmanimEngine | None = None,
                                    memo=memo, qualifier=qual))
                 candle_dates.add(d.isoformat())
             elif rid in _ENDS_IDS:
-                label = ("Shabbos & Yom Tov end" if d.weekday() == 5
-                         else "Yom Tov ends")
-                items.append(_item("ends", label, d, e["time"], memo=title))
+                # What is ending at this one time, in reading order.
+                #
+                # Yom Kippur is the one day that is both a Yom Tov and a fast,
+                # and the fast ending is what people are actually waiting on —
+                # the shul's own sheet reads "Maariv and end of Fast". Its
+                # begin/end pair is not on the week block the way a minor
+                # fast's is (it belongs to the yom tov day block), so without
+                # this the row reads "Yom Tov ends" and is coloured like any
+                # ordinary chag ending. Same time either way; only what it is
+                # called and how it is marked. Yom Kippur can itself fall on
+                # Shabbos, hence three parts rather than a special case.
+                fast = _is_fast_day(d)
+                parts = (["Shabbos"] if d.weekday() == 5 else []) + ["Yom Tov"]
+                if fast:
+                    parts.append("Fast")
+                label = (parts[0] + " ends" if len(parts) == 1
+                         else ", ".join(parts[:-1]) + " & " + parts[-1] + " end")
+                items.append(_item("fast_ends" if fast else "ends",
+                                   label, d, e["time"], memo=title))
 
     # --- regular Friday candle lighting (from the week block) ---
     for e in week["entries"]:
