@@ -23,7 +23,8 @@ from __future__ import annotations
 from datetime import date, timedelta
 
 from . import hebcal, luach
-from .assemble import _YOM_TOV, _is_yom_tov, assemble_day, assemble_week
+from .assemble import (_YOM_TOV, _is_yom_tov, _yom_tov_name, assemble_day,
+                       assemble_week)
 from .rules import DEFAULT_NOTES, DEFAULT_PROFILES
 from .zmanim import ZmanimEngine
 
@@ -36,6 +37,27 @@ _CANDLE_IDS = {"z_candles_fri", "erev_yt_candles", "yt_candles_2nd",
 _ENDS_IDS = {"yt_ends"}
 
 _FAST_NAMES = {"Tzom Gedaliah", "Taanis Esther", "Taanis Bechorim"}
+
+
+def _brings_in(d: date) -> str | None:
+    """What a candle lighting on `d` brings in, rather than the day it falls on.
+
+    The distinction is invisible most of the year and glaring in Tishrei: on
+    Friday 2 Oct 2026 the sheet's day is Hoshana Rabbah, but the 5:40pm candle
+    lighting brings in Shabbos and Shemini Atzeres, and a screen heading that
+    row "Hoshana Rabbah" tells people the wrong thing about the evening they
+    are standing in.
+
+    Returns None for an ordinary Friday, where the incoming day is only
+    Shabbos: those rows carry no memo today and are named by their week's
+    parsha, which is what the screens should keep showing.
+    """
+    incoming = d + timedelta(days=1)
+    name = _yom_tov_name(incoming)
+    if name is None:
+        return None
+    parts = (["Shabbos"] if incoming.weekday() == 5 else []) + [name]
+    return " & ".join(parts)
 
 
 def _is_yom_kippur(d: date) -> bool:
@@ -112,15 +134,18 @@ def week_highlights(sunday: date, *, engine: ZmanimEngine | None = None,
         for e in block.get("entries", []):
             rid = e.get("rule_id")
             if rid in _CANDLE_IDS:
-                time_s, qual, memo = e["time"], e.get("qualifier"), title
+                # Named for what it brings in, not the day it falls on.
+                brought_in = _brings_in(d)
+                time_s, qual = e["time"], e.get("qualifier")
+                memo = brought_in if brought_in else title
                 if rid == "erev_yt_candles" and d.weekday() == 5:
                     # Yom Tov beginning on Motzaei Shabbos: candles only after
                     # Shabbos ends, from a pre-existing flame (see module doc).
                     time_s = _fmt(engine.tzeis_shabbos(d, "nearest"))
                     qual = "not before"
                 if qual == "not before":
-                    memo = (f"{title} — from a pre-existing flame"
-                            if title else "From a pre-existing flame")
+                    memo = (f"{memo} — from a pre-existing flame"
+                            if memo else "From a pre-existing flame")
                 # On a fast day the sheet's own wording carries more than the
                 # time — "Candle lighting (Yom HaKippurim); Fast begins" — and
                 # the screen should say what the sheet says rather than a

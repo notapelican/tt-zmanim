@@ -265,6 +265,20 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
         for e in block["entries"]:
             if e["kind"] != "minyan":
                 continue
+            # A line that names its own date is believed over the section rule.
+            # Hoshana Rabbah's "Tehillim, apple & honey (from chatzos halayla)"
+            # is the case that forces this: it sits in the Erev Shabbos section
+            # with every other line of that evening, but its chatzos halayla
+            # falls at 11:45pm the night BEFORE — it carries date 1 Oct where
+            # its neighbours carry 2 Oct. Attributing the whole section to the
+            # block's Friday put a Thursday-night Tehillim on the Friday screen
+            # and left Thursday's screen silent about the one thing happening
+            # that night.
+            own_date = e.get("date")
+            if own_date and e["section"] != weekday_title:
+                if own_date == d.isoformat():
+                    out.append(dict(e))
+                continue
             if e["section"] == weekday_title:
                 if day_spec_includes(e.get("day_spec"), d) \
                         and not _overridden_by_day_block(e, day_lines):
