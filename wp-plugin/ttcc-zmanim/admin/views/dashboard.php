@@ -14,8 +14,9 @@ defined( 'ABSPATH' ) || exit;
 	<div id="ttcc-health" class="ttcc-health" role="status" aria-live="polite"></div>
 
 	<div class="ttcc-toolbar">
-		<label><?php esc_html_e( 'Week of (Sunday)', 'ttcc-zmanim' ); ?>
+		<label><?php esc_html_e( 'Starting', 'ttcc-zmanim' ); ?>
 			<input type="date" id="ttcc-start" />
+			<span class="description"><?php esc_html_e( 'Any weekday — the sheet runs to that week’s Shabbos.', 'ttcc-zmanim' ); ?></span>
 		</label>
 		<label><?php esc_html_e( 'Weeks', 'ttcc-zmanim' ); ?>
 			<select id="ttcc-weeks">

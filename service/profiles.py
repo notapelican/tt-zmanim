@@ -87,6 +87,7 @@ def _rule_to_json(r: ScheduleRule) -> dict:
         "bound": _bound_to_json(r.bound),
         "when": r.when,
         "kind": r.kind,
+        "after": r.after,
     }
 
 
@@ -101,6 +102,7 @@ def _rule_from_json(d: dict) -> ScheduleRule:
         bound=_bound_from_json(d.get("bound")),
         when=d.get("when"),
         kind=d.get("kind", "minyan"),
+        after=d.get("after"),
     )
 
 
@@ -111,6 +113,7 @@ def _condition_to_json(c: Condition) -> dict:
         "type": c.type,
         "start_md": c.start_md,
         "end_md": c.end_md,
+        "since_date": c.since_date,
         "zman": c.zman,
         "op": c.op,
         "time": c.time,
@@ -123,6 +126,7 @@ def _condition_from_json(d: dict) -> Condition:
         type=d["type"],
         start_md=d.get("start_md"),
         end_md=d.get("end_md"),
+        since_date=d.get("since_date"),
         zman=d.get("zman"),
         op=d.get("op"),
         time=d.get("time"),

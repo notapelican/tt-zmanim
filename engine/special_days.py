@@ -100,9 +100,13 @@ def _exclude_days(entries: list, idx: int, excl: set[date],
     with "Sun" put a phantom Friday Mincha on the 5787 Tzom Gedaliah week."""
     from engine.assemble import _SUN_FIRST_ABBR, expand_day_spec, format_day_spec
     e = entries[idx]
-    days = [week_days[_SUN_FIRST_ABBR.index(a)]
+    # Keyed on each date's own Sun-first index, not its position in the list:
+    # week_days is clipped on a sheet that starts mid-week, so week_days[0]
+    # is the block's first day rather than necessarily Sunday.
+    by_index = {(d.weekday() + 1) % 7: d for d in week_days}
+    days = [by_index[_SUN_FIRST_ABBR.index(a)]
             for a in expand_day_spec(e.get("day_spec"))
-            if _SUN_FIRST_ABBR.index(a) < len(week_days)]
+            if _SUN_FIRST_ABBR.index(a) in by_index]
     e["day_spec"] = format_day_spec([x for x in days if x not in excl])
 
 
@@ -304,12 +308,15 @@ def _tishrei_weekdays(entries, notes, sunday, shabbos, engine, week_days):
 
     # 11-21 Tishrei: the 9:15am third Shacharis. Same day_spec as the regular
     # weekday pair wherever they coincide, so the renderer merges it into one
-    # printed line.
+    # printed line. Dropped once the 9:15am runs every weekday year-round
+    # (rules.WEEKDAY_915_FROM): the base line already covers these days, and
+    # printing both would give the sheet two 9:15am Shacharises.
     from engine.assemble import _is_yom_tov, format_day_spec
-    third = [d for d in week_days[1:]           # Mon..Fri (Sun uses its own set)
-             if not _is_yom_tov(d)
+    third = [d for d in week_days           # Mon..Fri (Sun uses its own set)
+             if d.weekday() != 6
+             and not _is_yom_tov(d)
              and (lambda h: h.month == tishrei and 11 <= h.day <= 21)(to_hebrew(d))]
-    if third:
+    if third and _find(entries, "shacharis_wk_3") is None:
         idx = _find(entries, "shacharis_wk_2")
         if idx is not None:
             _insert_after(entries, idx, [
@@ -334,7 +341,7 @@ def _rosh_chodesh_span(notes, sunday, shabbos):
     the week containing the last RC day, so it appears exactly once. Rosh
     Hashana (1 Tishrei) is a yom tov with its own sheet, not an RC note."""
     day1 = None  # the 1st of the new month inside this week (or just after Shabbos)
-    for i in range(7):
+    for i in range((shabbos - sunday).days + 1):
         d = sunday + timedelta(days=i)
         h = to_hebrew(d)
         if h.day == 1 and h.month != month_number(h.year, "Tishrei"):
@@ -372,17 +379,24 @@ def _december_notes(notes, sunday, shabbos, engine):
 
 
 def apply_special_days(entries: list[dict], sunday: date, shabbos: date,
-                       engine: ZmanimEngine) -> list[str]:
+                       engine: ZmanimEngine,
+                       first_day: date | None = None) -> list[str]:
     """Mutate the week's entries in place (fast-day splits, decorations) and
     return extra notes. Called by assemble_week after the fast boxes, before
-    section-title mapping — davening entries still carry the WEEKDAY key."""
-    week_days = [sunday + timedelta(days=i) for i in range(6)]  # Sun..Fri
+    section-title mapping — davening entries still carry the WEEKDAY key.
+
+    `first_day` is the first day the block actually prints (a sheet may start
+    mid-week); days before it are out of range, so nothing is said about
+    them."""
+    first = first_day or sunday
+    week_days = [sunday + timedelta(days=i) for i in range(6)  # Sun..Fri
+                 if sunday + timedelta(days=i) >= first]
     notes: list[str] = []
-    _minor_fast_mincha(entries, notes, sunday, shabbos, engine, week_days)
-    _av9(entries, notes, sunday, shabbos, engine, week_days)
-    _elul(notes, sunday, shabbos)
-    _selichos_season(entries, notes, sunday, shabbos, engine, week_days)
-    _tishrei_weekdays(entries, notes, sunday, shabbos, engine, week_days)
-    _rosh_chodesh_span(notes, sunday, shabbos)
-    _december_notes(notes, sunday, shabbos, engine)
+    _minor_fast_mincha(entries, notes, first, shabbos, engine, week_days)
+    _av9(entries, notes, first, shabbos, engine, week_days)
+    _elul(notes, first, shabbos)
+    _selichos_season(entries, notes, first, shabbos, engine, week_days)
+    _tishrei_weekdays(entries, notes, first, shabbos, engine, week_days)
+    _rosh_chodesh_span(notes, first, shabbos)
+    _december_notes(notes, first, shabbos, engine)
     return notes

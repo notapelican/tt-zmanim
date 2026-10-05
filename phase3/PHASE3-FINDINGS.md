@@ -68,6 +68,22 @@ every ±1/±2 Kabbolas-Shabbos miss (10/10), every ±1 Erev-Shabbos-Mincha miss
 are cosmetic per-sheet edits of the true rule value — precisely the
 manual-override case the data model keeps editable (`source: "override"`).
 
+*Swept and confirmed.* Every zman-anchored family was re-scored against the
+whole corpus over the full parameter space — rounding (floor/ceil/nearest) ×
+offset (±3 min) × grid (none/5 floor/ceil/nearest) × earliest-vs-latest day —
+and in every family the parameters already in `rules.py` are the maximum. No
+rounding change recovers these lines, which is what one expects if they are
+hand edits rather than a mis-recovered rule. (The 5-minute-grid reading they
+suggest is selection bias: the *misses* land on :x0/:x5, but the families'
+printed times as a whole are spread evenly across all five residues.)
+
+*One real bug did come out of that sweep*, and it was not rounding. The
+weekday Shkia/Tzeis lines are computed over Sun–Thurs with Yom Tov included,
+while the Mincha/Maariv anchored to them used `ctx.weekdays`, which excludes
+it — so a sheet could print "Shkia 7:00pm" and, ten minutes before it, a
+6:51pm Mincha. `WeekContext.zman_weekdays` now carries the printed lines' own
+day set and `ZmanAnchored` resolves against it (rules 778 → 779).
+
 **±5-minute Shabbos-Mincha grid nudges (13 + 8 halacha-shiur lines).** Shabbos
 Mincha itself sits on a 5-minute grid, so its overrides show as ±5; the
 halacha shiur moves in lock-step (always Mincha − 30, including when Mincha is
@@ -114,4 +130,4 @@ YK only.)
   edit crosses it).
 - `engine/assemble.py` — `generate(start, end)` → plain-data week/day blocks
   (structure specified field-by-field in `RENDERER-CONTRACT.md`).
-- `engine/validate_rules.py` — asserting golden regression (baseline 777).
+- `engine/validate_rules.py` — asserting golden regression (baseline 779).

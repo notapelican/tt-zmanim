@@ -190,7 +190,7 @@ class TTCC_Zmanim_Generator {
 
 			<div class="tg-controls">
 				<div class="tg-field">
-					<span class="tg-label" id="<?php echo esc_attr( $uid ); ?>-wk"><?php esc_html_e( 'Week beginning (Sunday)', 'ttcc-zmanim' ); ?></span>
+					<span class="tg-label" id="<?php echo esc_attr( $uid ); ?>-wk"><?php esc_html_e( 'Starting (any day — runs to Shabbos)', 'ttcc-zmanim' ); ?></span>
 					<div class="tg-weekpick">
 						<button type="button" class="tg-step" data-nav="-1" data-busy-disable
 							aria-label="<?php esc_attr_e( 'Previous week', 'ttcc-zmanim' ); ?>">&lsaquo;</button>
@@ -611,28 +611,35 @@ class TTCC_Zmanim_Generator {
 	// --- request validation ---------------------------------------------------
 
 	/**
-	 * Snap $start to its Sunday, cap the span, and keep it inside the public
-	 * window. Returns array{start, end} or WP_Error.
+	 * Validate $start, cap the span, and keep it inside the public window.
+	 * Returns array{start, end, weeks} or WP_Error.
+	 *
+	 * $start is taken as given — any weekday, not snapped to a Sunday. The
+	 * range always ENDS on a Shabbos (the one that closes the $weeks'th week),
+	 * so a mid-week start is a short first week: the engine clips it and
+	 * prints nothing for the days before.
 	 */
 	private static function resolve_range( $start, $weeks ) {
 		$start = trim( (string) $start );
 		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start ) ) {
 			return new WP_Error( 'ttcc_bad_date', __( 'Pick a valid week.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
 		}
-		$sunday = TTCC_Zmanim_Shabbos::sunday_of( $start );
-		if ( ! $sunday || ! TTCC_Zmanim_Shabbos::in_window( $sunday ) ) {
+		$begin = date_create( $start );
+		if ( ! $begin || $begin->format( 'Y-m-d' ) !== $start ) {
+			return new WP_Error( 'ttcc_bad_date', __( 'Pick a valid week.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
+		}
+		if ( ! TTCC_Zmanim_Shabbos::in_window( $start ) ) {
 			return new WP_Error( 'ttcc_out_of_range', __( 'That week is outside the range this page covers.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
 		}
 		$weeks = (int) $weeks;
 		$weeks = max( 1, min( self::MAX_WEEKS, $weeks ) );
 
-		$end = date_create( $sunday );
-		if ( ! $end ) {
-			return new WP_Error( 'ttcc_bad_date', __( 'Pick a valid week.', 'ttcc-zmanim' ), array( 'status' => 400 ) );
-		}
-		$end->modify( '+' . ( $weeks * 7 - 1 ) . ' days' );
+		// 'w' is 0 (Sunday) .. 6 (Shabbos): days left to this week's Shabbos,
+		// then a whole week for each further week asked for.
+		$end = date_create( $start );
+		$end->modify( '+' . ( ( 6 - (int) $begin->format( 'w' ) ) + ( $weeks - 1 ) * 7 ) . ' days' );
 
-		return array( 'start' => $sunday, 'end' => $end->format( 'Y-m-d' ), 'weeks' => $weeks );
+		return array( 'start' => $start, 'end' => $end->format( 'Y-m-d' ), 'weeks' => $weeks );
 	}
 
 	private static function sanitize_template( $template ) {
