@@ -234,7 +234,7 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
     mistake.
     """
     engine = engine or ZmanimEngine()
-    doc = generate(d, d, engine=engine, profiles=profiles)
+    doc = generate(d, d, engine=engine, profiles=profiles, clip_start=False)
     weekday_title = SECTION_TITLES[WEEKDAY]
 
     # The day's own block is read FIRST, in its own pass: the week block can
@@ -353,6 +353,10 @@ def _dst_on(d: date, engine: ZmanimEngine) -> bool:
 
 def week_notes(sunday: date, shabbos: date, engine: ZmanimEngine,
                notes=DEFAULT_NOTES) -> list[str]:
+    """Notes for the range [sunday, shabbos]. `sunday` is the first day the
+    block prints, which on a sheet that starts mid-week is not a Sunday: a
+    clock change or public holiday earlier that week is out of range and is
+    not mentioned."""
     out = []
     trans = luach.dst_transition(sunday, shabbos + timedelta(days=1), engine.loc.tz)
     dst = _dst_on(shabbos, engine)
@@ -367,7 +371,7 @@ def week_notes(sunday: date, shabbos: date, engine: ZmanimEngine,
                 dst_date=f"{_WD_ABBR[trans.weekday()]} {trans.day} {trans:%b}",
                 dst_direction=direction))
     hols = luach.nsw_public_holidays(sunday.year) | luach.nsw_public_holidays(shabbos.year)
-    for i in range(7):
+    for i in range((shabbos - sunday).days + 1):
         d = sunday + timedelta(days=i)
         if d in hols and d.weekday() < 5:  # Mon-Fri public holiday
             # Deliberately unnamed (just "a public holiday") per shul preference.
@@ -420,16 +424,22 @@ def _fast_entries(sunday: date, shabbos: date, engine: ZmanimEngine) -> list[dic
     return out
 
 
-def build_week_context(sunday: date, engine: ZmanimEngine | None = None) -> WeekContext:
+def build_week_context(sunday: date, engine: ZmanimEngine | None = None,
+                       first_day: date | None = None) -> WeekContext:
+    """`first_day` is the first day the sheet prints for this week — a sheet
+    may start mid-week, and days before it are not covered by any line."""
     engine = engine or ZmanimEngine()
+    first = first_day or sunday
     friday, shabbos = sunday + timedelta(days=5), sunday + timedelta(days=6)
-    weekdays = tuple(sunday + timedelta(days=i) for i in range(5)
-                     if not _is_yom_tov(sunday + timedelta(days=i)))
+    zman_weekdays = tuple(sunday + timedelta(days=i) for i in range(5)
+                          if sunday + timedelta(days=i) >= first)
+    weekdays = tuple(d for d in zman_weekdays if not _is_yom_tov(d))
     return WeekContext(
         sunday=sunday,
-        friday=None if _is_yom_tov(friday) else friday,
+        friday=None if (_is_yom_tov(friday) or friday < first) else friday,
         shabbos=shabbos,
         weekdays=weekdays,
+        zman_weekdays=zman_weekdays,
         mevorchim=luach.mevorchim_month(shabbos) is not None,
         selichos_shabbos=luach.is_selichos_shabbos(shabbos),
         engine=engine)
@@ -460,13 +470,23 @@ def scope_overrides(overrides: dict[str, dict] | None, block_key: str) -> dict[s
 
 def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
                   profiles=DEFAULT_PROFILES, notes=DEFAULT_NOTES,
-                  overrides: dict[str, dict] | None = None) -> dict:
-    """One week block (Sunday..Shabbos), fixture-shaped plain data."""
+                  overrides: dict[str, dict] | None = None,
+                  first_day: date | None = None) -> dict:
+    """One week block (Sunday..Shabbos), fixture-shaped plain data.
+
+    `first_day` starts the block later than its Sunday: a sheet may begin on
+    any weekday and run to that week's Shabbos. Every day set below is
+    clipped to it, so ranged lines quote the extreme over the days actually
+    printed and no note talks about a day the sheet does not cover."""
     engine = engine or ZmanimEngine()
-    ctx = build_week_context(sunday, engine)
     friday, shabbos = sunday + timedelta(days=5), sunday + timedelta(days=6)
-    week_days = [sunday + timedelta(days=i) for i in range(6)]      # Sun..Fri
-    sun_thu = [d for d in week_days[:5] if not _is_yom_tov(d)]
+    first = min(max(first_day or sunday, sunday), shabbos)
+    ctx = build_week_context(sunday, engine, first_day=first)
+    week_days = [sunday + timedelta(days=i) for i in range(6)       # Sun..Fri
+                 if sunday + timedelta(days=i) >= first]
+    # Not week_days[:5] — week_days is clipped to `first`, so index 0 is the
+    # block's first day, not necessarily Sunday.
+    sun_thu = [d for d in week_days if d.weekday() != 4 and not _is_yom_tov(d)]
     sun_fri = [d for d in week_days if not _is_yom_tov(d)]
 
     entries: list[dict] = []
@@ -482,27 +502,32 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     # 5787 Tishrei sheet prints Mi'sheyakir 4:54am with Succos on the Sunday;
     # the Monday-onward extreme is 4:52am).
     tod = lambda dt: dt.time()
-    zman_sun_fri, zman_sun_thu = week_days, week_days[:5]
+    # A block starting on Friday (or Shabbos) has no Sun.-Thurs. days left,
+    # so those ranged lines have nothing to quote and are simply not printed.
+    zman_sun_fri = week_days
+    zman_sun_thu = [d for d in week_days if d.weekday() != 4]
     spec_sf = format_day_spec(zman_sun_fri)
-    entries.append(_zman_line(
-        "Mi'sheyakir (earliest tallis & tefillin)",
-        _fmt(max((engine.misheyakir(d, "ceil") for d in zman_sun_fri), key=tod)),
-        None, day_spec=spec_sf, qualifier="approx", rule_id="z_misheyakir"))
-    entries.append(_zman_line(
-        "Netz Hachamah (sunrise)",
-        _fmt(max((engine.netz(d, "nearest") for d in zman_sun_fri), key=tod)),
-        None, day_spec=spec_sf, rule_id="z_netz"))
-    entries.append(_zman_line(
-        "Morning Shema",
-        _fmt(min((engine.sof_zman_shema(d, "floor") for d in zman_sun_fri), key=tod)),
-        None, day_spec=spec_sf, qualifier="finish by", rule_id="z_shema_wk"))
+    if zman_sun_fri:
+        entries.append(_zman_line(
+            "Mi'sheyakir (earliest tallis & tefillin)",
+            _fmt(max((engine.misheyakir(d, "ceil") for d in zman_sun_fri), key=tod)),
+            None, day_spec=spec_sf, qualifier="approx", rule_id="z_misheyakir"))
+        entries.append(_zman_line(
+            "Netz Hachamah (sunrise)",
+            _fmt(max((engine.netz(d, "nearest") for d in zman_sun_fri), key=tod)),
+            None, day_spec=spec_sf, rule_id="z_netz"))
+        entries.append(_zman_line(
+            "Morning Shema",
+            _fmt(min((engine.sof_zman_shema(d, "floor") for d in zman_sun_fri), key=tod)),
+            None, day_spec=spec_sf, qualifier="finish by", rule_id="z_shema_wk"))
     spec_st = format_day_spec(zman_sun_thu)
-    entries.append(_zman_line(
-        "Shkia", _fmt(min((engine.shkia(d, "nearest") for d in zman_sun_thu), key=tod)),
-        None, day_spec=spec_st, rule_id="z_shkia_wk"))
-    entries.append(_zman_line(
-        "Tzeis", _fmt(max((engine.tzeis(d, "ceil") for d in zman_sun_thu), key=tod)),
-        None, day_spec=spec_st, rule_id="z_tzeis_wk"))
+    if zman_sun_thu:
+        entries.append(_zman_line(
+            "Shkia", _fmt(min((engine.shkia(d, "nearest") for d in zman_sun_thu), key=tod)),
+            None, day_spec=spec_st, rule_id="z_shkia_wk"))
+        entries.append(_zman_line(
+            "Tzeis", _fmt(max((engine.tzeis(d, "ceil") for d in zman_sun_thu), key=tod)),
+            None, day_spec=spec_st, rule_id="z_tzeis_wk"))
 
     # --- davening lines from the rules engine ---
     lines = davening_lines(ctx, profiles, overrides=None)  # overrides applied at end
@@ -513,9 +538,10 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
     # day davens off its own day block, so keeping it here would print a
     # weekday Shacharis contradicting the Yom Tov one on the same sheet.
     hols = luach.nsw_public_holidays(sunday.year) | luach.nsw_public_holidays(shabbos.year)
-    sunday_like = ([] if _is_yom_tov(sunday) else [sunday]) \
-        + [d for d in week_days[1:] if d in hols and not _is_yom_tov(d)]
-    plain_weekdays = [d for d in week_days[1:] if d not in sunday_like and not _is_yom_tov(d)]
+    sunday_like = ([] if (_is_yom_tov(sunday) or sunday < first) else [sunday]) \
+        + [d for d in week_days if d != sunday and d in hols and not _is_yom_tov(d)]
+    plain_weekdays = [d for d in week_days
+                      if d != sunday and d not in sunday_like and not _is_yom_tov(d)]
     for l in lines:
         if l["rule_id"].startswith("shacharis_sun"):
             l["day_spec"] = format_day_spec(sunday_like)
@@ -611,12 +637,13 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
         entries.extend(l for l in lines if l["section"] == SHABBOS_DAY)
 
     # --- fasts in the week ---
-    entries.extend(_fast_entries(sunday, shabbos, engine))
+    entries.extend(_fast_entries(first, shabbos, engine))
 
     # --- special-day rules (mined catalog, phase 1): fast-day Mincha splits,
     # 9 Av schedule, Elul customs, Rosh Chodesh span, seasonal notes. Mutates
     # davening entries in place and returns extra notes.
-    sd_notes = special_days.apply_special_days(entries, sunday, shabbos, engine)
+    sd_notes = special_days.apply_special_days(entries, sunday, shabbos, engine,
+                                              first_day=first)
 
     # Map rule-section keys to printed headings; regular ES section is renamed
     # when the early minyan runs, or when Friday night brings in a Yom Tov
@@ -647,15 +674,20 @@ def assemble_week(sunday: date, *, engine: ZmanimEngine | None = None,
         # rather than by the parsha (the sedra is not read on a Yom Tov
         # Shabbos, and the week title already carries the deferred one).
         "shabbos_yom_tov": [l for l in luach.day_labels(shabbos) if l in _YOM_TOV],
-        "hebrew_dates": luach.hebrew_date_range(sunday, shabbos),
+        "hebrew_dates": luach.hebrew_date_range(first, shabbos),
+        # civil_start stays the week's Sunday even when the block starts
+        # later: it is the block's identity (the "week:<ISO>" override key)
+        # and the anchor renderers add a day_spec's Sun-first index to.
+        # first_day is what the sheet actually prints from.
         "civil_start": sunday.isoformat(),
+        "first_day": first.isoformat(),
         "civil_end": shabbos.isoformat(),
         "friday": friday.isoformat(),
         "shabbos": shabbos.isoformat(),
         "active_profiles": [p.id for p in active_profiles(ctx, profiles)],
         "entries": entries,
         "molad": molad_text(shabbos),
-        "notes": week_notes(sunday, shabbos, engine, notes) + sd_notes,
+        "notes": week_notes(first, shabbos, engine, notes) + sd_notes,
     }
     return block
 
@@ -946,18 +978,30 @@ def _rehome_weekday_lines(week_block: dict, day_blocks: list[dict]) -> None:
 
 def generate(start: date, end: date, *, engine: ZmanimEngine | None = None,
              profiles=DEFAULT_PROFILES, notes=DEFAULT_NOTES,
-             overrides: dict[str, dict] | None = None) -> dict:
+             overrides: dict[str, dict] | None = None,
+             clip_start: bool = True) -> dict:
     """Generate sheet content for [start, end] as plain data: one week block
     per Sunday..Shabbos week intersecting the range, plus day blocks for yom
     tov and erev yom tov days in range. `overrides` maps rule_id -> edit and
-    always wins over rules (see rules.Timesheet)."""
+    always wins over rules (see rules.Timesheet).
+
+    `start` need not be a Sunday: a sheet may begin on any weekday, and the
+    first week block is then clipped to it — it prints nothing for the days
+    before, and its ranged lines quote the extreme over the days it does
+    print.
+
+    `clip_start=False` keeps that first week whole. A single-day caller
+    (day_minyanim) needs it: clipping would make Monday quote the Mon-Thurs
+    extreme while the sheet on the wall prints the Sun-Thurs one, and the
+    screen beside it must not disagree."""
     engine = engine or ZmanimEngine()
     blocks: list[dict] = []
     # first Sunday on/before start
     sunday = start - timedelta(days=(start.weekday() + 1) % 7)
     while sunday <= end:
         week_block = assemble_week(sunday, engine=engine, profiles=profiles,
-                                   notes=notes, overrides=overrides)
+                                   notes=notes, overrides=overrides,
+                                   first_day=max(start, sunday) if clip_start else None)
         blocks.append(week_block)
         week_day_blocks: list[dict] = []
         for i in range(7):

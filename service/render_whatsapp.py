@@ -26,6 +26,7 @@ from engine.render_docx import (
     SHABBOS_DAY,
     WEEKDAY,
     _fmt_civil_date,
+    _block_start,
     _fmt_civil_range,
     _group_blocks,
 )
@@ -65,7 +66,7 @@ def _week_message(block: dict) -> str:
     items = week_items(block, notes_inline=False)
     parsha = block.get("parsha", "")
     labels = block.get("shabbos_labels", []) or []
-    civ = _fmt_civil_range(block["civil_start"], block["civil_end"])
+    civ = _fmt_civil_range(_block_start(block), block["civil_end"])
     head_bits = ([f"Parshas {parsha}"] if parsha else []) + list(labels)
     head = ", ".join(head_bits) if head_bits else "This week"
 

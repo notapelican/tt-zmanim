@@ -59,11 +59,19 @@ class WeekContext:
     """Everything a rule may need about the week being generated.
     `weekdays` are the Sun-Thurs dates a ranged weekday line covers (yom tov
     days already excluded by the caller); `friday`/`shabbos` may be None for a
-    partial week."""
+    partial week.
+
+    `zman_weekdays` is the day set the sheet's own weekday Shkia/Tzeis lines
+    are computed over (Sun-Thurs, yom tov days *included*). A ranged minyan
+    line anchored to shkia or tzeis must use this set, not `weekdays`, or the
+    sheet contradicts itself: it would print "Shkia 7:00pm" from a Sunday the
+    minyan anchor skipped and then a Mincha that is not 10 minutes before it.
+    Defaults to `weekdays` when the caller does not supply it."""
     sunday: date
     friday: date | None
     shabbos: date | None
     weekdays: tuple[date, ...]
+    zman_weekdays: tuple[date, ...] = ()
     mevorchim: bool = False
     selichos_shabbos: bool = False
     engine: ZmanimEngine = field(default_factory=ZmanimEngine, compare=False)
@@ -81,7 +89,7 @@ class ZmanAnchored:
     anchor: str                    # method name on ZmanimEngine: shkia, tzeis,
                                    # tzeis_shabbos, plag_hamincha, candle_lighting...
     day: str                       # 'friday' | 'shabbos' | 'earliest' | 'latest'
-                                   # (earliest/latest of ctx.weekdays)
+                                   # (earliest/latest of ctx.zman_weekdays)
     offset_min: int = 0
     rounding: str = "floor"        # rounding applied to the anchor zman itself
     grid: int = 1                  # snap final time onto an n-minute grid
@@ -97,7 +105,7 @@ class ZmanAnchored:
                 return None
             days = [ctx.shabbos]
         else:
-            days = list(ctx.weekdays)
+            days = list(ctx.zman_weekdays or ctx.weekdays)
             if not days:
                 return None
         # earliest/latest by TIME OF DAY across the covered days: a ranged

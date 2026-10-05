@@ -22,7 +22,7 @@ from .render_docx import (EARLY_ES, KEY_TIMES, SHABBOS_DAY,
                           SELICHOS_SUBHEAD, _SHABBOS_DAY_RULE_PRIORITY,
                           _SHABBOS_SHACHARIS_RULES, WEEKDAY, _fast_box_text,
                           selichos_pivot,
-                          _fmt_ampm, _fmt_civil_date, _fmt_civil_range,
+                          _block_start, _fmt_ampm, _fmt_civil_date, _fmt_civil_range,
                           _join_dayspec_group, _partition_week_entries)
 
 # --- merge logic: block entries -> (label, value, bullet) lines -------------
@@ -100,7 +100,7 @@ def week_items(block: dict, *, notes_inline: bool) -> list[tuple]:
     items: list[tuple] = [
         ("title", block["title"]),
         ("subtitle", f"{block['hebrew_dates']}  "
-         f"({_fmt_civil_range(block['civil_start'], block['civil_end'])})"),
+         f"({_fmt_civil_range(_block_start(block), block['civil_end'])})"),
     ]
     zmanim, fast_runs, named, named_order = _partition_week_entries(block["entries"])
     _emit_lines(items, zmanim, kind="zman", dayspec_before_leader=True)
@@ -482,7 +482,7 @@ def tishrei_week_items(group: dict) -> list[tuple]:
     out += tail
     if gen:
         header = (f"General times for the week: {week['hebrew_dates']} "
-                  f"({_fmt_civil_range(week['civil_start'], week['civil_end'])})")
+                  f"({_fmt_civil_range(_block_start(week), week['civil_end'])})")
         out.insert(0, ("genbox", header, gen))
     return out
 

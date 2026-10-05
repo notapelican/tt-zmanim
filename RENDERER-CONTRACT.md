@@ -42,7 +42,8 @@ weeks in a two-column layout; day blocks render as boxed day-by-day schedules
 | `shabbos_labels` | string[] | Extra labels for the **"Shabbos kodesh:"** line, in print order: `Mevorchim`, `Chazak`, `Rosh Chodesh`, `Shekalim`/`Zachor`/`Parah`/`HaChodesh`, `Shira`, `HaGadol`, `Chazon`, `Nachamu`, `Shuva`, … Render as `"Shabbos kodesh: <parsha>, <label1>, <label2>"` |
 | `shabbos_yom_tov` | string[] | Yom Tov falling on this week's Shabbos (e.g. `["Rosh Hashana Day 1"]`), else `[]`. When non-empty it **replaces the parsha** as the name on the "Shabbos kodesh:" line — the sedra is not read on a Yom Tov Shabbos, and `title` already names the deferred one. The Shabbos-day section is omitted from `entries` in this case (that day davens off its own day block); read with a default, since sheets archived before this field existed lack it |
 | `hebrew_dates` | string | e.g. `"17–23 Kislev 5786"` — print under the title |
-| `civil_start`/`civil_end` | ISO date | Sunday / Shabbos of the week |
+| `civil_start`/`civil_end` | ISO date | Sunday / Shabbos of the week. `civil_start` is always the Sunday even when the sheet starts later — it is the block's identity (the `week:<ISO>` override key) and the day a `day_spec`'s Sun-first index counts from |
+| `first_day` | ISO date | The first day the block actually prints. Equal to `civil_start` for a whole week; later when the sheet starts mid-week (a sheet may begin on any weekday and runs to that week's Shabbos). **Print the date range from this, not `civil_start`**; read it with a default, since sheets archived before this field existed lack it |
 | `friday`/`shabbos` | ISO date | convenience anchors |
 | `active_profiles` | string[] | Which schedule profiles produced lines (`base`, `early_erev_shabbos`, `halacha_shiur_season`, `summer_holidays`). Informational — do not branch layout on it; the presence/absence of sections in `entries` is authoritative |
 | `entries` | LINE[] | every printed line, see LINE below |
@@ -164,6 +165,7 @@ Shacharis 10:15 for 10:10).
   "shabbos_labels": ["Mevorchim"],
   "hebrew_dates": "17–23 Kislev 5786",
   "civil_start": "2025-12-07",
+  "first_day": "2025-12-07",
   "civil_end": "2025-12-13",
   "friday": "2025-12-12",
   "shabbos": "2025-12-13",

@@ -119,6 +119,14 @@ def _fmt_civil_date(iso: str) -> str:
     return f"{d.day} {_mon(d)}"
 
 
+def _block_start(block: dict) -> str:
+    """The first day a week block prints. `civil_start` is the block's Sunday
+    (its identity, and the anchor day_spec indices count from); a sheet that
+    begins mid-week carries the day it really starts on in `first_day`, and
+    that is what the printed date range must show."""
+    return block.get("first_day") or block["civil_start"]
+
+
 # --- low-level docx helpers -------------------------------------------------
 
 def _set_cell_background(cell, hex_color: str) -> None:
@@ -494,7 +502,7 @@ def render_week_into(container, block: dict, width, *, size=BODY_SIZE,
     _para(container, block["title"], bold=True, color=BLUE, size=title_size,
           space_after=Pt(0))
     _para(container, f"{block['hebrew_dates']}  "
-          f"({_fmt_civil_range(block['civil_start'], block['civil_end'])})",
+          f"({_fmt_civil_range(_block_start(block), block['civil_end'])})",
           bold=True, color=BLUE, size=title_size, space_after=Pt(6))
 
     zmanim_table, fast_runs, named, named_order = _partition_week_entries(block["entries"])

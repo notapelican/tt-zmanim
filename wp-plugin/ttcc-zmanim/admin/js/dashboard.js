@@ -133,6 +133,13 @@
 	function daysBetween( a, b ) {
 		return Math.round( ( new Date( b + 'T00:00:00' ) - new Date( a + 'T00:00:00' ) ) / 86400000 );
 	}
+	// A sheet always ends on a Shabbos. It need not START on a Sunday: a
+	// mid-week start is a short first week (the engine clips it — nothing is
+	// printed for the days before, and ranged lines quote the extreme over
+	// the days that are).
+	function saturdayOf( iso ) {
+		return addDays( iso, 6 - new Date( iso + 'T00:00:00' ).getDay() );
+	}
 
 	// --- multi-week range -------------------------------------------------
 	// The engine already lays out multiple weeks (two-column stacked sheet)
@@ -141,13 +148,13 @@
 	function syncEndFromWeeks() {
 		var sel = $( 'ttcc-weeks' ), start = $( 'ttcc-start' ).value;
 		if ( ! sel || 'custom' === sel.value || ! start ) { return; }
-		$( 'ttcc-end' ).value = addDays( start, parseInt( sel.value, 10 ) * 7 - 1 );
+		$( 'ttcc-end' ).value = addDays( saturdayOf( start ), ( parseInt( sel.value, 10 ) - 1 ) * 7 );
 	}
 	function setWeeksSelectFromDates() {
 		var sel = $( 'ttcc-weeks' ), s = $( 'ttcc-start' ).value, e = $( 'ttcc-end' ).value;
 		if ( ! sel || ! s || ! e ) { return; }
-		var days = daysBetween( s, e ) + 1, wk = days / 7;
-		sel.value = ( days > 0 && 0 === days % 7 && wk >= 1 && wk <= 4 ) ? String( wk ) : 'custom';
+		var days = daysBetween( saturdayOf( s ), e ), wk = days / 7 + 1;
+		sel.value = ( days >= 0 && 0 === days % 7 && wk <= 4 ) ? String( wk ) : 'custom';
 	}
 	function weekTitle( b ) { return b.parsha || b.title || ''; }
 	function updateRangeLabel( doc ) {
@@ -1072,7 +1079,7 @@
 		updateRangeLabel( null );
 	} );
 	$( 'ttcc-start' ).addEventListener( 'change', function () {
-		syncEndFromWeeks(); // keep the same number of weeks when the Sunday moves
+		syncEndFromWeeks(); // keep the same number of weeks when the start moves
 		updateRangeLabel( null );
 	} );
 	$( 'ttcc-end' ).addEventListener( 'change', function () {
@@ -1083,7 +1090,7 @@
 	// initial dates
 	var sun = currentSunday();
 	$( 'ttcc-start' ).value = sun;
-	$( 'ttcc-end' ).value = addDays( sun, 6 );
+	$( 'ttcc-end' ).value = saturdayOf( sun );
 	$( 'ttcc-weeks' ).value = '1';
 	updateRangeLabel( null );
 	wireDesign();
