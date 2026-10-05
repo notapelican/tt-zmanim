@@ -100,9 +100,13 @@ def _exclude_days(entries: list, idx: int, excl: set[date],
     with "Sun" put a phantom Friday Mincha on the 5787 Tzom Gedaliah week."""
     from engine.assemble import _SUN_FIRST_ABBR, expand_day_spec, format_day_spec
     e = entries[idx]
-    days = [week_days[_SUN_FIRST_ABBR.index(a)]
+    # Keyed on each date's own Sun-first index, not its position in the list:
+    # week_days is clipped on a sheet that starts mid-week, so week_days[0]
+    # is the block's first day rather than necessarily Sunday.
+    by_index = {(d.weekday() + 1) % 7: d for d in week_days}
+    days = [by_index[_SUN_FIRST_ABBR.index(a)]
             for a in expand_day_spec(e.get("day_spec"))
-            if _SUN_FIRST_ABBR.index(a) < len(week_days)]
+            if _SUN_FIRST_ABBR.index(a) in by_index]
     e["day_spec"] = format_day_spec([x for x in days if x not in excl])
 
 
@@ -304,12 +308,15 @@ def _tishrei_weekdays(entries, notes, sunday, shabbos, engine, week_days):
 
     # 11-21 Tishrei: the 9:15am third Shacharis. Same day_spec as the regular
     # weekday pair wherever they coincide, so the renderer merges it into one
-    # printed line.
+    # printed line. Dropped once the 9:15am runs every weekday year-round
+    # (rules.WEEKDAY_915_FROM): the base line already covers these days, and
+    # printing both would give the sheet two 9:15am Shacharises.
     from engine.assemble import _is_yom_tov, format_day_spec
-    third = [d for d in week_days[1:]           # Mon..Fri (Sun uses its own set)
-             if not _is_yom_tov(d)
+    third = [d for d in week_days           # Mon..Fri (Sun uses its own set)
+             if d.weekday() != 6
+             and not _is_yom_tov(d)
              and (lambda h: h.month == tishrei and 11 <= h.day <= 21)(to_hebrew(d))]
-    if third:
+    if third and _find(entries, "shacharis_wk_3") is None:
         idx = _find(entries, "shacharis_wk_2")
         if idx is not None:
             _insert_after(entries, idx, [

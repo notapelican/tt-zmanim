@@ -54,11 +54,10 @@
 		d.setDate( d.getDate() + n );
 		return isoOf( d );
 	}
-	function sundayOf( iso ) {
+	/** A valid ISO date, unchanged — the start need not be a Sunday. */
+	function dayOf( iso ) {
 		var d = new Date( iso + 'T00:00:00' );
-		if ( isNaN( d.getTime() ) ) { return ''; }
-		d.setDate( d.getDate() - d.getDay() );
-		return isoOf( d );
+		return isNaN( d.getTime() ) ? '' : isoOf( d );
 	}
 	function currentSunday() {
 		var d = new Date();
@@ -78,7 +77,7 @@
 
 	function boot( root, cfg ) {
 		var state = {
-			start: sundayOf( cfg.sunday ) || currentSunday(),
+			start: dayOf( cfg.sunday ) || currentSunday(),
 			weeks: Math.max( 1, Math.min( 6, parseInt( cfg.weeks, 10 ) || 1 ) ),  // keep in step with MAX_WEEKS
 			template: ( 'modern' === cfg.template ) ? 'modern' : 'classic',
 			layout: '',          // '' = weekly pages | 'flow' = one-page (Tishrei)
@@ -195,7 +194,13 @@
 
 		// --- range ----------------------------------------------------------
 
-		function endDate() { return addDays( state.start, state.weeks * 7 - 1 ); }
+		// A range always ends on a Shabbos. The start may be any weekday, in
+		// which case the first week is short: the engine clips it and prints
+		// nothing for the days before (see RENDERER-CONTRACT first_day).
+		function endDate() {
+			var dow = new Date( state.start + 'T00:00:00' ).getDay();  // 0 Sun .. 6 Shabbos
+			return addDays( state.start, ( 6 - dow ) + ( state.weeks - 1 ) * 7 );
+		}
 
 		function weekTitle( block ) { return block.parsha || block.title || ''; }
 
@@ -1132,7 +1137,7 @@
 		}
 
 		ui.start.addEventListener( 'change', function () {
-			var picked = sundayOf( ui.start.value );
+			var picked = dayOf( ui.start.value );
 			if ( ! picked ) { ui.start.value = state.start; return; }
 			state.start = picked;
 			syncControls();

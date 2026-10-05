@@ -162,6 +162,14 @@ class ScheduleRule:
     bound: Bound | None = None
     when: str | None = None
     kind: str = "minyan"
+    after: str | None = None       # rule_id this line must follow, across
+                                   # profiles. Ordering is otherwise profile
+                                   # then declaration order, which puts a line
+                                   # from a later profile at the end of its
+                                   # section; a line that belongs to an
+                                   # earlier same-label group (a third weekday
+                                   # Shacharis) must sit beside it or the
+                                   # renderer cannot merge the printed line.
 
     def applies(self, ctx: WeekContext) -> bool:
         if self.when == "mevorchim":
@@ -199,9 +207,15 @@ class ScheduleRule:
 @dataclass(frozen=True)
 class Condition:
     """Profile activation condition.
-    type: 'always' | 'date_range' | 'dst' | 'zman' | 'all_of' | 'any_of'
+    type: 'always' | 'date_range' | 'since' | 'dst' | 'zman' | 'all_of' | 'any_of'
       date_range: recurring month-day window, inclusive ('12-14'..'01-27'
                   wraps the year end)
+      since:      every week from an absolute date onward ('2026-10-05').
+                  This is how a permanent change to the shul's schedule is
+                  recorded: the old sheets stay reproducible (and the golden
+                  fixtures keep scoring against the schedule that was
+                  actually printed) while every week from the changeover
+                  gets the new minyan.
       dst:        daylight saving in effect on the week's Friday (or Sunday
                   when there is no Friday)
       zman:       compare a Friday zman to a clock time, e.g. plag >= 17:50
@@ -209,6 +223,7 @@ class Condition:
     type: str
     start_md: str | None = None
     end_md: str | None = None
+    since_date: str | None = None  # ISO date, for type 'since'
     zman: str | None = None
     op: str | None = None
     time: str | None = None
@@ -227,6 +242,10 @@ class Condition:
             if self.start_md <= self.end_md:
                 return self.start_md <= md <= self.end_md
             return md >= self.start_md or md <= self.end_md
+        if self.type == "since":
+            # The week's Shabbos, not `probe`: a changeover mid-week applies
+            # to the sheet that contains it, and a week block is one sheet.
+            return (ctx.shabbos or probe) >= date.fromisoformat(self.since_date)
         if self.type == "dst":
             probe_dt = datetime(probe.year, probe.month, probe.day, 12,
                                 tzinfo=ctx.engine.loc.tz)
@@ -452,8 +471,22 @@ _SUMMER_HOLIDAY_RULES = (
                  day_spec="Sun.–Thurs."),
 )
 
+# The 9:15am Shacharis ran on Sundays and public holidays only; from the week
+# of 5 October 2026 it runs every weekday as well. Gated on the date rather
+# than added to _BASE_RULES so that sheets for earlier weeks still reproduce
+# what the shul actually printed.
+WEEKDAY_915_FROM = "2026-10-05"
+
+_WEEKDAY_915_RULES = (
+    ScheduleRule("shacharis_wk_3", WEEKDAY, "Shacharis", FixedTime("09:15"),
+                 day_spec="Mon.–Fri.", after="shacharis_wk_2"),
+)
+
 DEFAULT_PROFILES = (
     ScheduleProfile("base", "Year-round schedule", Condition("always"), _BASE_RULES),
+    ScheduleProfile("weekday_915", "Weekday 9:15am Shacharis",
+                    Condition("since", since_date=WEEKDAY_915_FROM),
+                    _WEEKDAY_915_RULES),
     ScheduleProfile("early_erev_shabbos", "Early Erev Shabbos minyan season",
                     Condition("zman", zman="plag_hamincha", op=">=", time="17:50"),
                     _EARLY_ES_RULES),
@@ -509,4 +542,20 @@ def davening_lines(ctx: WeekContext,
     if any(r.when == "selichos_shabbos" for _, r in resolved):
         resolved = [(l, r) for l, r in resolved
                     if not (r.when == "not_mevorchim" and r.section == SHABBOS_DAY)]
-    return apply_overrides([l for l, _ in resolved], overrides or {})
+    lines = _place_after([l for l, _ in resolved],
+                         {r.id: r.after for _, r in resolved if r.after})
+    return apply_overrides(lines, overrides or {})
+
+
+def _place_after(lines: list[dict], wanted: dict[str, str]) -> list[dict]:
+    """Move each line in `wanted` (rule_id -> the rule_id it must follow) to
+    sit directly after its anchor. A line whose anchor did not resolve this
+    week stays where it is."""
+    for rule_id, anchor in wanted.items():
+        src = next((i for i, l in enumerate(lines) if l["rule_id"] == rule_id), None)
+        if src is None or not any(l["rule_id"] == anchor for l in lines):
+            continue
+        line = lines.pop(src)
+        dst = next(i for i, l in enumerate(lines) if l["rule_id"] == anchor)
+        lines.insert(dst + 1, line)
+    return lines

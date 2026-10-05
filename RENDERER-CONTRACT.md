@@ -45,7 +45,7 @@ weeks in a two-column layout; day blocks render as boxed day-by-day schedules
 | `civil_start`/`civil_end` | ISO date | Sunday / Shabbos of the week. `civil_start` is always the Sunday even when the sheet starts later — it is the block's identity (the `week:<ISO>` override key) and the day a `day_spec`'s Sun-first index counts from |
 | `first_day` | ISO date | The first day the block actually prints. Equal to `civil_start` for a whole week; later when the sheet starts mid-week (a sheet may begin on any weekday and runs to that week's Shabbos). **Print the date range from this, not `civil_start`**; read it with a default, since sheets archived before this field existed lack it |
 | `friday`/`shabbos` | ISO date | convenience anchors |
-| `active_profiles` | string[] | Which schedule profiles produced lines (`base`, `early_erev_shabbos`, `halacha_shiur_season`, `summer_holidays`). Informational — do not branch layout on it; the presence/absence of sections in `entries` is authoritative |
+| `active_profiles` | string[] | Which schedule profiles produced lines (`base`, `weekday_915`, `early_erev_shabbos`, `halacha_shiur_season`, `summer_holidays`). Informational — do not branch layout on it; the presence/absence of sections in `entries` is authoritative |
 | `entries` | LINE[] | every printed line, see LINE below |
 | `molad` | string \| null | Fully formatted molad + Rosh Chodesh announcement (only on Shabbos Mevorchim weeks). Render as its own emphasized paragraph in the Shabbos-day area |
 | `notes` | string[] | Luach-triggered notes (kiddush-window text with DST/standard-time variant, DST-changeover warning, public-holiday notices). Render at the block foot; each is independently deletable in the dashboard |

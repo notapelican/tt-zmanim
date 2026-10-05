@@ -9,6 +9,7 @@ contract for this structure is RENDERER-CONTRACT.md.
 """
 from __future__ import annotations
 
+import re
 from datetime import date, datetime, timedelta
 from typing import Any
 
@@ -293,10 +294,14 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
                     out.append(dict(e, date=d.isoformat()))
 
     for e in out:
-        if not e.get("time"):
-            continue  # freetext ("Maariv after the drosha.") has no time
-        hh, mm = (int(p) for p in e["time"].split(":"))
-        e["time_iso"] = datetime(d.year, d.month, d.day, hh, mm,
+        # freetext ("Maariv after the drosha.") has no time, and a special-day
+        # line may decorate one ("20:49 (Eicha & Kinos on Wed. after Maariv)"
+        # on the 9 Av sheet) — take the leading HH:MM and ignore the rest
+        # rather than crashing the screen for the week.
+        m = re.match(r"(\d{1,2}):(\d{2})", e.get("time") or "")
+        if not m:
+            continue
+        e["time_iso"] = datetime(d.year, d.month, d.day, int(m[1]), int(m[2]),
                                  tzinfo=engine.loc.tz).isoformat()
 
     # A timeless line sorts with the line it follows on the sheet, which is the
