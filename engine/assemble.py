@@ -203,7 +203,8 @@ def _overridden_by_day_block(entry: dict, day_lines: list[dict]) -> bool:
 
 
 def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
-                 profiles=DEFAULT_PROFILES) -> list[dict]:
+                 profiles=DEFAULT_PROFILES,
+                 overrides: dict[str, dict] | None = None) -> list[dict]:
     """Minyan lines applicable to civil date `d`, resolved by the exact same
     rules engine and profile set `generate()` uses for the printed sheets —
     so a screen can never disagree with the sheet on the wall beside it
@@ -212,6 +213,10 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
     condition, fast-day Mincha split and other special-day mutation is
     already handled there, and duplicating any of that here would be a
     second place for the shul's schedule to silently drift from the sheets').
+
+    `overrides` (same shape and scoping as `generate`) is applied inside
+    `generate`, so a dashboard edit to a week's time reaches the screen and
+    the luach exactly as it reaches the printed sheet.
 
     Every returned entry carries `date` = d.isoformat() and a `time_iso`
     absolute instant (a signage player may not run the shul's timezone — see
@@ -235,7 +240,8 @@ def day_minyanim(d: date, *, engine: ZmanimEngine | None = None,
     mistake.
     """
     engine = engine or ZmanimEngine()
-    doc = generate(d, d, engine=engine, profiles=profiles, clip_start=False)
+    doc = generate(d, d, engine=engine, profiles=profiles, overrides=overrides,
+                   clip_start=False)
     weekday_title = SECTION_TITLES[WEEKDAY]
 
     # The day's own block is read FIRST, in its own pass: the week block can
