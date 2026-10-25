@@ -32,6 +32,12 @@ from engine.render_html import render_html  # noqa: E402
 from .config import load_settings  # noqa: E402
 from .version import engine_version  # noqa: E402
 
+# Shape version of the JSON this service returns on /day and /davening (the
+# per-date endpoints consumed by displays, including the TT Luach via the
+# WordPress site). Bump the major only when a consumer written against the old
+# shape would break; adding fields is not a bump.
+DAY_SCHEMA_VERSION = 1
+
 SETTINGS = load_settings()
 
 app = FastAPI(
@@ -234,7 +240,7 @@ def post_day(req: GenerateRequest) -> dict:
 
     s, e = _parse_range(req.start, req.end)
     doc = day_views(s, e)
-    return {**doc, "engine_version": engine_version()}
+    return {**doc, "schema_version": DAY_SCHEMA_VERSION, "engine_version": engine_version()}
 
 
 @app.post("/davening", dependencies=[Depends(require_auth)])
@@ -249,7 +255,13 @@ def post_davening(req: GenerateRequest) -> dict:
     engine's *default* profiles, which will not match a shul that has ever
     edited its schedule. A caller with no profile set of its own should not
     call this endpoint at all, rather than silently show the wrong minyan
-    times."""
+    times.
+
+    `overrides` is accepted too, in the same shape /generate takes (sheet-wide
+    rule_id keys, or keys scoped as `week:<sunday>|<rule_id>` and
+    `day:<date>|<rule_id>`). A shul that has edited a week's times in the
+    dashboard expects the screen and the luach to show the edited time, not
+    the rule's; without this the printed sheet and the wall could disagree."""
     from engine.assemble import day_minyanim
     from engine.rules import DEFAULT_PROFILES
     from engine.zmanim import ZmanimEngine
@@ -263,9 +275,12 @@ def post_davening(req: GenerateRequest) -> dict:
     days = []
     d = s
     while d <= e:
-        days.append({"date": d.isoformat(), "entries": day_minyanim(d, engine=engine, profiles=profiles)})
+        days.append({
+            "date": d.isoformat(),
+            "entries": day_minyanim(d, engine=engine, profiles=profiles, overrides=req.overrides),
+        })
         d += timedelta(days=1)
-    return {"days": days, "engine_version": engine_version()}
+    return {"days": days, "schema_version": DAY_SCHEMA_VERSION, "engine_version": engine_version()}
 
 
 @app.post("/render/html", dependencies=[Depends(require_auth)])

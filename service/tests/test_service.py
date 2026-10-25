@@ -204,6 +204,58 @@ def test_highlights_override_flows_through():
     assert candles["time"] == "19:15"
 
 
+def test_day_and_davening_carry_schema_version():
+    """The per-date endpoints displays consume stamp the shape they return,
+    so a consumer can refuse a shape it was not written for."""
+    from service.app import DAY_SCHEMA_VERSION
+
+    for path in ("/day", "/davening"):
+        r = client.post(path, json={"start": START, "end": START}, headers=AUTH)
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body["schema_version"] == DAY_SCHEMA_VERSION
+        assert body["engine_version"]
+        assert len(body["days"]) == 1 and body["days"][0]["date"] == START
+
+
+def test_davening_override_flows_through():
+    """A dashboard override reaches /davening exactly as it reaches the
+    printed sheet — sheet-wide, and scoped to the week."""
+    base = client.post("/davening", json={"start": START, "end": START}, headers=AUTH).json()
+    entries = base["days"][0]["entries"]
+    target = next(e for e in entries if e["kind"] == "minyan" and e["time"])
+    rule_id, old_time = target["rule_id"], target["time"]
+    new_time = "23:45" if old_time != "23:45" else "23:40"
+
+    r = client.post(
+        "/davening",
+        json={"start": START, "end": START, "overrides": {rule_id: {"time": new_time}}},
+        headers=AUTH,
+    )
+    assert r.status_code == 200, r.text
+    edited = next(e for e in r.json()["days"][0]["entries"] if e["rule_id"] == rule_id)
+    assert edited["time"] == new_time
+    assert edited["source"] == "override"
+    assert edited["time_iso"].startswith(START) and edited["time_iso"][11:16] == new_time
+
+    # Scoped to a different week: no effect on this one.
+    r = client.post(
+        "/davening",
+        json={"start": START, "end": START, "overrides": {f"week:2099-01-03|{rule_id}": {"time": new_time}}},
+        headers=AUTH,
+    )
+    untouched = next(e for e in r.json()["days"][0]["entries"] if e["rule_id"] == rule_id)
+    assert untouched["time"] == old_time
+
+    # Suppressed: the line is gone.
+    r = client.post(
+        "/davening",
+        json={"start": START, "end": START, "overrides": {rule_id: {"suppress": True}}},
+        headers=AUTH,
+    )
+    assert all(e["rule_id"] != rule_id for e in r.json()["days"][0]["entries"])
+
+
 def test_auth_required():
     assert client.post("/generate", json={"start": START, "end": END}).status_code == 401
     assert client.post("/highlights", json={"start": START, "end": END}).status_code == 401
