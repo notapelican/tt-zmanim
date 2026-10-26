@@ -82,3 +82,26 @@ save. Public pages serve the cached last-good HTML.
 Two halachic gates remain open before production use (Rov's written sign-off on
 the recovered definitions; chabad.org's exact Sydney coordinate). They don't
 block building or staging, but no sheet is used in production until both land.
+
+## Bundles for the TT Luach (0.9.0)
+
+The two signage screens are also published as downloadable bundles for the
+shul's TT Luach (a Windows display app that keeps working offline), listed in
+the display plugin's luach feed (`notapelican/ttcc-display`, `docs/luach-feed.md`):
+
+- `/ttcc-signage/<slug>/bundle/sheet.zip` — a small loader plus
+  `sheets/index.json` and `sheets/<sunday>.html` for this week and the next
+  two (the signage HTML exactly as the wall shows it). The loader picks the
+  week by the device's date in the site timezone.
+- `/ttcc-signage/<slug>/bundle/shabbos.zip` — the Shabbos & Yom Tov board
+  with its style and script as files (no web fonts), reading
+  `weeks/index.json` and `weeks/<sunday>.json` (the public `shabbos-times`
+  JSON) the same way.
+
+The dated files are served at `/ttcc-signage/<slug>/sheets/…` and
+`/ttcc-signage/<slug>/weeks/…` for the luach to refresh, slug-gated like the
+screens. Also in 0.9.0: the live sheet screen re-fetches itself every half
+hour and swaps the document only on success (a `<meta refresh>` used to strand
+it on the browser's error page during an outage), and the Shabbos board's
+last-good copy is kept per week, so a Saturday-night rollover during an
+outage no longer shows the previous week.

@@ -38,6 +38,13 @@ class TTCC_Zmanim_Public {
 		add_rewrite_rule( '^ttcc-signage/preview/?$', 'index.php?ttcc_signage=1&ttcc_view=preview', 'top' );
 		// The /shabbos variant must register before the generic slug rule.
 		add_rewrite_rule( '^ttcc-signage/([^/]+)/shabbos/?$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=shabbos', 'top' );
+		// The TT Luach's bundles and their data files (class-ttcc-bundle.php),
+		// slug-gated like the screens. Also before the generic rule.
+		add_rewrite_rule( '^ttcc-signage/([^/]+)/bundle/(sheet|shabbos)\.zip$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=bundle&ttcc_arg=$matches[2]', 'top' );
+		add_rewrite_rule( '^ttcc-signage/([^/]+)/sheets/index\.json$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=sheet_index', 'top' );
+		add_rewrite_rule( '^ttcc-signage/([^/]+)/sheets/(\d{4}-\d{2}-\d{2})\.html$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=sheet_week&ttcc_arg=$matches[2]', 'top' );
+		add_rewrite_rule( '^ttcc-signage/([^/]+)/weeks/index\.json$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=week_index', 'top' );
+		add_rewrite_rule( '^ttcc-signage/([^/]+)/weeks/(\d{4}-\d{2}-\d{2})\.json$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]&ttcc_view=week_json&ttcc_arg=$matches[2]', 'top' );
 		add_rewrite_rule( '^ttcc-signage/([^/]+)/?$', 'index.php?ttcc_signage=1&ttcc_slug=$matches[1]', 'top' );
 	}
 
@@ -45,6 +52,7 @@ class TTCC_Zmanim_Public {
 		$vars[] = 'ttcc_signage';
 		$vars[] = 'ttcc_slug';
 		$vars[] = 'ttcc_view';
+		$vars[] = 'ttcc_arg';
 		return $vars;
 	}
 
@@ -337,17 +345,50 @@ class TTCC_Zmanim_Public {
 			exit;
 		}
 
+		$view = (string) get_query_var( 'ttcc_view' );
+		$arg  = (string) get_query_var( 'ttcc_arg' );
+
 		// /ttcc-signage/<slug>/shabbos/ — the Shabbos & Yom Tov screen
 		// (portrait, large-type, self-refreshing; see TTCC_Zmanim_Shabbos).
-		if ( 'shabbos' === (string) get_query_var( 'ttcc_view' ) ) {
+		if ( 'shabbos' === $view ) {
 			nocache_headers();
 			header( 'Content-Type: text/html; charset=utf-8' );
 			TTCC_Zmanim_Shabbos::render_signage_screen();
 			exit;
 		}
 
+		// The TT Luach's bundles and the dated files behind them
+		// (class-ttcc-bundle.php). A date outside the covered weeks is a 404
+		// rather than a render: these routes exist to refresh known files,
+		// not to generate arbitrary weeks on request.
+		if ( 'bundle' === $view ) {
+			TTCC_Zmanim_Bundle::serve_zip( $arg );
+			exit;
+		}
+		if ( 'sheet_index' === $view ) {
+			TTCC_Zmanim_Bundle::serve_json( TTCC_Zmanim_Bundle::index( 'sheet' ) );
+			exit;
+		}
+		if ( 'week_index' === $view ) {
+			TTCC_Zmanim_Bundle::serve_json( TTCC_Zmanim_Bundle::index( 'shabbos' ) );
+			exit;
+		}
+		if ( 'sheet_week' === $view || 'week_json' === $view ) {
+			if ( ! TTCC_Zmanim_Bundle::covers( $arg ) ) {
+				status_header( 404 );
+				nocache_headers();
+				exit;
+			}
+			if ( 'sheet_week' === $view ) {
+				TTCC_Zmanim_Bundle::serve_html( TTCC_Zmanim_Bundle::sheet_html( $arg ) );
+			} else {
+				TTCC_Zmanim_Bundle::serve_json( TTCC_Zmanim_Bundle::shabbos_week( $arg ) );
+			}
+			exit;
+		}
+
 		$sunday = self::current_sunday();
-		$html   = self::cached_html( $sunday, self::week_end( $sunday ), 'signage', self::signage_head() );
+		$html   = self::signage_sheet_html( $sunday );
 
 		nocache_headers();
 		header( 'Content-Type: text/html; charset=utf-8' );
@@ -355,10 +396,38 @@ class TTCC_Zmanim_Public {
 			echo '<!doctype html><meta charset="utf-8"><body style="font:4vw sans-serif;text-align:center;padding:20vh">Times temporarily unavailable</body>';
 			exit;
 		}
-		// Auto-advance to the next week when the clock rolls over: refresh hourly.
-		$html = self::inject_head_static( $html, '<meta http-equiv="refresh" content="1800">' );
+		// Roll over to the next week, and pick up edits, by re-fetching this
+		// same URL every half hour and swapping the document in only when the
+		// fetch succeeds. A <meta refresh> used to do this and left the screen
+		// on the browser's error page whenever the reload happened to land in
+		// an outage; now an outage simply leaves the current sheet up.
+		$html = self::inject_head_static( $html, self::signage_refresh_script() );
 		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- self-contained service HTML.
 		exit;
+	}
+
+	/**
+	 * The signage HTML for a week (the sheet laid out to fill the panel), with
+	 * last-good fallback and no self-refresh — the wall adds its own, the
+	 * Luach bundle has the loader's. Public for TTCC_Zmanim_Bundle.
+	 */
+	public static function signage_sheet_html( $sunday ) {
+		return self::cached_html( $sunday, self::week_end( $sunday ), 'signage', self::signage_head() );
+	}
+
+	/** Bundle descriptors for the display plugin's luach feed (see TTCC_Zmanim_Bundle). */
+	public static function luach_bundles() {
+		return TTCC_Zmanim_Bundle::descriptors();
+	}
+
+	/** Stale beats blank: re-fetch and swap the document only on success. */
+	private static function signage_refresh_script() {
+		return '<script id="ttcc-signage-refresh">'
+			. '(function(){setInterval(function(){'
+			. 'fetch(location.href,{cache:"no-store"}).then(function(r){if(!r.ok){throw 0;}return r.text();})'
+			. '.then(function(t){if(t.indexOf("</html>")===-1){return;}document.open();document.write(t);document.close();})'
+			. '.catch(function(){});},' . ( 30 * 60 * 1000 ) . ');})();'
+			. '</script>';
 	}
 
 	private static function inject_head_static( $html, $snippet ) {
