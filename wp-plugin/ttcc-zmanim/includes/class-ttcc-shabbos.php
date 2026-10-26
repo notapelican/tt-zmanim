@@ -64,18 +64,67 @@ class TTCC_Zmanim_Shabbos {
 		$end = TTCC_Zmanim_Public::week_end( $sunday_iso );
 		$res = TTCC_Zmanim_Service_Client::highlights( $sunday_iso, $end, $profiles, $notes );
 		if ( is_wp_error( $res ) || empty( $res['weeks'][0] ) ) {
+			// Last-good is kept per week (see lastgood_key): the single copy
+			// this used to keep was the *previous* week's for the first hours
+			// after a Saturday-night rollover during an outage, and a board
+			// confidently showing last week's candle lighting is the one
+			// failure it exists to prevent.
+			$lastgood = get_option( self::lastgood_key( $sunday_iso ), null );
+			if ( is_array( $lastgood ) ) {
+				return $lastgood;
+			}
 			if ( $sunday_iso === $current ) {
-				$lastgood = get_option( self::LASTGOOD_KEY, null );
-				return is_array( $lastgood ) ? $lastgood : null;
+				$legacy = get_option( self::LASTGOOD_KEY, null );
+				return is_array( $legacy ) ? $legacy : null;
 			}
 			return null;
 		}
 		$week = $res['weeks'][0];
 		set_transient( $key, $week, self::CACHE_TTL );
-		if ( $sunday_iso === $current ) {
-			update_option( self::LASTGOOD_KEY, $week, false );
+		if ( self::keeps_lastgood( $sunday_iso, $current ) ) {
+			update_option( self::lastgood_key( $sunday_iso ), $week, false );
+			self::prune_lastgood( $current );
 		}
 		return $week;
+	}
+
+	/** Option name of the last-good copy for one week. */
+	private static function lastgood_key( $sunday_iso ) {
+		return self::LASTGOOD_KEY . '_' . $sunday_iso;
+	}
+
+	/**
+	 * Only weeks a screen could be showing soon get a last-good copy: last
+	 * week through four weeks out. The widget's two-year navigation must not
+	 * grow the options table by one row per week anyone ever browsed to.
+	 */
+	private static function keeps_lastgood( $sunday_iso, $current ) {
+		$d = date_create( $sunday_iso );
+		$c = date_create( $current );
+		if ( ! $d || ! $c ) {
+			return false;
+		}
+		$days = ( $d->getTimestamp() - $c->getTimestamp() ) / DAY_IN_SECONDS;
+		return $days >= -7 && $days <= 28;
+	}
+
+	/** Drop last-good copies of weeks that have passed. */
+	private static function prune_lastgood( $current ) {
+		global $wpdb;
+		$like = $wpdb->esc_like( self::LASTGOOD_KEY . '_' ) . '%';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- prefix sweep, no API for it.
+		$names = $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_name LIKE %s", $like ) );
+		$floor = date_create( $current );
+		if ( ! $floor ) {
+			return;
+		}
+		$floor = $floor->modify( '-7 days' )->format( 'Y-m-d' );
+		foreach ( (array) $names as $name ) {
+			$sunday = substr( $name, strlen( self::LASTGOOD_KEY ) + 1 );
+			if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $sunday ) && $sunday < $floor ) {
+				delete_option( $name );
+			}
+		}
 	}
 
 	/**
@@ -100,6 +149,11 @@ class TTCC_Zmanim_Shabbos {
 			delete_transient( substr( $name, strlen( '_transient_' ) ) );
 		}
 		delete_option( self::LASTGOOD_KEY );
+		$like = $wpdb->esc_like( self::LASTGOOD_KEY . '_' ) . '%';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- prefix sweep, no API for it.
+		foreach ( (array) $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_name LIKE %s", $like ) ) as $name ) {
+			delete_option( $name );
+		}
 	}
 
 	/** REST callback (public, read-only): GET ttcc/v1/shabbos-times[?week=YYYY-MM-DD]. */
@@ -395,20 +449,25 @@ JS;
 	 * looking at it) and must not tick (two previews of one moment should
 	 * render identically), so `preview` turns both off in the page's own JS.
 	 */
-	public static function render_signage_screen( $sunday = null, $at = null ) {
+	public static function render_signage_screen( $sunday = null, $at = null, $bundle = false ) {
 		$preview = ( null !== $at );
 		$sunday  = $sunday ? $sunday : TTCC_Zmanim_Public::current_sunday();
 		$week    = self::week_data( $sunday );
 		$cfg     = array(
-			'rest'      => self::rest_endpoint(),
+			'rest'      => $bundle ? null : self::rest_endpoint(),
 			'initial'   => $week,
-			'refreshMs' => 3 * HOUR_IN_SECONDS * 1000,
+			'refreshMs' => ( $bundle ? 1 : 3 ) * HOUR_IN_SECONDS * 1000,
 			'retryMs'   => 5 * MINUTE_IN_SECONDS * 1000,
 			'tz'        => wp_timezone_string(),
 			// ISO 8601 with the site's offset, so the page's clock reads the
 			// previewed moment in the shul's timezone whatever the browser's is.
 			'preview'   => $preview ? $at->format( 'c' ) : null,
 		);
+		if ( $bundle ) {
+			// Read from the files beside this document (see TTCC_Zmanim_Bundle).
+			$cfg['weeks_index'] = 'weeks/index.json';
+			$cfg['weeks_dir']   = 'weeks/';
+		}
 		$site  = wp_parse_url( home_url(), PHP_URL_HOST );
 		$title = get_bloginfo( 'name' );
 		?>
@@ -418,44 +477,16 @@ JS;
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?php echo esc_html( $title ); ?> — <?php esc_html_e( 'Shabbos Times', 'ttcc-zmanim' ); ?></title>
+		<?php if ( $bundle ) : ?>
+<link rel="stylesheet" href="board.css">
+		<?php else : ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-	:root{--night:#141d33;--night-2:#1c2947;--flame:#e3a83b;--rose:#c96a5a;--paper:#f6f2e9;--muted:#9aa5c0;--line:rgba(246,242,233,.14)}
-	*{margin:0;padding:0;box-sizing:border-box}
-	html,body{width:100%;height:100%;overflow:hidden}
-	body{font-family:'Assistant',system-ui,sans-serif;color:var(--paper);background:radial-gradient(140% 100% at 50% 0%,var(--night-2) 0%,var(--night) 60%);display:flex;flex-direction:column;padding:4vh 6vw 2.5vh}
-	.topbar{display:flex;justify-content:space-between;align-items:baseline}
-	.eyebrow{font-size:1.9vh;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--flame)}
-	.clock{text-align:right}
-	.clock-time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:3vh;font-weight:500}
-	.clock-date{font-size:1.6vh;color:var(--muted)}
-	.horizon{height:.4vh;border-radius:1vh;margin:2.2vh 0 3vh;background:linear-gradient(90deg,var(--flame) 0%,var(--rose) 45%,transparent 95%)}
-	.title{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-weight:700;font-size:6.2vh;line-height:1.12}
-	.hebrew{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:3.4vh;color:var(--flame);min-height:1em}
-	.range{font-size:2vh;color:var(--muted);margin-top:.8vh}
-	.chips{display:flex;flex-wrap:wrap;gap:1vh;margin-top:1.4vh;list-style:none}
-	.chip{font-size:1.8vh;font-weight:600;padding:.5vh 1.8vh;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
-	.chip.fast{border-color:var(--rose);color:var(--rose)}
-	/* Rows are em-sized against .times so the fit pass below (fitRows) can scale
-	   a busy chag week (6+ rows) down to the space left under the identity
-	   block — one font-size sets the whole rhythm. */
-	.times{list-style:none;display:flex;flex-direction:column;justify-content:center;gap:.7em;flex:1;margin-top:3vh;min-height:0;overflow:hidden;font-size:3vh}
-	.row{display:flex;align-items:center;justify-content:space-between;gap:3vw;border-radius:1.6vh;padding:.8em 3.6vw;background:rgba(246,242,233,.035)}
-	.label{font-weight:700;font-size:1em;line-height:1.2}
-	.memo{font-size:.67em;color:var(--flame);font-weight:600;margin-top:.1em}
-	.row.fast .memo{color:var(--rose)}
-	.day{font-size:.67em;color:var(--muted);margin-top:.17em}
-	.time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:2.13em;font-weight:700;color:var(--flame);white-space:nowrap;text-align:right}
-	.row.fast .time{color:var(--rose)}
-	.qual{display:block;font-family:'Assistant',sans-serif;font-size:.63em;font-weight:600;color:var(--muted);text-transform:lowercase}
-	.status{font-size:2.2vh;color:var(--muted)}
-	.status:empty{display:none}
-	.cta{text-align:center;font-size:2.2vh;font-weight:600;color:var(--paper);padding:1.8vh 0;margin-top:1.5vh;border-top:1px solid var(--line)}
-	.cta .site{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:2.8vh;font-weight:700;color:var(--flame);letter-spacing:.03em}
-	.foot{font-size:1.5vh;color:var(--muted);padding-top:1.4vh;border-top:1px solid var(--line);text-align:center}
+<?php echo self::signage_css(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static CSS. ?>
 </style>
+		<?php endif; ?>
 </head>
 <body>
 	<div class="topbar">
@@ -478,10 +509,63 @@ JS;
 	<div class="foot"><?php echo esc_html( apply_filters( 'ttcc_shabbos_signage_footer', "Times for Bondi, NSW · According to the Alter Rebbe's Zmanim — Tzemach Tzedek Community Centre" ) ); ?></div>
 
 <script type="application/json" id="stw-config"><?php echo self::json( $cfg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON_HEX_TAG-encoded. ?></script>
+		<?php if ( $bundle ) : ?>
+<script src="board.js"></script>
+		<?php else : ?>
 <script>
+<?php echo self::signage_js(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static JS. ?>
+</script>
+		<?php endif; ?>
+</body>
+</html>
+		<?php
+	}
+
+	/** The board's stylesheet (inline on the live screen, board.css in a bundle). */
+	public static function signage_css() {
+		return <<<'CSS'
+:root{--night:#141d33;--night-2:#1c2947;--flame:#e3a83b;--rose:#c96a5a;--paper:#f6f2e9;--muted:#9aa5c0;--line:rgba(246,242,233,.14)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:'Assistant',system-ui,sans-serif;color:var(--paper);background:radial-gradient(140% 100% at 50% 0%,var(--night-2) 0%,var(--night) 60%);display:flex;flex-direction:column;padding:4vh 6vw 2.5vh}
+.topbar{display:flex;justify-content:space-between;align-items:baseline}
+.eyebrow{font-size:1.9vh;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--flame)}
+.clock{text-align:right}
+.clock-time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:3vh;font-weight:500}
+.clock-date{font-size:1.6vh;color:var(--muted)}
+.horizon{height:.4vh;border-radius:1vh;margin:2.2vh 0 3vh;background:linear-gradient(90deg,var(--flame) 0%,var(--rose) 45%,transparent 95%)}
+.title{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-weight:700;font-size:6.2vh;line-height:1.12}
+.hebrew{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:3.4vh;color:var(--flame);min-height:1em}
+.range{font-size:2vh;color:var(--muted);margin-top:.8vh}
+.chips{display:flex;flex-wrap:wrap;gap:1vh;margin-top:1.4vh;list-style:none}
+.chip{font-size:1.8vh;font-weight:600;padding:.5vh 1.8vh;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
+.chip.fast{border-color:var(--rose);color:var(--rose)}
+/* Rows are em-sized against .times so the fit pass below (fitRows) can scale
+   a busy chag week (6+ rows) down to the space left under the identity
+   block — one font-size sets the whole rhythm. */
+.times{list-style:none;display:flex;flex-direction:column;justify-content:center;gap:.7em;flex:1;margin-top:3vh;min-height:0;overflow:hidden;font-size:3vh}
+.row{display:flex;align-items:center;justify-content:space-between;gap:3vw;border-radius:1.6vh;padding:.8em 3.6vw;background:rgba(246,242,233,.035)}
+.label{font-weight:700;font-size:1em;line-height:1.2}
+.memo{font-size:.67em;color:var(--flame);font-weight:600;margin-top:.1em}
+.row.fast .memo{color:var(--rose)}
+.day{font-size:.67em;color:var(--muted);margin-top:.17em}
+.time{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:2.13em;font-weight:700;color:var(--flame);white-space:nowrap;text-align:right}
+.row.fast .time{color:var(--rose)}
+.qual{display:block;font-family:'Assistant',sans-serif;font-size:.63em;font-weight:600;color:var(--muted);text-transform:lowercase}
+.status{font-size:2.2vh;color:var(--muted)}
+.status:empty{display:none}
+.cta{text-align:center;font-size:2.2vh;font-weight:600;color:var(--paper);padding:1.8vh 0;margin-top:1.5vh;border-top:1px solid var(--line)}
+.cta .site{font-family:'Montserrat','Assistant',system-ui,sans-serif;font-size:2.8vh;font-weight:700;color:var(--flame);letter-spacing:.03em}
+.foot{font-size:1.5vh;color:var(--muted);padding-top:1.4vh;border-top:1px solid var(--line);text-align:center}
+CSS;
+	}
+
+	/** The board's script (inline on the live screen, board.js in a bundle). */
+	public static function signage_js() {
+		$js = <<<'JS'
 (function () {
 	'use strict';
-	<?php echo self::render_js_helpers(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static JS. ?>
+__HELPERS__
 
 	var cfg = JSON.parse(document.getElementById('stw-config').textContent);
 	var els = {
@@ -557,10 +641,48 @@ JS;
 		document.fonts.ready.then(fitRows, function () {});
 	}
 
+	function todayIso() {
+		try {
+			return new Intl.DateTimeFormat('en-CA', { timeZone: cfg.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+		} catch (e) {
+			return new Date().toISOString().slice(0, 10);
+		}
+	}
+
+	// Bundle mode (cfg.weeks_index set): the data is a local index of weeks
+	// with a JSON file each, refreshed by the kiosk serving this bundle. The
+	// week is chosen by today's date in the site timezone, so a board offline
+	// across Saturday night still turns to the new week on its own; past the
+	// last week on hand, the latest stays up rather than a blank.
+	function pickWeek(weeks) {
+		var t = todayIso(), i, best = null;
+		for (i = 0; i < weeks.length; i++) {
+			var w = weeks[i];
+			if (w.sunday <= t && t <= w.end) { return w; }
+			if (w.sunday <= t && (!best || w.sunday > best.sunday)) { best = w; }
+		}
+		return best || weeks[0] || null;
+	}
+
+	function fetchJson(url) {
+		return fetch(url, { cache: 'no-store' })
+			.then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+	}
+
+	function source() {
+		if (cfg.weeks_index) {
+			return fetchJson(cfg.weeks_index).then(function (index) {
+				var w = pickWeek((index && index.weeks) || []);
+				if (!w) { throw new Error('no weeks'); }
+				return fetchJson((cfg.weeks_dir || 'weeks/') + w.file);
+			});
+		}
+		return fetchJson(cfg.rest);
+	}
+
 	var retryTimer = null;
 	function load() {
-		fetch(cfg.rest)
-			.then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+		source()
 			.then(function (week) {
 				if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
 				render(week);
@@ -600,15 +722,32 @@ JS;
 	// else. The live screen keeps its clock and its refresh loop.
 	if (!cfg.preview) {
 		setInterval(tickClock, 1000);
-		if (!cfg.initial) { load(); }
+		// In a bundle the inline copy is only as fresh as the zip; the local
+		// files are fresher, so read them straight away as well.
+		if (!cfg.initial || cfg.weeks_index) { load(); }
 		setInterval(load, cfg.refreshMs);
 	} else if (!cfg.initial) {
 		els.status.textContent = 'This week could not be loaded — the sheet service did not answer.';
 	}
 })();
-</script>
-</body>
-</html>
-		<?php
+JS;
+		return str_replace( '__HELPERS__', self::render_js_helpers(), $js );
+	}
+
+	/**
+	 * The files of the Shabbos board bundle (see TTCC_Zmanim_Bundle): the
+	 * document with its style and script as files beside it, no web fonts
+	 * (system faces instead — a kiosk may be offline and its security policy
+	 * forbids remote resources), reading its weeks from local JSON files.
+	 */
+	public static function bundle_files() {
+		ob_start();
+		self::render_signage_screen( null, null, true );
+		$html = (string) ob_get_clean();
+		return array(
+			'index.html' => $html,
+			'board.css'  => self::signage_css(),
+			'board.js'   => self::signage_js(),
+		);
 	}
 }
