@@ -41,6 +41,10 @@ computes or re-rounds a time. See the plan record and `../../WARPLAN.md` §4.
     engine's `/highlights` endpoint — the identical assembled times as the
     printed sheet, never Hebcal or a client-side calculation.
   - piSignage page at `/ttcc-signage/<slug>/` — current week, large-type, auto-refresh.
+    The half-hourly refresh timer is registered once per Window (0.9.1): the
+    swapped-in document re-runs the same script, and Chromium keeps the old
+    Window's timers across `document.open()`, so each swap used to add another
+    live timer and the screen's requests doubled every half hour.
   - piSignage Shabbos screen at `/ttcc-signage/<slug>/shabbos/` — portrait
     (1080×1920-first) large-type screen with the same highlights data plus a
     live clock (site timezone). Non-interactive; re-fetches every 3 hours,
