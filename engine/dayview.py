@@ -132,6 +132,13 @@ def day_view(d: date, *, engine: ZmanimEngine | None = None) -> dict:
 
     labels = luach.day_labels(d)
     is_shabbos = d.weekday() == 5
+    h = hebcal.to_hebrew(d)
+    # From the Hebrew date, not from the labels: the weekday label list never
+    # carries "Rosh Chodesh" (only the Shabbos line does), so deriving the
+    # flag from labels made it true only when Rosh Chodesh fell on Shabbos.
+    # Same rule as luach.shabbos_labels: 1 Tishrei is Rosh Hashana, not Rosh
+    # Chodesh; 30 Tishrei is genuinely Rosh Chodesh Cheshvan.
+    is_rosh_chodesh = h.day in (1, 30) and not (h.day == 1 and h.month == 1)
 
     out = {
         "date": d.isoformat(),
@@ -148,7 +155,7 @@ def day_view(d: date, *, engine: ZmanimEngine | None = None) -> dict:
         "parsha": luach.week_parsha(_coming_shabbos(d)),
         "is_shabbos": is_shabbos,
         "is_fast": _is_fast(d),
-        "is_rosh_chodesh": any("Rosh Chodesh" in l for l in labels),
+        "is_rosh_chodesh": is_rosh_chodesh,
     }
 
     if is_shabbos:

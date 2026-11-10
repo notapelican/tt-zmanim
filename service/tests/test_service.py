@@ -218,6 +218,23 @@ def test_day_and_davening_carry_schema_version():
         assert len(body["days"]) == 1 and body["days"][0]["date"] == START
 
 
+def test_day_is_rosh_chodesh_flag():
+    """The flag follows the Hebrew date on weekdays too, not only when Rosh
+    Chodesh falls on Shabbos (it used to be derived from the Shabbos-only
+    label), and 1 Tishrei is Rosh Hashana rather than Rosh Chodesh."""
+    r = client.post("/day", json={"start": "2026-11-09", "end": "2026-11-12"}, headers=AUTH)
+    assert r.status_code == 200, r.text
+    flags = {d["date"]: d["is_rosh_chodesh"] for d in r.json()["days"]}
+    assert flags == {
+        "2026-11-09": False,  # 29 Cheshvan
+        "2026-11-10": True,   # 30 Cheshvan
+        "2026-11-11": True,   # 1 Kislev
+        "2026-11-12": False,  # 2 Kislev
+    }
+    r = client.post("/day", json={"start": "2026-09-12", "end": "2026-09-12"}, headers=AUTH)
+    assert r.json()["days"][0]["hebrew"]["day"] == 1 and r.json()["days"][0]["is_rosh_chodesh"] is False
+
+
 def test_davening_override_flows_through():
     """A dashboard override reaches /davening exactly as it reaches the
     printed sheet — sheet-wide, and scoped to the week."""
