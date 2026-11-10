@@ -420,10 +420,20 @@ class TTCC_Zmanim_Public {
 		return TTCC_Zmanim_Bundle::descriptors();
 	}
 
-	/** Stale beats blank: re-fetch and swap the document only on success. */
+	/**
+	 * Stale beats blank: re-fetch and swap the document only on success.
+	 *
+	 * The interval is registered once per Window. The fetched HTML carries this
+	 * same script, and in current Chromium document.open() keeps the Window (and
+	 * its timers) rather than replacing it, so without the guard every swap added
+	 * a second live timer to the one that caused it: the screen's requests
+	 * doubled every half hour (1, 2, 4, 7, 14, 28, 53, 103 per cycle in the
+	 * server log — ~950k requests from one Pi in 13 days, with 500s under load).
+	 */
 	private static function signage_refresh_script() {
 		return '<script id="ttcc-signage-refresh">'
-			. '(function(){setInterval(function(){'
+			. '(function(){if(window.__ttccSignageRefresh){return;}'
+			. 'window.__ttccSignageRefresh=setInterval(function(){'
 			. 'fetch(location.href,{cache:"no-store"}).then(function(r){if(!r.ok){throw 0;}return r.text();})'
 			. '.then(function(t){if(t.indexOf("</html>")===-1){return;}document.open();document.write(t);document.close();})'
 			. '.catch(function(){});},' . ( 30 * 60 * 1000 ) . ');})();'
@@ -462,6 +472,11 @@ class TTCC_Zmanim_Public {
 	 * A screen shows one page at a time, so a week that needs more than one —
 	 * Sukkos, where the yom-tov days push the block count past four — cycles
 	 * through them instead of quietly showing the first and dropping the rest.
+	 *
+	 * The half-hourly refresh re-runs this script against the same Window (see
+	 * signage_refresh_script), so the rotation timer is kept on `window` and the
+	 * previous one is cleared before a new one starts; otherwise each swap left
+	 * another timer running against the detached pages of the old document.
 	 */
 	private static function signage_head() {
 		return '<style id="ttcc-signage">'
@@ -478,9 +493,16 @@ class TTCC_Zmanim_Public {
 			// Rotate only once the sheet's fit pass has run: it measures each page,
 			// and a page hidden before it is measured would come back unscaled.
 			// Start anyway after 10s so a fit that never finishes still cycles.
-			. 'var i=0,waited=0,t=setInterval(function(){'
+			// Both timers live on window so the next run of this script (after a
+			// document swap) can stop them. The poll ends within 10s of load, long
+			// before the half-hourly swap, but is cleared too in case a swap ever
+			// lands mid-poll.
+			. 'if(window.__ttccPagesPoll){clearInterval(window.__ttccPagesPoll);}'
+			. 'if(window.__ttccPagesTimer){clearInterval(window.__ttccPagesTimer);}'
+			. 'var i=0,waited=0,t=window.__ttccPagesPoll=setInterval(function(){'
 			. 'if(document.documentElement.getAttribute("data-ttcc-fitted")==="1"||(waited+=200)>10000){'
-			. 'clearInterval(t);show();setInterval(show,' . ( 20 * 1000 ) . ');}},200);'
+			. 'clearInterval(t);window.__ttccPagesPoll=null;show();'
+			. 'window.__ttccPagesTimer=setInterval(show,' . ( 20 * 1000 ) . ');}},200);'
 			. 'function show(){for(var k=0;k<P.length;k++){P[k].style.display=(k===i)?"":"none";}'
 			. 'i=(i+1)%P.length;}}'
 			// This runs from <head>, so the pages do not exist yet.
